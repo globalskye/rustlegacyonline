@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: rust-legacy-postgres
+    environment:
+      POSTGRES_DB: rustlegacy
+      POSTGRES_USER: rustlegacy
+      POSTGRES_PASSWORD: rustlegacy_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rust-legacy-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rustlegacy"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: rust-legacy-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=rustlegacy
+      - DB_PASSWORD=rustlegacy_password
+      - DB_NAME=rustlegacy
+    restart: unless-stopped
+    networks:
+      - rust-legacy-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: rust-legacy-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - rust-legacy-network
+
+volumes:
+  postgres_data:
+
+networks:
+  rust-legacy-network:
+    driver: bridge
