@@ -6,6 +6,9 @@ export interface ServerInfo {
   downloadUrl: string;
   virusTotalUrl?: string;
   descriptions: Description[];
+  type?: 'classic' | 'deathmatch';
+  ip?: string;
+  port?: number;
 }
 
 export interface Description {
@@ -50,7 +53,7 @@ export interface HowToStartStep {
 export interface ServerDetail {
   id: number;
   language: string;
-  section: string; // 'description' or 'features'
+  section: string;
   title: string;
   content: string;
   imageUrl?: string;
@@ -91,6 +94,9 @@ export interface Player {
   lastSeen: string;
   firstJoined: string;
   isOnline: boolean;
+  kills?: number;
+  deaths?: number;
+  rank?: number;
 }
 
 export interface PaymentMethod {
@@ -108,4 +114,65 @@ export interface LegalDocument {
   title: string;
   content: string;
   updatedAt: string;
+}
+
+export interface ShopCategory {
+  id: number;
+  name: string;
+  language: string;
+  order: number;
+  enabled: boolean;
+}
+
+export interface ShopItem {
+  id: number;
+  categoryId: number;
+  language: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  imageUrl?: string;
+  enabled: boolean;
+  order: number;
+  features?: string[];
+  discount?: number;
+}
+
+export interface Theme {
+  id: number;
+  name: string;
+  primaryColor: string;
+  accentColor: string;
+  backgroundColor: string;
+  cardBackground: string;
+  textPrimary: string;
+  textSecondary: string;
+  borderColor: string;
+  glowColor: string;
+  isActive: boolean;
+}
+
+export interface FontSettings {
+  id: number;
+  headingFont: string;
+  bodyFont: string;
+  h1Size: string;
+  h2Size: string;
+  h3Size: string;
+  bodySize: string;
+}
+
+export interface ServerStatus {
+  serverId: number;
+  serverName: string;
+  serverType: 'classic' | 'deathmatch';
+  isOnline: boolean;
+  currentPlayers: number;
+  maxPlayers: number;
+  map: string;
+  uptime: number;
+  ip: string;
+  port: number;
+  activePlayers: Player[];
 }

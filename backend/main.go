@@ -14,31 +14,25 @@ import (
 )
 
 func main() {
-	// Подключаемся к базе данных
 	log.Println("Connecting to database...")
 	
-	// Ждем, пока postgres запустится
 	time.Sleep(5 * time.Second)
 	
 	if err := database.Connect(); err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
-	// Мигрируем схему
 	log.Println("Running migrations...")
 	if err := database.Migrate(); err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}
 
-	// Заполняем начальными данными
 	log.Println("Seeding database...")
 	if err := database.Seed(); err != nil {
 		log.Fatal("Failed to seed database:", err)
 	}
 
 	router := mux.NewRouter()
-
-	// API routes
 	api := router.PathPrefix("/api").Subrouter()
 
 	// Health check
@@ -47,6 +41,7 @@ func main() {
 	// Server Info
 	api.HandleFunc("/server-info", handlers.GetServerInfo).Methods("GET")
 	api.HandleFunc("/server-info", handlers.UpdateServerInfo).Methods("PUT")
+	api.HandleFunc("/servers", handlers.GetAllServers).Methods("GET")
 
 	// Features
 	api.HandleFunc("/features", handlers.GetFeatures).Methods("GET")
@@ -105,6 +100,29 @@ func main() {
 	// Players
 	api.HandleFunc("/players", handlers.GetPlayers).Methods("GET")
 	api.HandleFunc("/players/{steamid}", handlers.GetPlayer).Methods("GET")
+
+	// Shop Categories
+	api.HandleFunc("/shop/categories", handlers.GetShopCategories).Methods("GET")
+	api.HandleFunc("/shop/categories", handlers.CreateShopCategory).Methods("POST")
+	api.HandleFunc("/shop/categories/{id}", handlers.UpdateShopCategory).Methods("PUT")
+	api.HandleFunc("/shop/categories/{id}", handlers.DeleteShopCategory).Methods("DELETE")
+
+	// Shop Items
+	api.HandleFunc("/shop/items", handlers.GetShopItems).Methods("GET")
+	api.HandleFunc("/shop/items", handlers.CreateShopItem).Methods("POST")
+	api.HandleFunc("/shop/items/{id}", handlers.UpdateShopItem).Methods("PUT")
+	api.HandleFunc("/shop/items/{id}", handlers.DeleteShopItem).Methods("DELETE")
+
+	// Theme
+	api.HandleFunc("/theme", handlers.GetTheme).Methods("GET")
+	api.HandleFunc("/theme", handlers.UpdateTheme).Methods("PUT")
+
+	// Font Settings
+	api.HandleFunc("/font-settings", handlers.GetFontSettings).Methods("GET")
+	api.HandleFunc("/font-settings", handlers.UpdateFontSettings).Methods("PUT")
+
+	// Server Status
+	api.HandleFunc("/server-status", handlers.GetServerStatus).Methods("GET")
 
 	// CORS configuration
 	c := cors.New(cors.Options{

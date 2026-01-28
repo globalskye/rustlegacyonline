@@ -7,7 +7,7 @@ import * as Types from '../types';
 
 const HowToStart: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const [steps, setSteps] = useState<Types.GettingStartedStep[]>([]);
+  const [steps, setSteps] = useState<Types.HowToStartStep[]>([]);
   const [serverInfo, setServerInfo] = useState<Types.ServerInfo | null>(null);
 
   useEffect(() => {
@@ -17,10 +17,10 @@ const HowToStart: React.FC = () => {
   const loadData = async () => {
     try {
       const [stepsData, infoData] = await Promise.all([
-        apiService.getGettingStartedSteps(i18n.language),
+        apiService.getHowToStartSteps(i18n.language),
         apiService.getServerInfo()
       ]);
-      setSteps(stepsData.sort((a, b) => a.stepNumber - b.stepNumber));
+      setSteps(stepsData.sort((a: Types.HowToStartStep, b: Types.HowToStartStep) => a.stepNumber - b.stepNumber));
       setServerInfo(infoData);
     } catch (error) {
       console.error('Error loading data:', error);

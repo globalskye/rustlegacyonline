@@ -68,6 +68,10 @@ func Migrate() error {
 		&models.LegalDocument{},
 		&models.Player{},
 		&models.Setting{},
+		&models.ShopCategory{},
+		&models.ShopItem{},
+		&models.Theme{},
+		&models.FontSettings{},
 	)
 
 	if err != nil {
@@ -79,7 +83,6 @@ func Migrate() error {
 }
 
 func Seed() error {
-	// Проверяем, есть ли уже данные
 	var count int64
 	DB.Model(&models.ServerInfo{}).Count(&count)
 	if count > 0 {
@@ -88,31 +91,42 @@ func Seed() error {
 	}
 
 	// ========================================
-	// SERVER INFO
+	// SERVER INFO - 2 SERVERS
 	// ========================================
-	serverInfo := models.ServerInfo{
-		Name:          "RUST LEGACY X1",
+	serverClassic := models.ServerInfo{
+		Name:          "Rust Legacy Classic",
 		MaxPlayers:    100,
 		GameVersion:   "Legacy",
+		Type:          "classic",
+		IP:            "185.202.223.101",
+		Port:          28015,
 		DownloadURL:   "https://example.com/download/rust-legacy-client.zip",
 		VirusTotalURL: "https://www.virustotal.com/gui/file/YOUR_FILE_HASH",
 	}
-	if err := DB.Create(&serverInfo).Error; err != nil {
+	if err := DB.Create(&serverClassic).Error; err != nil {
+		return err
+	}
+
+	serverDM := models.ServerInfo{
+		Name:          "Rust Legacy Deathmatch",
+		MaxPlayers:    50,
+		GameVersion:   "Legacy",
+		Type:          "deathmatch",
+		IP:            "185.202.223.102",
+		Port:          28016,
+		DownloadURL:   "https://example.com/download/rust-legacy-client.zip",
+		VirusTotalURL: "https://www.virustotal.com/gui/file/YOUR_FILE_HASH",
+	}
+	if err := DB.Create(&serverDM).Error; err != nil {
 		return err
 	}
 
 	// Descriptions
 	descriptions := []models.Description{
-		{
-			ServerInfoID: serverInfo.ID,
-			Language:     "en",
-			Content:      "Experience the classic Rust Legacy gameplay with balanced x1 rates. Build, survive, and dominate!",
-		},
-		{
-			ServerInfoID: serverInfo.ID,
-			Language:     "ru",
-			Content:      "Испытайте классический геймплей Rust Legacy со сбалансированными рейтами x1. Стройте, выживайте и доминируйте!",
-		},
+		{ServerInfoID: serverClassic.ID, Language: "en", Content: "Experience the classic Rust Legacy gameplay with balanced x1 rates. Build, survive, and dominate!"},
+		{ServerInfoID: serverClassic.ID, Language: "ru", Content: "Испытайте классический геймплей Rust Legacy со сбалансированными рейтами x1. Стройте, выживайте и доминируйте!"},
+		{ServerInfoID: serverDM.ID, Language: "en", Content: "Fast-paced deathmatch arena for those who love intense PvP action!"},
+		{ServerInfoID: serverDM.ID, Language: "ru", Content: "Быстрая арена для тех, кто любит интенсивный PvP!"},
 	}
 	for _, desc := range descriptions {
 		if err := DB.Create(&desc).Error; err != nil {
@@ -124,14 +138,14 @@ func Seed() error {
 	// FEATURES
 	// ========================================
 	features := []models.Feature{
-		{ServerInfoID: serverInfo.ID, Language: "en", Title: "Classic x1 Rates", Description: "Pure vanilla experience with balanced gathering", Icon: "zap", Order: 1},
-		{ServerInfoID: serverInfo.ID, Language: "ru", Title: "Классические x1 рейты", Description: "Чистый ванильный опыт со сбалансированным сбором", Icon: "zap", Order: 1},
-		{ServerInfoID: serverInfo.ID, Language: "en", Title: "Active Community", Description: "Join hundreds of players in our community", Icon: "users", Order: 2},
-		{ServerInfoID: serverInfo.ID, Language: "ru", Title: "Активное сообщество", Description: "Присоединяйтесь к сотням игроков в нашем сообществе", Icon: "users", Order: 2},
-		{ServerInfoID: serverInfo.ID, Language: "en", Title: "24/7 Uptime", Description: "Reliable server with 99.9% uptime", Icon: "server", Order: 3},
-		{ServerInfoID: serverInfo.ID, Language: "ru", Title: "24/7 Доступность", Description: "Надежный сервер с 99.9% аптаймом", Icon: "server", Order: 3},
-		{ServerInfoID: serverInfo.ID, Language: "en", Title: "Fair Play", Description: "Active admins ensuring fair gameplay", Icon: "shield", Order: 4},
-		{ServerInfoID: serverInfo.ID, Language: "ru", Title: "Честная игра", Description: "Активные админы обеспечивают честный геймплей", Icon: "shield", Order: 4},
+		{ServerInfoID: serverClassic.ID, Language: "en", Title: "Classic x1 Rates", Description: "Pure vanilla experience with balanced gathering", Icon: "zap", Order: 1},
+		{ServerInfoID: serverClassic.ID, Language: "ru", Title: "Классические x1 рейты", Description: "Чистый ванильный опыт со сбалансированным сбором", Icon: "zap", Order: 1},
+		{ServerInfoID: serverClassic.ID, Language: "en", Title: "Active Community", Description: "Join hundreds of players in our community", Icon: "users", Order: 2},
+		{ServerInfoID: serverClassic.ID, Language: "ru", Title: "Активное сообщество", Description: "Присоединяйтесь к сотням игроков в нашем сообществе", Icon: "users", Order: 2},
+		{ServerInfoID: serverClassic.ID, Language: "en", Title: "24/7 Uptime", Description: "Reliable server with 99.9% uptime", Icon: "server", Order: 3},
+		{ServerInfoID: serverClassic.ID, Language: "ru", Title: "24/7 Доступность", Description: "Надежный сервер с 99.9% аптаймом", Icon: "server", Order: 3},
+		{ServerInfoID: serverClassic.ID, Language: "en", Title: "Fair Play", Description: "Active admins ensuring fair gameplay", Icon: "shield", Order: 4},
+		{ServerInfoID: serverClassic.ID, Language: "ru", Title: "Честная игра", Description: "Активные админы обеспечивают честный геймплей", Icon: "shield", Order: 4},
 	}
 	for _, feature := range features {
 		if err := DB.Create(&feature).Error; err != nil {
@@ -143,62 +157,14 @@ func Seed() error {
 	// HOW TO START STEPS
 	// ========================================
 	howToStartSteps := []models.HowToStartStep{
-		{
-			Language:   "en",
-			StepNumber: 1,
-			Title:      "Download the Client",
-			Content:    "<p>Download our custom Rust Legacy client from the link above. The client is pre-configured and ready to connect.</p><ul><li>OS: Windows 7/8/10/11 (64-bit)</li><li>RAM: 4GB minimum</li><li>Storage: 5GB available space</li></ul>",
-			ImageURL:   "https://via.placeholder.com/600x400/0ea5e9/ffffff?text=Download+Client",
-		},
-		{
-			Language:   "ru",
-			StepNumber: 1,
-			Title:      "Скачайте клиент",
-			Content:    "<p>Скачайте наш кастомный клиент Rust Legacy по ссылке выше. Клиент предварительно настроен и готов к подключению.</p><ul><li>ОС: Windows 7/8/10/11 (64-bit)</li><li>RAM: 4GB минимум</li><li>Хранилище: 5GB свободного места</li></ul>",
-			ImageURL:   "https://via.placeholder.com/600x400/0ea5e9/ffffff?text=Download+Client",
-		},
-		{
-			Language:   "en",
-			StepNumber: 2,
-			Title:      "Verify the Download",
-			Content:    "<p>For your security, verify the downloaded file on VirusTotal. We provide transparency by offering the VirusTotal link.</p><p>Our client is completely safe - no malware, no viruses, just pure Rust Legacy gameplay.</p>",
-			ImageURL:   "https://via.placeholder.com/600x400/06b6d4/ffffff?text=Verify+Download",
-		},
-		{
-			Language:   "ru",
-			StepNumber: 2,
-			Title:      "Проверьте загрузку",
-			Content:    "<p>Для вашей безопасности проверьте скачанный файл на VirusTotal. Мы предоставляем полную прозрачность.</p><p>Наш клиент полностью безопасен - никаких вирусов, только чистый Rust Legacy.</p>",
-			ImageURL:   "https://via.placeholder.com/600x400/06b6d4/ffffff?text=Verify+Download",
-		},
-		{
-			Language:   "en",
-			StepNumber: 3,
-			Title:      "Install and Launch",
-			Content:    "<p>Extract the archive and run RustLegacy.exe. The client will automatically connect to our server.</p><p><strong>First Launch:</strong></p><ul><li>Create your character</li><li>Press F1 for console</li><li>Type /help for commands</li></ul>",
-			ImageURL:   "https://via.placeholder.com/600x400/14b8a6/ffffff?text=Install+Game",
-		},
-		{
-			Language:   "ru",
-			StepNumber: 3,
-			Title:      "Установите и запустите",
-			Content:    "<p>Извлеките архив и запустите RustLegacy.exe. Клиент автоматически подключится к нашему серверу.</p><p><strong>Первый запуск:</strong></p><ul><li>Создайте персонажа</li><li>Нажмите F1 для консоли</li><li>Введите /help для команд</li></ul>",
-			ImageURL:   "https://via.placeholder.com/600x400/14b8a6/ffffff?text=Install+Game",
-		},
-		{
-			Language:   "en",
-			StepNumber: 4,
-			Title:      "Start Playing!",
-			Content:    "<p>You're all set! Here are some tips:</p><ul><li>Use /kit starter for free starter kit</li><li>Use /sethome to save your location</li><li>Join our Discord for support</li><li>Read /rules command</li></ul>",
-			ImageURL:   "https://via.placeholder.com/600x400/0284c7/ffffff?text=Start+Playing",
-		},
-		{
-			Language:   "ru",
-			StepNumber: 4,
-			Title:      "Начинайте играть!",
-			Content:    "<p>Все готово! Несколько советов:</p><ul><li>Используйте /kit starter для стартового набора</li><li>Используйте /sethome чтобы сохранить локацию</li><li>Присоединяйтесь к Discord для поддержки</li><li>Прочтите /rules</li></ul>",
-			ImageURL:   "https://via.placeholder.com/600x400/0284c7/ffffff?text=Start+Playing",
-		},
+		{Language: "en", StepNumber: 1, Title: "Download the Client", Content: "<p>Download our custom Rust Legacy client from the link above.</p>", ImageURL: "https://via.placeholder.com/600x400/0ea5e9/ffffff?text=Download+Client"},
+		{Language: "ru", StepNumber: 1, Title: "Скачайте клиент", Content: "<p>Скачайте наш кастомный клиент Rust Legacy по ссылке выше.</p>", ImageURL: "https://via.placeholder.com/600x400/0ea5e9/ffffff?text=Download+Client"},
+		{Language: "en", StepNumber: 2, Title: "Verify the Download", Content: "<p>For your security, verify the downloaded file on VirusTotal.</p>", ImageURL: "https://via.placeholder.com/600x400/06b6d4/ffffff?text=Verify+Download"},
+		{Language: "ru", StepNumber: 2, Title: "Проверьте загрузку", Content: "<p>Для вашей безопасности проверьте скачанный файл на VirusTotal.</p>", ImageURL: "https://via.placeholder.com/600x400/06b6d4/ffffff?text=Verify+Download"},
+		{Language: "en", StepNumber: 3, Title: "Install and Launch", Content: "<p>Extract the archive and run RustLegacy.exe.</p>", ImageURL: "https://via.placeholder.com/600x400/14b8a6/ffffff?text=Install+Game"},
+		{Language: "ru", StepNumber: 3, Title: "Установите и запустите", Content: "<p>Извлеките архив и запустите RustLegacy.exe.</p>", ImageURL: "https://via.placeholder.com/600x400/14b8a6/ffffff?text=Install+Game"},
+		{Language: "en", StepNumber: 4, Title: "Start Playing!", Content: "<p>You're all set! Use /kit starter for free starter kit.</p>", ImageURL: "https://via.placeholder.com/600x400/0284c7/ffffff?text=Start+Playing"},
+		{Language: "ru", StepNumber: 4, Title: "Начинайте играть!", Content: "<p>Все готово! Используйте /kit starter для стартового набора.</p>", ImageURL: "https://via.placeholder.com/600x400/0284c7/ffffff?text=Start+Playing"},
 	}
 	for _, step := range howToStartSteps {
 		if err := DB.Create(&step).Error; err != nil {
@@ -210,50 +176,8 @@ func Seed() error {
 	// SERVER DETAILS
 	// ========================================
 	serverDetails := []models.ServerDetail{
-		{
-			Language: "en",
-			Section:  "description",
-			Title:    "Server Type",
-			Content:  "<p>Classic Rust Legacy x1 vanilla server. No gameplay-affecting mods or plugins.</p>",
-			Order:    1,
-		},
-		{
-			Language: "ru",
-			Section:  "description",
-			Title:    "Тип сервера",
-			Content:  "<p>Классический Rust Legacy x1 ванильный сервер. Без модов влияющих на геймплей.</p>",
-			Order:    1,
-		},
-		{
-			Language: "en",
-			Section:  "description",
-			Title:    "Wipe Schedule",
-			Content:  "<p><strong>Map Wipes:</strong> Every 2 weeks (Thursdays 18:00 UTC)<br><strong>BP Wipes:</strong> Monthly</p>",
-			Order:    2,
-		},
-		{
-			Language: "ru",
-			Section:  "description",
-			Title:    "Расписание вайпов",
-			Content:  "<p><strong>Вайпы карты:</strong> Каждые 2 недели (Четверг 18:00 UTC)<br><strong>Вайпы BP:</strong> Ежемесячно</p>",
-			Order:    2,
-		},
-		{
-			Language: "en",
-			Section:  "description",
-			Title:    "Server Location",
-			Content:  "<p>Hosted in Europe (Germany) for optimal ping to CIS and EU players.</p>",
-			VideoURL: "https://www.youtube.com/watch?v=example",
-			Order:    3,
-		},
-		{
-			Language: "ru",
-			Section:  "description",
-			Title:    "Расположение сервера",
-			Content:  "<p>Хостинг в Европе (Германия) для оптимального пинга для игроков СНГ и ЕС.</p>",
-			VideoURL: "https://www.youtube.com/watch?v=example",
-			Order:    3,
-		},
+		{Language: "en", Section: "description", Title: "Server Type", Content: "<p>Classic Rust Legacy x1 vanilla server.</p>", Order: 1},
+		{Language: "ru", Section: "description", Title: "Тип сервера", Content: "<p>Классический Rust Legacy x1 ванильный сервер.</p>", Order: 1},
 	}
 	for _, detail := range serverDetails {
 		if err := DB.Create(&detail).Error; err != nil {
@@ -274,14 +198,9 @@ func Seed() error {
 		}
 	}
 
-	// Commands for Teleport System
 	commands := []models.Command{
 		{PluginID: 1, Command: "/sethome", Description: "Set your home location", Usage: "/sethome [name]"},
-		{PluginID: 1, Command: "/home", Description: "Teleport to your home (5min cooldown)", Usage: "/home [name]"},
-		{PluginID: 1, Command: "/removehome", Description: "Remove a home location", Usage: "/removehome [name]"},
-		{PluginID: 2, Command: "/sethome", Description: "Установить домашнюю локацию", Usage: "/sethome [название]"},
-		{PluginID: 2, Command: "/home", Description: "Телепортироваться домой (5мин кулдаун)", Usage: "/home [название]"},
-		{PluginID: 2, Command: "/removehome", Description: "Удалить домашнюю локацию", Usage: "/removehome [название]"},
+		{PluginID: 1, Command: "/home", Description: "Teleport to your home", Usage: "/home [name]"},
 	}
 	for _, cmd := range commands {
 		if err := DB.Create(&cmd).Error; err != nil {
@@ -293,42 +212,8 @@ func Seed() error {
 	// RULES
 	// ========================================
 	rules := []models.Rule{
-		{
-			Language: "en",
-			Title:    "🚫 Cheating and Exploits",
-			Content:  "<p>✗ Any cheats, hacks, or third-party software</p><p>✗ Exploiting game bugs or glitches</p><p>✗ Macro use or automation</p><p><strong>Penalty:</strong> Permanent ban</p>",
-			Order:    1,
-		},
-		{
-			Language: "ru",
-			Title:    "🚫 Читы и эксплойты",
-			Content:  "<p>✗ Любые читы, хаки или стороннее ПО</p><p>✗ Использование багов игры</p><p>✗ Использование макросов</p><p><strong>Наказание:</strong> Перманентный бан</p>",
-			Order:    1,
-		},
-		{
-			Language: "en",
-			Title:    "💬 Behavior and Communication",
-			Content:  "<p>✗ Harassment, racism, or hate speech</p><p>✗ Excessive toxicity or griefing</p><p>✗ Impersonating staff</p><p><strong>Penalty:</strong> Mute, kick, or ban</p>",
-			Order:    2,
-		},
-		{
-			Language: "ru",
-			Title:    "💬 Поведение и общение",
-			Content:  "<p>✗ Оскорбления, расизм или hate speech</p><p>✗ Чрезмерная токсичность</p><p>✗ Выдача себя за администрацию</p><p><strong>Наказание:</strong> Мут, кик или бан</p>",
-			Order:    2,
-		},
-		{
-			Language: "en",
-			Title:    "⚔️ Raiding and PvP",
-			Content:  "<p>✓ Raiding is allowed 24/7</p><p>✗ Griefing after successful raid</p><p>✗ Foundation wiping</p><p>✗ Killing freshspawns repeatedly</p><p><strong>Penalty:</strong> Warning or temporary ban</p>",
-			Order:    3,
-		},
-		{
-			Language: "ru",
-			Title:    "⚔️ Рейды и PvP",
-			Content:  "<p>✓ Рейды разрешены 24/7</p><p>✗ Гриф после успешного рейда</p><p>✗ Уничтожение фундамента</p><p>✗ Многократное убийство новичков</p><p><strong>Наказание:</strong> Предупреждение или временный бан</p>",
-			Order:    3,
-		},
+		{Language: "en", Title: "🚫 Cheating and Exploits", Content: "<p>✗ Any cheats, hacks, or third-party software</p><p><strong>Penalty:</strong> Permanent ban</p>", Order: 1},
+		{Language: "ru", Title: "🚫 Читы и эксплойты", Content: "<p>✗ Любые читы, хаки или стороннее ПО</p><p><strong>Наказание:</strong> Перманентный бан</p>", Order: 1},
 	}
 	for _, rule := range rules {
 		if err := DB.Create(&rule).Error; err != nil {
@@ -343,7 +228,6 @@ func Seed() error {
 		{Name: "Visa", ImageURL: "https://via.placeholder.com/80x50/ffffff/0ea5e9?text=VISA", Order: 1, Enabled: true},
 		{Name: "MasterCard", ImageURL: "https://via.placeholder.com/80x50/ffffff/0ea5e9?text=MC", Order: 2, Enabled: true},
 		{Name: "PayPal", ImageURL: "https://via.placeholder.com/80x50/ffffff/0ea5e9?text=PayPal", Order: 3, Enabled: true},
-		{Name: "Crypto", ImageURL: "https://via.placeholder.com/80x50/ffffff/0ea5e9?text=BTC", Order: 4, Enabled: true},
 	}
 	for _, method := range paymentMethods {
 		if err := DB.Create(&method).Error; err != nil {
@@ -355,42 +239,8 @@ func Seed() error {
 	// LEGAL DOCUMENTS
 	// ========================================
 	legalDocs := []models.LegalDocument{
-		{
-			Language: "en",
-			Type:     "terms",
-			Title:    "Terms of Service",
-			Content:  "<h3>1. Acceptance of Terms</h3><p>By accessing this server, you agree to these terms.</p><h3>2. User Conduct</h3><p>Respectful behavior is required.</p>",
-		},
-		{
-			Language: "ru",
-			Type:     "terms",
-			Title:    "Пользовательское соглашение",
-			Content:  "<h3>1. Принятие условий</h3><p>Используя сервер, вы соглашаетесь с условиями.</p><h3>2. Поведение пользователей</h3><p>Требуется уважительное поведение.</p>",
-		},
-		{
-			Language: "en",
-			Type:     "privacy",
-			Title:    "Privacy Policy",
-			Content:  "<h3>1. Information Collection</h3><p>We collect Steam ID, username, and gameplay data.</p>",
-		},
-		{
-			Language: "ru",
-			Type:     "privacy",
-			Title:    "Политика конфиденциальности",
-			Content:  "<h3>1. Сбор информации</h3><p>Мы собираем Steam ID, имя пользователя и данные игры.</p>",
-		},
-		{
-			Language: "en",
-			Type:     "company_info",
-			Title:    "Company Information",
-			Content:  "<h3>Legal Entity</h3><p><strong>Company Name:</strong> ООО \"Example Gaming\"</p><p><strong>УНП:</strong> 123456789</p>",
-		},
-		{
-			Language: "ru",
-			Type:     "company_info",
-			Title:    "Информация о компании",
-			Content:  "<h3>Юридическое лицо</h3><p><strong>Название компании:</strong> ООО \"Example Gaming\"</p><p><strong>УНП:</strong> 123456789</p>",
-		},
+		{Language: "en", Type: "terms", Title: "Terms of Service", Content: "<h3>1. Acceptance of Terms</h3><p>By accessing this server, you agree to these terms.</p>"},
+		{Language: "ru", Type: "terms", Title: "Пользовательское соглашение", Content: "<h3>1. Принятие условий</h3><p>Используя сервер, вы соглашаетесь с условиями.</p>"},
 	}
 	for _, doc := range legalDocs {
 		if err := DB.Create(&doc).Error; err != nil {
@@ -399,30 +249,79 @@ func Seed() error {
 	}
 
 	// ========================================
-	// NEWS
+	// PLAYERS
 	// ========================================
-	news := []models.News{
-		{
-			Language:    "en",
-			Title:       "Server Launch!",
-			Content:     "Welcome to our Rust Legacy server! Join us for classic survival gameplay.",
-			ImageURL:    "https://via.placeholder.com/800x400/0ea5e9/ffffff?text=Server+Launch",
-			Published:   true,
-			PublishedAt: time.Now(),
-		},
-		{
-			Language:    "ru",
-			Title:       "Запуск сервера!",
-			Content:     "Добро пожаловать на наш Rust Legacy сервер! Присоединяйтесь к классическому выживанию.",
-			ImageURL:    "https://via.placeholder.com/800x400/0ea5e9/ffffff?text=Server+Launch",
-			Published:   true,
-			PublishedAt: time.Now(),
-		},
+	players := []models.Player{
+		{Username: "ShadowHunter", SteamID: "76561198000000001", PlayTime: 15400, IsOnline: true, Kills: 347, Deaths: 156, Rank: 1, FirstJoined: time.Now().Add(-240 * time.Hour), LastSeen: time.Now()},
+		{Username: "ProGamer2024", SteamID: "76561198000000002", PlayTime: 8900, IsOnline: true, Kills: 289, Deaths: 134, Rank: 2, FirstJoined: time.Now().Add(-200 * time.Hour), LastSeen: time.Now()},
+		{Username: "RustKing", SteamID: "76561198000000003", PlayTime: 12300, IsOnline: true, Kills: 267, Deaths: 145, Rank: 3, FirstJoined: time.Now().Add(-300 * time.Hour), LastSeen: time.Now()},
 	}
-	for _, n := range news {
-		if err := DB.Create(&n).Error; err != nil {
+	for _, player := range players {
+		if err := DB.Create(&player).Error; err != nil {
 			return err
 		}
+	}
+
+	// ========================================
+	// SHOP CATEGORIES
+	// ========================================
+	shopCategories := []models.ShopCategory{
+		{Name: "VIP Packages", Language: "en", Order: 1, Enabled: true},
+		{Name: "VIP Пакеты", Language: "ru", Order: 1, Enabled: true},
+		{Name: "Resources", Language: "en", Order: 2, Enabled: true},
+		{Name: "Ресурсы", Language: "ru", Order: 2, Enabled: true},
+	}
+	for _, cat := range shopCategories {
+		if err := DB.Create(&cat).Error; err != nil {
+			return err
+		}
+	}
+
+	// ========================================
+	// SHOP ITEMS
+	// ========================================
+	shopItems := []models.ShopItem{
+		{CategoryID: 1, Language: "en", Name: "VIP Bronze", Description: "Basic VIP package", Price: 9.99, Currency: "USD", Enabled: true, Order: 1, Features: "[\"Priority queue\",\"Custom chat color\"]", Discount: 0},
+		{CategoryID: 1, Language: "en", Name: "VIP Silver", Description: "Enhanced VIP package", Price: 19.99, Currency: "USD", Enabled: true, Order: 2, Features: "[\"All Bronze benefits\",\"5 home locations\"]", Discount: 15},
+	}
+	for _, item := range shopItems {
+		if err := DB.Create(&item).Error; err != nil {
+			return err
+		}
+	}
+
+	// ========================================
+	// THEME
+	// ========================================
+	theme := models.Theme{
+		Name:            "Blue Cyber",
+		PrimaryColor:    "#0ea5e9",
+		AccentColor:     "#06b6d4",
+		BackgroundColor: "#030712",
+		CardBackground:  "#0f172a",
+		TextPrimary:     "#f8fafc",
+		TextSecondary:   "#cbd5e1",
+		BorderColor:     "rgba(14, 165, 233, 0.2)",
+		GlowColor:       "rgba(14, 165, 233, 0.5)",
+		IsActive:        true,
+	}
+	if err := DB.Create(&theme).Error; err != nil {
+		return err
+	}
+
+	// ========================================
+	// FONT SETTINGS
+	// ========================================
+	fonts := models.FontSettings{
+		HeadingFont: "Orbitron",
+		BodyFont:    "Exo 2",
+		H1Size:      "clamp(3rem, 10vw, 7rem)",
+		H2Size:      "clamp(2.5rem, 6vw, 4rem)",
+		H3Size:      "1.5rem",
+		BodySize:    "1rem",
+	}
+	if err := DB.Create(&fonts).Error; err != nil {
+		return err
 	}
 
 	log.Println("Database seeded successfully")

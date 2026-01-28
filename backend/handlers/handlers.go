@@ -6,6 +6,7 @@ import (
 	"rust-legacy-site/database"
 	"rust-legacy-site/models"
 	"strconv"
+	
 
 	"github.com/gorilla/mux"
 )
@@ -32,6 +33,9 @@ func GetServerInfo(w http.ResponseWriter, r *http.Request) {
 		"gameVersion":   serverInfo.GameVersion,
 		"downloadUrl":   serverInfo.DownloadURL,
 		"virusTotalUrl": serverInfo.VirusTotalURL,
+		"type":          serverInfo.Type,
+		"ip":            serverInfo.IP,
+		"port":          serverInfo.Port,
 		"descriptions":  descriptions,
 	}
 
@@ -57,6 +61,9 @@ func UpdateServerInfo(w http.ResponseWriter, r *http.Request) {
 	serverInfo.GameVersion = input.GameVersion
 	serverInfo.DownloadURL = input.DownloadURL
 	serverInfo.VirusTotalURL = input.VirusTotalURL
+	serverInfo.Type = input.Type
+	serverInfo.IP = input.IP
+	serverInfo.Port = input.Port
 
 	if err := database.DB.Save(&serverInfo).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -65,6 +72,18 @@ func UpdateServerInfo(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(serverInfo)
+}
+
+func GetAllServers(w http.ResponseWriter, r *http.Request) {
+	var servers []models.ServerInfo
+	
+	if err := database.DB.Find(&servers).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(servers)
 }
 
 // ========================================
@@ -456,7 +475,6 @@ func DeletePlugin(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	// Delete commands first
 	database.DB.Where("plugin_id = ?", id).Delete(&models.Command{})
 	
 	if err := database.DB.Delete(&models.Plugin{}, id).Error; err != nil {
@@ -755,7 +773,7 @@ func GetPlayers(w http.ResponseWriter, r *http.Request) {
 	var players []models.Player
 	onlineOnly := r.URL.Query().Get("online") == "true"
 
-	query := database.DB.Order("play_time DESC")
+	query := database.DB.Order("kills DESC")
 	if onlineOnly {
 		query = query.Where("is_online = ?", true)
 	}
@@ -763,6 +781,11 @@ func GetPlayers(w http.ResponseWriter, r *http.Request) {
 	if err := query.Find(&players).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// Update ranks
+	for i := range players {
+		players[i].Rank = i + 1
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -779,8 +802,359 @@ func GetPlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get rank
+	var rank int64
+	database.DB.Model(&models.Player{}).Where("kills > ?", player.Kills).Count(&rank)
+	player.Rank = int(rank) + 1
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(player)
+}
+
+// ========================================
+// SHOP CATEGORIES
+// ========================================
+
+func GetShopCategories(w http.ResponseWriter, r *http.Request) {
+	var categories []models.ShopCategory
+	lang := r.URL.Query().Get("lang")
+
+	query := database.DB.Order("\"order\" ASC")
+	if lang != "" {
+		query = query.Where("language = ?", lang)
+	}
+
+	if err := query.Find(&categories).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(categories)
+}
+
+func CreateShopCategory(w http.ResponseWriter, r *http.Request) {
+	var category models.ShopCategory
+	if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := database.DB.Create(&category).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(category)
+}
+
+func UpdateShopCategory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	var category models.ShopCategory
+	if err := database.DB.First(&category, id).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&category); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := database.DB.Save(&category).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(category)
+}
+
+func DeleteShopCategory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	if err := database.DB.Delete(&models.ShopCategory{}, id).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// ========================================
+// SHOP ITEMS
+// ========================================
+
+func GetShopItems(w http.ResponseWriter, r *http.Request) {
+	var items []models.ShopItem
+	lang := r.URL.Query().Get("lang")
+	categoryID := r.URL.Query().Get("categoryId")
+
+	query := database.DB.Order("\"order\" ASC")
+	if lang != "" {
+		query = query.Where("language = ?", lang)
+	}
+	if categoryID != "" {
+		catID, _ := strconv.Atoi(categoryID)
+		query = query.Where("category_id = ?", catID)
+	}
+
+	if err := query.Find(&items).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Parse features from JSON string
+	type ItemResponse struct {
+		models.ShopItem
+		Features []string `json:"features"`
+	}
+
+	var response []ItemResponse
+	for _, item := range items {
+		itemResp := ItemResponse{ShopItem: item}
+		if item.Features != "" {
+			json.Unmarshal([]byte(item.Features), &itemResp.Features)
+		}
+		response = append(response, itemResp)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+func CreateShopItem(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		models.ShopItem
+		Features []string `json:"features"`
+	}
+	
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Convert features to JSON string
+	if len(input.Features) > 0 {
+		featuresJSON, _ := json.Marshal(input.Features)
+		input.ShopItem.Features = string(featuresJSON)
+	}
+
+	if err := database.DB.Create(&input.ShopItem).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(input)
+}
+
+func UpdateShopItem(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	var item models.ShopItem
+	if err := database.DB.First(&item, id).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	var input struct {
+		models.ShopItem
+		Features []string `json:"features"`
+	}
+	
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Convert features to JSON string
+	if len(input.Features) > 0 {
+		featuresJSON, _ := json.Marshal(input.Features)
+		input.ShopItem.Features = string(featuresJSON)
+	}
+
+	item = input.ShopItem
+	item.ID = uint(id)
+
+	if err := database.DB.Save(&item).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(item)
+}
+
+func DeleteShopItem(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	if err := database.DB.Delete(&models.ShopItem{}, id).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// ========================================
+// THEME
+// ========================================
+
+func GetTheme(w http.ResponseWriter, r *http.Request) {
+	var theme models.Theme
+	
+	if err := database.DB.Where("is_active = ?", true).First(&theme).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(theme)
+}
+
+func UpdateTheme(w http.ResponseWriter, r *http.Request) {
+	var input models.Theme
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var theme models.Theme
+	if err := database.DB.Where("is_active = ?", true).First(&theme).Error; err != nil {
+		// Create new theme if not exists
+		input.IsActive = true
+		if err := database.DB.Create(&input).Error; err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(input)
+		return
+	}
+
+	// Update existing theme
+	theme.Name = input.Name
+	theme.PrimaryColor = input.PrimaryColor
+	theme.AccentColor = input.AccentColor
+	theme.BackgroundColor = input.BackgroundColor
+	theme.CardBackground = input.CardBackground
+	theme.TextPrimary = input.TextPrimary
+	theme.TextSecondary = input.TextSecondary
+	theme.BorderColor = input.BorderColor
+	theme.GlowColor = input.GlowColor
+
+	if err := database.DB.Save(&theme).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(theme)
+}
+
+// ========================================
+// FONT SETTINGS
+// ========================================
+
+func GetFontSettings(w http.ResponseWriter, r *http.Request) {
+	var fonts models.FontSettings
+	
+	if err := database.DB.First(&fonts).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(fonts)
+}
+
+func UpdateFontSettings(w http.ResponseWriter, r *http.Request) {
+	var input models.FontSettings
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var fonts models.FontSettings
+	if err := database.DB.First(&fonts).Error; err != nil {
+		// Create new if not exists
+		if err := database.DB.Create(&input).Error; err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(input)
+		return
+	}
+
+	// Update existing
+	fonts.HeadingFont = input.HeadingFont
+	fonts.BodyFont = input.BodyFont
+	fonts.H1Size = input.H1Size
+	fonts.H2Size = input.H2Size
+	fonts.H3Size = input.H3Size
+	fonts.BodySize = input.BodySize
+
+	if err := database.DB.Save(&fonts).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(fonts)
+}
+
+// ========================================
+// SERVER STATUS
+// ========================================
+
+func GetServerStatus(w http.ResponseWriter, r *http.Request) {
+	serverType := r.URL.Query().Get("type")
+	
+	var servers []models.ServerInfo
+	query := database.DB
+	if serverType != "" {
+		query = query.Where("type = ?", serverType)
+	}
+	
+	if err := query.Find(&servers).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var statuses []models.ServerStatus
+	for _, server := range servers {
+		// Get active players for this server
+		var players []models.Player
+		database.DB.Where("is_online = ?", true).Limit(10).Find(&players)
+
+		status := models.ServerStatus{
+			ServerID:       server.ID,
+			ServerName:     server.Name,
+			ServerType:     server.Type,
+			IsOnline:       true, // TODO: Implement real server ping
+			CurrentPlayers: len(players),
+			MaxPlayers:     server.MaxPlayers,
+			Map:            "Procedural 4000", // TODO: Get from actual server
+			Uptime:         256800, // TODO: Get from actual server
+			IP:             server.IP,
+			Port:           server.Port,
+			ActivePlayers:  players,
+		}
+		statuses = append(statuses, status)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(statuses)
 }
 
 // ========================================
