@@ -61,6 +61,47 @@ func main() {
 	api.HandleFunc("/news/{id}", handlers.UpdateNews).Methods("PUT")
 	api.HandleFunc("/news/{id}", handlers.DeleteNews).Methods("DELETE")
 
+	// How To Start Steps
+	api.HandleFunc("/how-to-start", handlers.GetHowToStartSteps).Methods("GET")
+	api.HandleFunc("/how-to-start", handlers.CreateHowToStartStep).Methods("POST")
+	api.HandleFunc("/how-to-start/{id}", handlers.UpdateHowToStartStep).Methods("PUT")
+	api.HandleFunc("/how-to-start/{id}", handlers.DeleteHowToStartStep).Methods("DELETE")
+
+	// Server Details
+	api.HandleFunc("/server-details", handlers.GetServerDetails).Methods("GET")
+	api.HandleFunc("/server-details", handlers.CreateServerDetail).Methods("POST")
+	api.HandleFunc("/server-details/{id}", handlers.UpdateServerDetail).Methods("PUT")
+	api.HandleFunc("/server-details/{id}", handlers.DeleteServerDetail).Methods("DELETE")
+
+	// Plugins
+	api.HandleFunc("/plugins", handlers.GetPlugins).Methods("GET")
+	api.HandleFunc("/plugins", handlers.CreatePlugin).Methods("POST")
+	api.HandleFunc("/plugins/{id}", handlers.UpdatePlugin).Methods("PUT")
+	api.HandleFunc("/plugins/{id}", handlers.DeletePlugin).Methods("DELETE")
+
+	// Commands
+	api.HandleFunc("/commands", handlers.CreateCommand).Methods("POST")
+	api.HandleFunc("/commands/{id}", handlers.UpdateCommand).Methods("PUT")
+	api.HandleFunc("/commands/{id}", handlers.DeleteCommand).Methods("DELETE")
+
+	// Rules
+	api.HandleFunc("/rules", handlers.GetRules).Methods("GET")
+	api.HandleFunc("/rules", handlers.CreateRule).Methods("POST")
+	api.HandleFunc("/rules/{id}", handlers.UpdateRule).Methods("PUT")
+	api.HandleFunc("/rules/{id}", handlers.DeleteRule).Methods("DELETE")
+
+	// Payment Methods
+	api.HandleFunc("/payment-methods", handlers.GetPaymentMethods).Methods("GET")
+	api.HandleFunc("/payment-methods", handlers.CreatePaymentMethod).Methods("POST")
+	api.HandleFunc("/payment-methods/{id}", handlers.UpdatePaymentMethod).Methods("PUT")
+	api.HandleFunc("/payment-methods/{id}", handlers.DeletePaymentMethod).Methods("DELETE")
+
+	// Legal Documents
+	api.HandleFunc("/legal-documents", handlers.GetLegalDocuments).Methods("GET")
+	api.HandleFunc("/legal-documents", handlers.CreateLegalDocument).Methods("POST")
+	api.HandleFunc("/legal-documents/{id}", handlers.UpdateLegalDocument).Methods("PUT")
+	api.HandleFunc("/legal-documents/{id}", handlers.DeleteLegalDocument).Methods("DELETE")
+
 	// Players
 	api.HandleFunc("/players", handlers.GetPlayers).Methods("GET")
 	api.HandleFunc("/players/{steamid}", handlers.GetPlayer).Methods("GET")

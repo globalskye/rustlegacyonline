@@ -7,7 +7,7 @@ import * as Types from '../types';
 
 const Rules: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const [rulesDoc, setRulesDoc] = useState<Types.LegalDocument | null>(null);
+  const [rules, setRules] = useState<Types.Rule[]>([]);
 
   useEffect(() => {
     loadRules();
@@ -15,10 +15,8 @@ const Rules: React.FC = () => {
 
   const loadRules = async () => {
     try {
-      const docs = await apiService.getLegalDocuments(i18n.language, 'rules');
-      if (docs.length > 0) {
-        setRulesDoc(docs[0]);
-      }
+      const rulesData = await apiService.getRules(i18n.language);
+      setRules(rulesData.sort((a, b) => a.order - b.order));
     } catch (error) {
       console.error('Error loading rules:', error);
     }
@@ -84,46 +82,44 @@ const Rules: React.FC = () => {
         </motion.div>
 
         {/* Rules Content */}
-        {rulesDoc ? (
-          <motion.div
-            className="card"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            style={{
-              maxWidth: '900px',
-              margin: '0 auto'
-            }}
-          >
-            <h2 style={{
-              fontFamily: 'Orbitron, sans-serif',
-              fontSize: '1.8rem',
-              color: 'var(--text-primary)',
-              marginBottom: '1rem',
-              letterSpacing: '1px'
-            }}>
-              {rulesDoc.title}
-            </h2>
-            
-            <div style={{
-              color: 'var(--text-muted)',
-              fontSize: '0.9rem',
-              marginBottom: '2rem',
-              textTransform: 'uppercase',
-              letterSpacing: '1px'
-            }}>
-              {t('legal.lastUpdated')}: {new Date(rulesDoc.updatedAt).toLocaleDateString(i18n.language)}
-            </div>
-
-            <div 
-              style={{
-                color: 'var(--text-secondary)',
-                lineHeight: 1.8,
-                fontSize: '1.05rem'
-              }}
-              dangerouslySetInnerHTML={{ __html: rulesDoc.content }}
-            />
-          </motion.div>
+        {rules.length > 0 ? (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+            gap: '2rem',
+            maxWidth: '1200px',
+            margin: '0 auto'
+          }}>
+            {rules.map((rule, index) => (
+              <motion.div
+                key={rule.id}
+                className="card"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.05 }}
+              >
+                <h2 style={{
+                  fontFamily: 'Orbitron, sans-serif',
+                  fontSize: '1.3rem',
+                  color: 'var(--text-primary)',
+                  marginBottom: '1rem',
+                  letterSpacing: '0.5px'
+                }}>
+                  {rule.title}
+                </h2>
+                
+                <div 
+                  style={{
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.8,
+                    fontSize: '1rem'
+                  }}
+                  dangerouslySetInnerHTML={{ __html: rule.content }}
+                />
+              </motion.div>
+            ))}
+          </div>
         ) : (
           <motion.div
             className="card"

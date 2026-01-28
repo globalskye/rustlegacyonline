@@ -37,6 +37,52 @@ export interface News {
   updatedAt: string;
 }
 
+export interface HowToStartStep {
+  id: number;
+  language: string;
+  stepNumber: number;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  videoUrl?: string;
+}
+
+export interface ServerDetail {
+  id: number;
+  language: string;
+  section: string; // 'description' or 'features'
+  title: string;
+  content: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  order: number;
+}
+
+export interface Plugin {
+  id: number;
+  language: string;
+  name: string;
+  description: string;
+  commands: Command[];
+  order: number;
+}
+
+export interface Command {
+  id: number;
+  pluginId: number;
+  command: string;
+  description: string;
+  usage?: string;
+}
+
+export interface Rule {
+  id: number;
+  language: string;
+  title: string;
+  content: string;
+  order: number;
+}
+
 export interface Player {
   id: number;
   username: string;
@@ -62,39 +108,4 @@ export interface LegalDocument {
   title: string;
   content: string;
   updatedAt: string;
-}
-
-export interface ServerDetail {
-  id: number;
-  language: string;
-  section: string;
-  title: string;
-  content: string;
-  order: number;
-}
-
-export interface Plugin {
-  id: number;
-  language: string;
-  name: string;
-  description: string;
-  commands: Command[];
-  order: number;
-}
-
-export interface Command {
-  id: number;
-  pluginId: number;
-  command: string;
-  description: string;
-  usage?: string;
-}
-
-export interface GettingStartedStep {
-  id: number;
-  language: string;
-  stepNumber: number;
-  title: string;
-  content: string;
-  imageUrl?: string;
 }

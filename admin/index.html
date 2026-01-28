@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Rust Legacy Server</title>
+  <style>
+    :root {
+      --primary-blue: #0ea5e9;
+      --bg-dark: #0a1628;
+      --bg-darker: #030712;
+      --bg-card: #0f172a;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --border-color: rgba(14, 165, 233, 0.2);
+      --border-bright: rgba(14, 165, 233, 0.6);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg-darker);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      background: var(--bg-dark);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.5rem 0;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--primary-blue);
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--primary-blue);
+      background: rgba(14, 165, 233, 0.1);
+    }
+
+    .nav-btn.active {
+      background: var(--primary-blue);
+      color: white;
+      border-color: var(--primary-blue);
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--bg-darker);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 1rem;
+    }
+
+    textarea {
+      min-height: 150px;
+      font-family: monospace;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+    }
+
+    button {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #0284c7;
+      transform: translateY(-2px);
+    }
+
+    button.danger {
+      background: #ef4444;
+    }
+
+    button.danger:hover {
+      background: #dc2626;
+    }
+
+    button.secondary {
+      background: transparent;
+      border: 1px solid var(--border-bright);
+      color: var(--primary-blue);
+    }
+
+    button.secondary:hover {
+      background: rgba(14, 165, 233, 0.1);
+    }
+
+    .items-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .item-card {
+      background: rgba(14, 165, 233, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item-info h3 {
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .item-info p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .success {
+      background: #10b981;
+      color: white;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .error {
+      background: #ef4444;
+      color: white;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>🎮 Admin Panel</h1>
+      <p class="subtitle">Rust Legacy Server Management</p>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="message"></div>
+
+    <nav>
+      <button class="nav-btn active" onclick="showSection('server-info')">Server Info</button>
+      <button class="nav-btn" onclick="showSection('features')">Features</button>
+      <button class="nav-btn" onclick="showSection('how-to-start')">How To Start</button>
+      <button class="nav-btn" onclick="showSection('server-details')">Server Details</button>
+      <button class="nav-btn" onclick="showSection('plugins')">Plugins</button>
+      <button class="nav-btn" onclick="showSection('rules')">Rules</button>
+      <button class="nav-btn" onclick="showSection('payment-methods')">Payment Methods</button>
+      <button class="nav-btn" onclick="showSection('legal')">Legal Docs</button>
+    </nav>
+
+    <!-- Server Info Section -->
+    <div id="server-info" class="section active">
+      <div class="card">
+        <h2>Server Information</h2>
+        <form id="server-info-form" onsubmit="updateServerInfo(event)">
+          <div class="form-group">
+            <label>Server Name</label>
+            <input type="text" id="server-name" required>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Max Players</label>
+              <input type="number" id="max-players" required>
+            </div>
+            <div class="form-group">
+              <label>Game Version</label>
+              <input type="text" id="game-version" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Download URL</label>
+            <input type="url" id="download-url" required>
+          </div>
+          <div class="form-group">
+            <label>VirusTotal URL</label>
+            <input type="url" id="virus-total-url">
+          </div>
+          <button type="submit">Update Server Info</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div id="features" class="section">
+      <div class="card">
+        <h2>Add New Feature</h2>
+        <form id="feature-form" onsubmit="createFeature(event)">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Language</label>
+              <select id="feature-lang" required>
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Icon</label>
+              <select id="feature-icon" required>
+                <option value="zap">⚡ Zap</option>
+                <option value="users">👥 Users</option>
+                <option value="shield">🛡️ Shield</option>
+                <option value="server">💻 Server</option>
+                <option value="globe">🌐 Globe</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="feature-title" required>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="feature-description" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Order</label>
+            <input type="number" id="feature-order" value="1" required>
+          </div>
+          <button type="submit">Add Feature</button>
+        </form>
+      </div>
+      
+      <div class="card">
+        <h2>Existing Features</h2>
+        <div id="features-list" class="items-list"></div>
+      </div>
+    </div>
+
+    <!-- How To Start Section -->
+    <div id="how-to-start" class="section">
+      <div class="card">
+        <h2>Add New Step</h2>
+        <form id="step-form" onsubmit="createStep(event)">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Language</label>
+              <select id="step-lang" required>
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Step Number</label>
+              <input type="number" id="step-number" value="1" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="step-title" required>
+          </div>
+          <div class="form-group">
+            <label>Content (HTML)</label>
+            <textarea id="step-content" required></textarea>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Image URL (optional)</label>
+              <input type="url" id="step-image">
+            </div>
+            <div class="form-group">
+              <label>Video URL (optional, YouTube)</label>
+              <input type="url" id="step-video">
+            </div>
+          </div>
+          <button type="submit">Add Step</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Existing Steps</h2>
+        <div id="steps-list" class="items-list"></div>
+      </div>
+    </div>
+
+    <!-- Server Details Section -->
+    <div id="server-details" class="section">
+      <div class="card">
+        <h2>Add New Server Detail</h2>
+        <form id="detail-form" onsubmit="createDetail(event)">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Language</label>
+              <select id="detail-lang" required>
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Section</label>
+              <select id="detail-section" required>
+                <option value="description">Description</option>
+                <option value="features">Features</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="detail-title" required>
+          </div>
+          <div class="form-group">
+            <label>Content (HTML)</label>
+            <textarea id="detail-content" required></textarea>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Image URL (optional)</label>
+              <input type="url" id="detail-image">
+            </div>
+            <div class="form-group">
+              <label>Video URL (optional, YouTube)</label>
+              <input type="url" id="detail-video">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Order</label>
+            <input type="number" id="detail-order" value="1" required>
+          </div>
+          <button type="submit">Add Detail</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Existing Details</h2>
+        <div id="details-list" class="items-list"></div>
+      </div>
+    </div>
+
+    <!-- Plugins Section -->
+    <div id="plugins" class="section">
+      <div class="card">
+        <h2>Add New Plugin</h2>
+        <form id="plugin-form" onsubmit="createPlugin(event)">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Language</label>
+              <select id="plugin-lang" required>
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Order</label>
+              <input type="number" id="plugin-order" value="1" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Plugin Name</label>
+            <input type="text" id="plugin-name" required>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="plugin-description" required></textarea>
+          </div>
+          <button type="submit">Add Plugin</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Existing Plugins</h2>
+        <div id="plugins-list" class="items-list"></div>
+      </div>
+    </div>
+
+    <!-- Rules Section -->
+    <div id="rules" class="section">
+      <div class="card">
+        <h2>Add New Rule</h2>
+        <form id="rule-form" onsubmit="createRule(event)">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Language</label>
+              <select id="rule-lang" required>
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Order</label>
+              <input type="number" id="rule-order" value="1" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="rule-title" required>
+          </div>
+          <div class="form-group">
+            <label>Content (HTML)</label>
+            <textarea id="rule-content" required></textarea>
+          </div>
+          <button type="submit">Add Rule</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Existing Rules</h2>
+        <div id="rules-list" class="items-list"></div>
+      </div>
+    </div>
+
+    <!-- Payment Methods Section -->
+    <div id="payment-methods" class="section">
+      <div class="card">
+        <h2>Add New Payment Method</h2>
+        <form id="payment-form" onsubmit="createPaymentMethod(event)">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" id="payment-name" required>
+            </div>
+            <div class="form-group">
+              <label>Order</label>
+              <input type="number" id="payment-order" value="1" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Image URL</label>
+            <input type="url" id="payment-image" required>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="payment-enabled" checked> Enabled
+            </label>
+          </div>
+          <button type="submit">Add Payment Method</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Existing Payment Methods</h2>
+        <div id="payments-list" class="items-list"></div>
+      </div>
+    </div>
+
+    <!-- Legal Documents Section -->
+    <div id="legal" class="section">
+      <div class="card">
+        <h2>Add/Edit Legal Document</h2>
+        <form id="legal-form" onsubmit="createLegalDocument(event)">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Language</label>
+              <select id="legal-lang" required>
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Type</label>
+              <select id="legal-type" required>
+                <option value="terms">Terms of Service</option>
+                <option value="privacy">Privacy Policy</option>
+                <option value="company_info">Company Info</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="legal-title" required>
+          </div>
+          <div class="form-group">
+            <label>Content (HTML)</label>
+            <textarea id="legal-content" style="min-height: 300px;" required></textarea>
+          </div>
+          <button type="submit">Save Document</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Existing Legal Documents</h2>
+        <div id="legal-list" class="items-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -19,7 +19,10 @@ class ApiService {
     return response.json();
   }
 
-  // Server Info
+  // ========================================
+  // SERVER INFO
+  // ========================================
+
   async getServerInfo(): Promise<Types.ServerInfo> {
     return this.request<Types.ServerInfo>('/server-info');
   }
@@ -31,7 +34,10 @@ class ApiService {
     });
   }
 
-  // Features
+  // ========================================
+  // FEATURES
+  // ========================================
+
   async getFeatures(lang?: string): Promise<Types.Feature[]> {
     const query = lang ? `?lang=${lang}` : '';
     return this.request<Types.Feature[]>(`/features${query}`);
@@ -57,7 +63,10 @@ class ApiService {
     });
   }
 
-  // News
+  // ========================================
+  // NEWS
+  // ========================================
+
   async getNews(lang?: string, publishedOnly: boolean = true): Promise<Types.News[]> {
     const params = new URLSearchParams();
     if (lang) params.append('lang', lang);
@@ -91,17 +100,154 @@ class ApiService {
     });
   }
 
-  // Players
-  async getPlayers(onlineOnly: boolean = false): Promise<Types.Player[]> {
-    const query = onlineOnly ? '?online=true' : '';
-    return this.request<Types.Player[]>(`/players${query}`);
+  // ========================================
+  // HOW TO START STEPS
+  // ========================================
+
+  async getHowToStartSteps(lang?: string): Promise<Types.HowToStartStep[]> {
+    const query = lang ? `?lang=${lang}` : '';
+    return this.request<Types.HowToStartStep[]>(`/how-to-start${query}`);
   }
 
-  async getPlayer(steamId: string): Promise<Types.Player> {
-    return this.request<Types.Player>(`/players/${steamId}`);
+  async createHowToStartStep(data: Omit<Types.HowToStartStep, 'id'>): Promise<Types.HowToStartStep> {
+    return this.request<Types.HowToStartStep>('/how-to-start', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
 
-  // Payment Methods
+  async updateHowToStartStep(id: number, data: Partial<Types.HowToStartStep>): Promise<Types.HowToStartStep> {
+    return this.request<Types.HowToStartStep>(`/how-to-start/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteHowToStartStep(id: number): Promise<void> {
+    return this.request<void>(`/how-to-start/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // ========================================
+  // SERVER DETAILS
+  // ========================================
+
+  async getServerDetails(lang?: string, section?: string): Promise<Types.ServerDetail[]> {
+    const params = new URLSearchParams();
+    if (lang) params.append('lang', lang);
+    if (section) params.append('section', section);
+    
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return this.request<Types.ServerDetail[]>(`/server-details${query}`);
+  }
+
+  async createServerDetail(data: Omit<Types.ServerDetail, 'id'>): Promise<Types.ServerDetail> {
+    return this.request<Types.ServerDetail>('/server-details', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateServerDetail(id: number, data: Partial<Types.ServerDetail>): Promise<Types.ServerDetail> {
+    return this.request<Types.ServerDetail>(`/server-details/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteServerDetail(id: number): Promise<void> {
+    return this.request<void>(`/server-details/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // ========================================
+  // PLUGINS
+  // ========================================
+
+  async getPlugins(lang?: string): Promise<Types.Plugin[]> {
+    const query = lang ? `?lang=${lang}` : '';
+    return this.request<Types.Plugin[]>(`/plugins${query}`);
+  }
+
+  async createPlugin(data: Omit<Types.Plugin, 'id'>): Promise<Types.Plugin> {
+    return this.request<Types.Plugin>('/plugins', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updatePlugin(id: number, data: Partial<Types.Plugin>): Promise<Types.Plugin> {
+    return this.request<Types.Plugin>(`/plugins/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deletePlugin(id: number): Promise<void> {
+    return this.request<void>(`/plugins/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // ========================================
+  // COMMANDS
+  // ========================================
+
+  async createCommand(data: Omit<Types.Command, 'id'>): Promise<Types.Command> {
+    return this.request<Types.Command>('/commands', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateCommand(id: number, data: Partial<Types.Command>): Promise<Types.Command> {
+    return this.request<Types.Command>(`/commands/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteCommand(id: number): Promise<void> {
+    return this.request<void>(`/commands/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // ========================================
+  // RULES
+  // ========================================
+
+  async getRules(lang?: string): Promise<Types.Rule[]> {
+    const query = lang ? `?lang=${lang}` : '';
+    return this.request<Types.Rule[]>(`/rules${query}`);
+  }
+
+  async createRule(data: Omit<Types.Rule, 'id'>): Promise<Types.Rule> {
+    return this.request<Types.Rule>('/rules', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateRule(id: number, data: Partial<Types.Rule>): Promise<Types.Rule> {
+    return this.request<Types.Rule>(`/rules/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteRule(id: number): Promise<void> {
+    return this.request<void>(`/rules/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // ========================================
+  // PAYMENT METHODS
+  // ========================================
+
   async getPaymentMethods(): Promise<Types.PaymentMethod[]> {
     return this.request<Types.PaymentMethod[]>('/payment-methods');
   }
@@ -126,7 +272,10 @@ class ApiService {
     });
   }
 
-  // Legal Documents
+  // ========================================
+  // LEGAL DOCUMENTS
+  // ========================================
+
   async getLegalDocuments(lang?: string, type?: string): Promise<Types.LegalDocument[]> {
     const params = new URLSearchParams();
     if (lang) params.append('lang', lang);
@@ -154,64 +303,23 @@ class ApiService {
     });
   }
 
-  // Server Details
-  async getServerDetails(lang?: string): Promise<Types.ServerDetail[]> {
-    const query = lang ? `?lang=${lang}` : '';
-    return this.request<Types.ServerDetail[]>(`/server-details${query}`);
-  }
-
-  async createServerDetail(data: Omit<Types.ServerDetail, 'id'>): Promise<Types.ServerDetail> {
-    return this.request<Types.ServerDetail>('/server-details', {
-      method: 'POST',
-      body: JSON.stringify(data),
+  async deleteLegalDocument(id: number): Promise<void> {
+    return this.request<void>(`/legal-documents/${id}`, {
+      method: 'DELETE',
     });
   }
 
-  async updateServerDetail(id: number, data: Partial<Types.ServerDetail>): Promise<Types.ServerDetail> {
-    return this.request<Types.ServerDetail>(`/server-details/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+  // ========================================
+  // PLAYERS
+  // ========================================
+
+  async getPlayers(onlineOnly: boolean = false): Promise<Types.Player[]> {
+    const query = onlineOnly ? '?online=true' : '';
+    return this.request<Types.Player[]>(`/players${query}`);
   }
 
-  // Plugins
-  async getPlugins(lang?: string): Promise<Types.Plugin[]> {
-    const query = lang ? `?lang=${lang}` : '';
-    return this.request<Types.Plugin[]>(`/plugins${query}`);
-  }
-
-  async createPlugin(data: Omit<Types.Plugin, 'id'>): Promise<Types.Plugin> {
-    return this.request<Types.Plugin>('/plugins', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-  }
-
-  async updatePlugin(id: number, data: Partial<Types.Plugin>): Promise<Types.Plugin> {
-    return this.request<Types.Plugin>(`/plugins/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
-  }
-
-  // Getting Started Steps
-  async getGettingStartedSteps(lang?: string): Promise<Types.GettingStartedStep[]> {
-    const query = lang ? `?lang=${lang}` : '';
-    return this.request<Types.GettingStartedStep[]>(`/getting-started${query}`);
-  }
-
-  async createGettingStartedStep(data: Omit<Types.GettingStartedStep, 'id'>): Promise<Types.GettingStartedStep> {
-    return this.request<Types.GettingStartedStep>('/getting-started', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-  }
-
-  async updateGettingStartedStep(id: number, data: Partial<Types.GettingStartedStep>): Promise<Types.GettingStartedStep> {
-    return this.request<Types.GettingStartedStep>(`/getting-started/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+  async getPlayer(steamId: string): Promise<Types.Player> {
+    return this.request<Types.Player>(`/players/${steamId}`);
   }
 }
 
