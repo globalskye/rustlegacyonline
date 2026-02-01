@@ -19,12 +19,17 @@ const LegalDocument: React.FC = () => {
     if (!type) return;
     
     try {
-      const docs = await apiService.getLegalDocuments(i18n.language, type);
+      // Backend uses company_info, frontend route is /legal/company
+      const docType = type === 'company' ? 'company_info' : type;
+      const docs = await apiService.getLegalDocuments(i18n.language, docType);
       if (docs.length > 0) {
         setDocument(docs[0]);
+      } else {
+        setDocument(null);
       }
     } catch (error) {
       console.error('Error loading legal document:', error);
+      setDocument(null);
     }
   };
 

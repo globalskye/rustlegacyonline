@@ -1,10 +1,18 @@
 import * as Types from '../types';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+// API base: /api for Docker (same-origin), localhost:8080/api for dev
+const getApiUrl = () => {
+  const url = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+  return url.endsWith('/') ? url.slice(0, -1) : url;
+};
 
 class ApiService {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    const response = await fetch(`${API_URL}${endpoint}`, {
+    const base = getApiUrl();
+    const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const url = base.startsWith('http') ? `${base}${path}` : `${window.location.origin}${base}${path}`;
+
+    const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -13,7 +21,7 @@ class ApiService {
     });
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
 
     return response.json();
@@ -269,13 +277,26 @@ class ApiService {
     });
   }
 
-  async getPlayers(onlineOnly: boolean = false): Promise<Types.Player[]> {
-    const query = onlineOnly ? '?online=true' : '';
+  async getPlayers(onlineOnly?: boolean, clanId?: number, withStats?: boolean): Promise<Types.Player[]> {
+    const params = new URLSearchParams();
+    if (onlineOnly) params.append('online', 'true');
+    if (clanId) params.append('clanId', clanId.toString());
+    if (withStats) params.append('stats', 'true');
+    const query = params.toString() ? `?${params.toString()}` : '';
     return this.request<Types.Player[]>(`/players${query}`);
   }
 
   async getPlayer(steamId: string): Promise<Types.Player> {
     return this.request<Types.Player>(`/players/${steamId}`);
+  }
+
+  async getClans(withMembers?: boolean): Promise<Types.Clan[]> {
+    const query = withMembers ? '?members=true' : '';
+    return this.request<Types.Clan[]>(`/clans${query}`);
+  }
+
+  async getClan(id: number): Promise<Types.Clan> {
+    return this.request<Types.Clan>(`/clans/${id}`);
   }
 
   async getShopCategories(lang?: string): Promise<Types.ShopCategory[]> {

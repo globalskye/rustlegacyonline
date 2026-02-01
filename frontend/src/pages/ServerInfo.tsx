@@ -21,10 +21,12 @@ const ServerInfo: React.FC = () => {
         apiService.getServerDetails(i18n.language, 'description'),
         apiService.getPlugins(i18n.language)
       ]);
-      setDescriptionDetails(descData.sort((a, b) => a.order - b.order));
-      setPlugins(pluginsData.sort((a, b) => a.order - b.order));
+      setDescriptionDetails((descData || []).sort((a, b) => a.order - b.order));
+      setPlugins((pluginsData || []).sort((a, b) => a.order - b.order));
     } catch (error) {
       console.error('Error loading server info:', error);
+      setDescriptionDetails([]);
+      setPlugins([]);
     }
   };
 

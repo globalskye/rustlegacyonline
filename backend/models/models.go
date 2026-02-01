@@ -120,19 +120,86 @@ type LegalDocument struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
+// Clan - Rust Legacy format [0x38471ABB] NAME=WaR ABBREV= LEADER=...
+// Public: Name, Abbrev, LeaderSteamID, Level, Experience, MemberCount, Tax, Created
+// Hidden: Balance, Location, MOTD (optional)
+type Clan struct {
+	ID              uint      `gorm:"primaryKey" json:"id"`
+	HexID           string    `json:"hexId" gorm:"uniqueIndex"` // e.g. "0x38471ABB"
+	Name            string    `json:"name"`
+	Abbrev          string    `json:"abbrev"`           // e.g. "[GGWP]" or "PRASE"
+	LeaderSteamID   string    `json:"leaderSteamId"`    // SteamID of leader
+	Created         time.Time `json:"created"`
+	Level           int       `json:"level"`
+	Experience      int       `json:"experience"`
+	MemberCount     int       `json:"memberCount"`
+	Tax             int       `json:"tax"`              // 0-100 %
+	Balance         int       `json:"-"`                // hidden from public API
+	Location        string    `json:"-"`                // hidden - privacy
+	MOTD            string    `json:"motd,omitempty"`   // message of the day
+	Flags           string    `json:"-"`                // can_motd,can_abbr,etc - internal
+	UpdatedAt       time.Time `json:"updatedAt"`
+	Members         []ClanMember `gorm:"foreignKey:ClanID" json:"members,omitempty"`
+	LeaderUsername  string    `json:"leaderUsername,omitempty" gorm:"-"` // resolved for display
+	Rank            int       `json:"rank" gorm:"-"`    // computed for leaderboard
+}
+
+// ClanMember - MEMBER=76561197970954269,invite,dismiss,management
+type ClanMember struct {
+	ID          uint   `gorm:"primaryKey" json:"id"`
+	ClanID      uint   `json:"clanId"`
+	SteamID     string `json:"steamId"`
+	Permissions string `json:"permissions"` // "invite,dismiss,management" or "0"
+}
+
+// Player - Rust Legacy format [76561197961407422] USERNAME= KILLEDPLAYERS= DEATHS=...
+// Public: Username, SteamID, Rank, Language, KilledPlayers, KilledMutants, KilledAnimals, Deaths, PlayTime, FirstConnect, LastConnect, Clan
+// Hidden: Password, HWID, IP, Balance, Violations, Position
 type Player struct {
-	ID          uint      `gorm:"primaryKey" json:"id"`
-	Username    string    `json:"username"`
-	SteamID     string    `json:"steamId" gorm:"uniqueIndex"`
-	PlayTime    int       `json:"playTime"`
-	LastSeen    time.Time `json:"lastSeen"`
-	FirstJoined time.Time `json:"firstJoined"`
-	IsOnline    bool      `json:"isOnline"`
-	Kills       int       `json:"kills"`
-	Deaths      int       `json:"deaths"`
-	Rank        int       `json:"rank"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	ID               uint       `gorm:"primaryKey" json:"id"`
+	SteamID          string     `json:"steamId" gorm:"uniqueIndex"`
+	Username         string     `json:"username"`
+	Rank             int        `json:"rank"`
+	Language         string     `json:"language"`
+	KilledPlayers    int        `json:"killedPlayers"`    // PvP kills
+	KilledMutants    int        `json:"killedMutants"`
+	KilledAnimals    int        `json:"killedAnimals"`
+	Deaths           int        `json:"deaths"`
+	PlayTime         int        `json:"playTime"`         // TimeMinutes
+	FirstConnectDate time.Time  `json:"firstConnectDate"`
+	LastConnectDate  time.Time  `json:"lastConnectDate"`
+	ClanID           *uint      `json:"clanId"`
+	Clan             *Clan      `gorm:"foreignKey:ClanID" json:"clan,omitempty"`
+	IsOnline         bool       `json:"isOnline"`
+	Balance          int        `json:"-"`               // hidden
+	Violations       int        `json:"-"`               // hidden - admin only
+	CreatedAt        time.Time  `json:"createdAt"`
+	UpdatedAt        time.Time  `json:"updatedAt"`
+	Stats            *PlayerStats `gorm:"-" json:"stats,omitempty"` // loaded separately by SteamID
+	RankPosition     int        `json:"rankPosition" gorm:"-"` // computed leaderboard pos
+}
+
+// PlayerStats - extended stats from JSON { "76561197961407422": { "RaidObjects": 0, "TimeMinutes": 981, ... } }
+type PlayerStats struct {
+	SteamID     string `gorm:"primaryKey" json:"steamId"`
+	RaidObjects int    `json:"raidObjects"`
+	TimeMinutes int    `json:"timeMinutes"`
+	Wood        int    `json:"wood"`
+	Metal       int    `json:"metal"`
+	Sulfur      int    `json:"sulfur"`
+	Leather     int    `json:"leather"`
+	Cloth       int    `json:"cloth"`
+	Fat         int    `json:"fat"`
+	Suicides    int    `json:"suicides"`
+}
+
+// AdminUser for admin panel authentication
+type AdminUser struct {
+	ID           uint      `gorm:"primaryKey" json:"id"`
+	Username     string    `json:"username" gorm:"uniqueIndex"`
+	PasswordHash string    `json:"-" gorm:"column:password_hash"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
 }
 
 type Setting struct {

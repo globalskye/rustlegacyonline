@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, User, Trophy, Crosshair, Skull, Clock, Calendar } from 'lucide-react';
+import { BarChart3, User, Trophy, Crosshair, Skull, Clock, Calendar, Users, Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { apiService } from '../services/api';
 import * as Types from '../types';
 
+type TabType = 'players' | 'clans';
+
 const Statistics: React.FC = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<TabType>('players');
   const [topPlayers, setTopPlayers] = useState<Types.Player[]>([]);
+  const [topClans, setTopClans] = useState<Types.Clan[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Types.Player | null>(null);
+  const [selectedClan, setSelectedClan] = useState<Types.Clan | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,19 +24,37 @@ const Statistics: React.FC = () => {
 
   useEffect(() => {
     const playerSteamId = searchParams.get('player');
+    const clanId = searchParams.get('clan');
     if (playerSteamId) {
       loadPlayerDetails(playerSteamId);
+      setActiveTab('players');
+    } else if (clanId) {
+      loadClanDetails(parseInt(clanId));
+      setActiveTab('clans');
     }
   }, [searchParams]);
 
   const loadData = async () => {
     try {
-      const players = await apiService.getPlayers();
-      setTopPlayers(players.sort((a, b) => (b.kills || 0) - (a.kills || 0)).slice(0, 20));
+      const [players, clans] = await Promise.all([
+        apiService.getPlayers(undefined, undefined, true),
+        apiService.getClans(true)
+      ]);
+      setTopPlayers(players.sort((a, b) => (b.killedPlayers || 0) - (a.killedPlayers || 0)).slice(0, 20));
+      setTopClans(clans.sort((a, b) => (b.experience || 0) - (a.experience || 0)).slice(0, 20));
       setLoading(false);
     } catch (error) {
-      console.error('Error loading players:', error);
+      console.error('Error loading data:', error);
       setLoading(false);
+    }
+  };
+
+  const loadClanDetails = async (id: number) => {
+    try {
+      const clan = await apiService.getClan(id);
+      setSelectedClan(clan);
+    } catch (error) {
+      console.error('Error loading clan:', error);
     }
   };
 
@@ -58,7 +81,8 @@ const Statistics: React.FC = () => {
   };
 
   const getKDRatio = (kills?: number, deaths?: number) => {
-    if (!kills || !deaths || deaths === 0) return kills || 0;
+    if (!kills && kills !== 0) return '0';
+    if (!deaths || deaths === 0) return kills?.toString() || '0';
     return (kills / deaths).toFixed(2);
   };
 
@@ -117,10 +141,56 @@ const Statistics: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           gap: '1rem',
-          marginBottom: '3rem'
+          marginBottom: '2rem'
         }}>
           <BarChart3 size={48} color="var(--primary-blue)" style={{ filter: 'drop-shadow(0 0 20px var(--glow-blue))' }} />
           <h1 className="section-title" style={{ marginBottom: 0 }}>{t('nav.statistics')}</h1>
+        </div>
+
+        {/* Tabs */}
+        <div style={{
+          display: 'flex',
+          gap: '0.5rem',
+          justifyContent: 'center',
+          marginBottom: '2rem',
+          flexWrap: 'wrap'
+        }}>
+          <button
+            onClick={() => { setActiveTab('players'); setSelectedClan(null); }}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: activeTab === 'players' ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))' : 'transparent',
+              border: '1px solid var(--border-color)',
+              color: activeTab === 'players' ? 'var(--text-primary)' : 'var(--text-secondary)',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontFamily: 'Orbitron, sans-serif',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}
+          >
+            <User size={20} /> Players
+          </button>
+          <button
+            onClick={() => { setActiveTab('clans'); setSelectedPlayer(null); }}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: activeTab === 'clans' ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))' : 'transparent',
+              border: '1px solid var(--border-color)',
+              color: activeTab === 'clans' ? 'var(--text-primary)' : 'var(--text-secondary)',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontFamily: 'Orbitron, sans-serif',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}
+          >
+            <Users size={20} /> Clans
+          </button>
         </div>
 
         {/* Player Details Modal */}
@@ -168,7 +238,7 @@ const Statistics: React.FC = () => {
                 }}>
                   {selectedPlayer.username}
                 </h2>
-                {selectedPlayer.rank && (
+                {(selectedPlayer.rankPosition || selectedPlayer.rank) && (
                   <div style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -184,7 +254,7 @@ const Statistics: React.FC = () => {
                       fontWeight: 600,
                       fontSize: '0.9rem'
                     }}>
-                      Rank #{selectedPlayer.rank}
+                      Rank #{selectedPlayer.rankPosition || selectedPlayer.rank}
                     </span>
                   </div>
                 )}
@@ -211,7 +281,7 @@ const Statistics: React.FC = () => {
                   color: 'var(--text-primary)',
                   marginBottom: '0.25rem'
                 }}>
-                  {selectedPlayer.kills || 0}
+                  {selectedPlayer.killedPlayers || 0}
                 </div>
                 <div style={{
                   fontSize: '0.8rem',
@@ -261,7 +331,7 @@ const Statistics: React.FC = () => {
                   color: 'var(--text-primary)',
                   marginBottom: '0.25rem'
                 }}>
-                  {getKDRatio(selectedPlayer.kills, selectedPlayer.deaths)}
+                  {getKDRatio(selectedPlayer.killedPlayers, selectedPlayer.deaths)}
                 </div>
                 <div style={{
                   fontSize: '0.8rem',
@@ -286,7 +356,7 @@ const Statistics: React.FC = () => {
                   color: 'var(--text-primary)',
                   marginBottom: '0.25rem'
                 }}>
-                  {formatPlayTime(selectedPlayer.playTime)}
+                  {formatPlayTime(selectedPlayer.playTime || selectedPlayer.stats?.timeMinutes || 0)}
                 </div>
                 <div style={{
                   fontSize: '0.8rem',
@@ -297,6 +367,25 @@ const Statistics: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {selectedPlayer.stats && (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+                gap: '0.75rem',
+                marginBottom: '1.5rem',
+                padding: '1rem',
+                background: 'rgba(15, 23, 42, 0.6)',
+                borderRadius: '8px',
+                border: '1px solid var(--border-color)'
+              }}>
+                <div><strong style={{ color: 'var(--text-muted)' }}>Wood</strong><br />{selectedPlayer.stats.wood?.toLocaleString()}</div>
+                <div><strong style={{ color: 'var(--text-muted)' }}>Metal</strong><br />{selectedPlayer.stats.metal?.toLocaleString()}</div>
+                <div><strong style={{ color: 'var(--text-muted)' }}>Sulfur</strong><br />{selectedPlayer.stats.sulfur?.toLocaleString()}</div>
+                <div><strong style={{ color: 'var(--text-muted)' }}>Raid Obj</strong><br />{selectedPlayer.stats.raidObjects}</div>
+                <div><strong style={{ color: 'var(--text-muted)' }}>Suicides</strong><br />{selectedPlayer.stats.suicides}</div>
+              </div>
+            )}
 
             <div style={{
               display: 'grid',
@@ -314,7 +403,7 @@ const Statistics: React.FC = () => {
                 <Calendar size={20} color="var(--primary-blue)" />
                 <div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>First Joined</div>
-                  <div style={{ fontWeight: 600 }}>{formatDate(selectedPlayer.firstJoined)}</div>
+                  <div style={{ fontWeight: 600 }}>{formatDate(selectedPlayer.firstConnectDate)}</div>
                 </div>
               </div>
 
@@ -327,7 +416,7 @@ const Statistics: React.FC = () => {
                 <Clock size={20} color="var(--primary-blue)" />
                 <div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Last Seen</div>
-                  <div style={{ fontWeight: 600 }}>{formatDate(selectedPlayer.lastSeen)}</div>
+                  <div style={{ fontWeight: 600 }}>{formatDate(selectedPlayer.lastConnectDate)}</div>
                 </div>
               </div>
 
@@ -365,6 +454,53 @@ const Statistics: React.FC = () => {
           </motion.div>
         )}
 
+        {/* Clan Details Modal */}
+        {selectedClan && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="card"
+            style={{
+              background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(6, 182, 212, 0.05))',
+              border: '2px solid var(--border-bright)',
+              marginBottom: '3rem',
+              maxWidth: '800px',
+              margin: '0 auto 3rem'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div style={{
+                width: 80, height: 80,
+                background: 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))',
+                borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 0 30px var(--glow-blue)'
+              }}>
+                <Users size={40} color="#ffffff" />
+              </div>
+              <div>
+                <h2 style={{ fontFamily: 'Orbitron', fontSize: '2rem', color: 'var(--text-primary)' }}>
+                  {selectedClan.abbrev || selectedClan.name}
+                </h2>
+                <div style={{ color: 'var(--text-secondary)' }}>{selectedClan.name}</div>
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                  <span>Level {selectedClan.level}</span>
+                  <span>XP: {selectedClan.experience?.toLocaleString()}</span>
+                  <span>{selectedClan.memberCount} members</span>
+                  <span>Tax: {selectedClan.tax}%</span>
+                </div>
+              </div>
+            </div>
+            {selectedClan.motd && (
+              <div style={{ padding: '1rem', background: 'rgba(15,23,42,0.6)', borderRadius: '8px', marginBottom: '1rem' }}>
+                <strong>MOTD:</strong> {selectedClan.motd}
+              </div>
+            )}
+            <motion.button onClick={() => setSelectedClan(null)} className="btn btn-secondary" style={{ marginTop: '1rem', width: '100%' }}>
+              Close
+            </motion.button>
+          </motion.div>
+        )}
+
         {/* Leaderboard */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -380,14 +516,11 @@ const Statistics: React.FC = () => {
             letterSpacing: '2px',
             textAlign: 'center'
           }}>
-            Top Players
+            {activeTab === 'players' ? 'Top Players' : 'Top Clans'}
           </h2>
 
-          <div style={{
-            display: 'grid',
-            gap: '1rem'
-          }}>
-            {topPlayers.map((player, index) => (
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            {activeTab === 'players' && topPlayers.map((player, index) => (
               <motion.div
                 key={player.steamId}
                 className="card"
@@ -449,7 +582,7 @@ const Statistics: React.FC = () => {
                     }}>
                       <span>
                         <Crosshair size={14} style={{ display: 'inline', marginRight: '0.25rem' }} />
-                        {player.kills || 0} kills
+                        {player.killedPlayers || 0} kills
                       </span>
                       <span>
                         <Skull size={14} style={{ display: 'inline', marginRight: '0.25rem' }} />
@@ -468,7 +601,46 @@ const Statistics: React.FC = () => {
                     color: 'var(--primary-blue)',
                     fontWeight: 700
                   }}>
-                    {getKDRatio(player.kills, player.deaths)} K/D
+                    {getKDRatio(player.killedPlayers, player.deaths)} K/D
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+
+            {activeTab === 'clans' && topClans.map((clan, index) => (
+              <motion.div
+                key={clan.id}
+                className="card"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.03 }}
+                onClick={() => loadClanDetails(clan.id)}
+                style={{
+                  cursor: 'pointer',
+                  background: index < 3 ? 'linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(6, 182, 212, 0.08))' : undefined
+                }}
+              >
+                <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr auto', gap: '1.5rem', alignItems: 'center' }}>
+                  <div style={{
+                    width: 60, height: 60,
+                    background: index === 0 ? 'linear-gradient(135deg, #fbbf24, #f59e0b)' : index === 1 ? 'linear-gradient(135deg, #d1d5db, #9ca3af)' : index === 2 ? 'linear-gradient(135deg, #fb923c, #ea580c)' : 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))',
+                    borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontFamily: 'Orbitron', fontSize: '1.5rem', fontWeight: 900, color: '#ffffff'
+                  }}>
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: 'Orbitron', fontSize: '1.2rem', color: 'var(--text-primary)' }}>
+                      {clan.abbrev || clan.name} {clan.name}
+                    </div>
+                    <div style={{ display: 'flex', gap: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                      <span><Zap size={14} style={{ display: 'inline', marginRight: '0.25rem' }} />Level {clan.level}</span>
+                      <span>XP: {clan.experience?.toLocaleString()}</span>
+                      <span><Users size={14} style={{ display: 'inline', marginRight: '0.25rem' }} />{clan.memberCount} members</span>
+                    </div>
+                  </div>
+                  <div style={{ fontFamily: 'Orbitron', fontSize: '1.2rem', color: 'var(--primary-blue)', fontWeight: 700 }}>
+                    #{clan.rank || index + 1}
                   </div>
                 </div>
               </motion.div>

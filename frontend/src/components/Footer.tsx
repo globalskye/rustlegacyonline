@@ -21,10 +21,11 @@ const Footer: React.FC = () => {
         apiService.getPaymentMethods(),
         apiService.getServerInfo()
       ]);
-      setPaymentMethods(payments.filter(p => p.enabled).sort((a, b) => a.order - b.order));
-      setServerInfo(info);
+      setPaymentMethods((payments || []).filter(p => p.enabled).sort((a, b) => a.order - b.order));
+      setServerInfo(info || null);
     } catch (error) {
       console.error('Error loading footer data:', error);
+      setPaymentMethods([]);
     }
   };
 

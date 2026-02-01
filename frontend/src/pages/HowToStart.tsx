@@ -7,6 +7,7 @@ import * as Types from '../types';
 
 const HowToStart: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const [loading, setLoading] = useState(true);
   const [steps, setSteps] = useState<Types.HowToStartStep[]>([]);
   const [serverInfo, setServerInfo] = useState<Types.ServerInfo | null>(null);
 
@@ -15,19 +16,30 @@ const HowToStart: React.FC = () => {
   }, [i18n.language]);
 
   const loadData = async () => {
+    setLoading(true);
     try {
       const [stepsData, infoData] = await Promise.all([
         apiService.getHowToStartSteps(i18n.language),
         apiService.getServerInfo()
       ]);
-      setSteps(stepsData.sort((a: Types.HowToStartStep, b: Types.HowToStartStep) => a.stepNumber - b.stepNumber));
-      setServerInfo(infoData);
+      setSteps((stepsData || []).sort((a, b) => a.stepNumber - b.stepNumber));
+      setServerInfo(infoData || null);
     } catch (error) {
       console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const stepIcons = [Download, Shield, CheckCircle, Play];
+
+  if (loading) {
+    return (
+      <div className="page-container" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: 'var(--text-secondary)' }}>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">

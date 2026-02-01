@@ -21,12 +21,14 @@ const Shop: React.FC = () => {
   }, [selectedCategory, i18n.language]);
 
   const loadData = async () => {
+    setLoading(true);
     try {
       const categoriesData = await apiService.getShopCategories(i18n.language);
-      setCategories(categoriesData.filter(c => c.enabled).sort((a, b) => a.order - b.order));
-      setLoading(false);
+      setCategories((categoriesData || []).filter(c => c.enabled).sort((a, b) => a.order - b.order));
     } catch (error) {
       console.error('Error loading categories:', error);
+      setCategories([]);
+    } finally {
       setLoading(false);
     }
   };
@@ -34,9 +36,10 @@ const Shop: React.FC = () => {
   const loadItems = async () => {
     try {
       const itemsData = await apiService.getShopItems(i18n.language, selectedCategory || undefined);
-      setItems(itemsData.filter(i => i.enabled).sort((a, b) => a.order - b.order));
+      setItems((itemsData || []).filter(i => i.enabled).sort((a, b) => a.order - b.order));
     } catch (error) {
       console.error('Error loading items:', error);
+      setItems([]);
     }
   };
 

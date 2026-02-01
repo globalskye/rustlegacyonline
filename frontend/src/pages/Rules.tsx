@@ -16,9 +16,10 @@ const Rules: React.FC = () => {
   const loadRules = async () => {
     try {
       const rulesData = await apiService.getRules(i18n.language);
-      setRules(rulesData.sort((a, b) => a.order - b.order));
+      setRules((rulesData || []).sort((a, b) => a.order - b.order));
     } catch (error) {
       console.error('Error loading rules:', error);
+      setRules([]);
     }
   };
 

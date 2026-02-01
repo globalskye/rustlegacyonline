@@ -86,17 +86,61 @@ export interface Rule {
   order: number;
 }
 
+export interface Clan {
+  id: number;
+  hexId: string;
+  name: string;
+  abbrev: string;
+  leaderSteamId: string;
+  leaderUsername?: string;
+  created: string;
+  level: number;
+  experience: number;
+  memberCount: number;
+  tax: number;
+  motd?: string;
+  rank?: number;
+  members?: ClanMember[];
+}
+
+export interface ClanMember {
+  id: number;
+  clanId: number;
+  steamId: string;
+  permissions: string;
+}
+
 export interface Player {
   id: number;
   username: string;
   steamId: string;
+  rank: number;
+  language: string;
+  killedPlayers: number;
+  killedMutants: number;
+  killedAnimals: number;
+  deaths: number;
   playTime: number;
-  lastSeen: string;
-  firstJoined: string;
+  firstConnectDate: string;
+  lastConnectDate: string;
   isOnline: boolean;
-  kills?: number;
-  deaths?: number;
-  rank?: number;
+  clanId?: number;
+  clan?: Clan;
+  rankPosition?: number;
+  stats?: PlayerStats;
+}
+
+export interface PlayerStats {
+  steamId: string;
+  raidObjects: number;
+  timeMinutes: number;
+  wood: number;
+  metal: number;
+  sulfur: number;
+  leather: number;
+  cloth: number;
+  fat: number;
+  suicides: number;
 }
 
 export interface PaymentMethod {

@@ -9,6 +9,8 @@ import * as Types from '../types';
 const Home: React.FC = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [serverStatuses, setServerStatuses] = useState<Types.ServerStatus[]>([]);
   const [features, setFeatures] = useState<Types.Feature[]>([]);
   const [howToStartSteps, setHowToStartSteps] = useState<Types.HowToStartStep[]>([]);
@@ -24,6 +26,8 @@ const Home: React.FC = () => {
   }, [i18n.language]);
 
   const loadData = async () => {
+    setLoading(true);
+    setApiError(null);
     try {
       const [statusData, featuresData, stepsData, detailsData, rulesData] = await Promise.all([
         apiService.getServerStatus(),
@@ -33,20 +37,23 @@ const Home: React.FC = () => {
         apiService.getRules(i18n.language)
       ]);
       
-      setServerStatuses(statusData);
-      setFeatures(featuresData.sort((a, b) => a.order - b.order));
-      setHowToStartSteps(stepsData.sort((a, b) => a.stepNumber - b.stepNumber));
-      setServerDetails(detailsData.sort((a, b) => a.order - b.order));
-      setRules(rulesData.sort((a, b) => a.order - b.order));
+      setServerStatuses(statusData || []);
+      setFeatures((featuresData || []).sort((a, b) => a.order - b.order));
+      setHowToStartSteps((stepsData || []).sort((a, b) => a.stepNumber - b.stepNumber));
+      setServerDetails((detailsData || []).sort((a, b) => a.order - b.order));
+      setRules((rulesData || []).sort((a, b) => a.order - b.order));
     } catch (error) {
       console.error('Error loading data:', error);
+      setApiError(error instanceof Error ? error.message : 'Failed to load data. Is the API running?');
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadServerStatuses = async () => {
     try {
       const statusData = await apiService.getServerStatus();
-      setServerStatuses(statusData);
+      setServerStatuses(statusData || []);
     } catch (error) {
       console.error('Error loading server statuses:', error);
     }
@@ -74,6 +81,31 @@ const Home: React.FC = () => {
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
   };
+
+  if (loading) {
+    return (
+      <div style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} style={{ textAlign: 'center' }}>
+          <Server size={80} color="var(--primary-blue)" style={{ marginBottom: '1rem', filter: 'drop-shadow(0 0 20px var(--glow-blue))' }} />
+          <p style={{ color: 'var(--text-secondary)', fontFamily: 'Orbitron' }}>Loading...</p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (apiError) {
+    return (
+      <div style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+        <motion.div className="card" style={{ maxWidth: 500, textAlign: 'center' }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <AlertCircle size={64} color="#ef4444" style={{ marginBottom: '1rem' }} />
+          <h2 style={{ color: 'var(--text-primary)', marginBottom: '1rem' }}>API Connection Error</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{apiError}</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Ensure backend is running: docker-compose up -d</p>
+          <button onClick={loadData} className="btn" style={{ marginTop: '1rem' }}>Retry</button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh' }}>
