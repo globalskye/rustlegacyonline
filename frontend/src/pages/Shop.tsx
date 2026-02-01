@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ShoppingCart, Package, Tag, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart, Package, Tag, Check, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/api';
 import * as Types from '../types';
+
+const CURRENCIES = ['USD', 'EUR', 'CZK', 'RUB', 'BYN'] as const;
 
 const Shop: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [categories, setCategories] = useState<Types.ShopCategory[]>([]);
   const [items, setItems] = useState<Types.ShopItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Types.ShopItem | null>(null);
+  const [currency, setCurrency] = useState<string>('USD');
+  const [rates, setRates] = useState<Record<string, number>>({ USD: 1 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,6 +24,10 @@ const Shop: React.FC = () => {
   useEffect(() => {
     loadItems();
   }, [selectedCategory, i18n.language]);
+
+  useEffect(() => {
+    apiService.getCurrencyRates().then(setRates).catch(() => {});
+  }, []);
 
   const loadData = async () => {
     setLoading(true);
@@ -41,6 +50,18 @@ const Shop: React.FC = () => {
       console.error('Error loading items:', error);
       setItems([]);
     }
+  };
+
+  const convertPrice = (priceUsd: number) => {
+    const rate = rates[currency] || 1;
+    return (priceUsd * rate).toFixed(2);
+  };
+
+  const getDisplayPrice = (item: Types.ShopItem) => {
+    const base = item.discount && item.discount > 0
+      ? item.price * (1 - item.discount / 100)
+      : item.price;
+    return base;
   };
 
   if (loading) {
@@ -69,15 +90,35 @@ const Shop: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '1rem',
-          marginBottom: '1rem'
-        }}>
+        <div className="page-header" style={{ marginBottom: '1rem' }}>
           <ShoppingCart size={48} color="var(--primary-blue)" style={{ filter: 'drop-shadow(0 0 20px var(--glow-blue))' }} />
           <h1 className="section-title" style={{ marginBottom: 0 }}>{t('nav.shop')}</h1>
+        </div>
+
+        {/* Currency selector - no stray zero */}
+        <div className="centered-buttons" style={{ marginBottom: '1.5rem' }}>
+          {CURRENCIES.map((c) => (
+            <button
+              key={c}
+              onClick={() => setCurrency(c)}
+              style={{
+                padding: '0.5rem 1rem',
+                background: currency === c ? 'var(--primary-blue)' : 'transparent',
+                border: '1px solid var(--border-color)',
+                color: currency === c ? 'white' : 'var(--text-secondary)',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center'
+              }}
+            >
+              {c}
+            </button>
+          ))}
         </div>
 
         {/* Category Filters */}
@@ -102,8 +143,8 @@ const Shop: React.FC = () => {
               onClick={() => setSelectedCategory(null)}
               style={{
                 padding: '0.75rem 1.5rem',
-                background: selectedCategory === null 
-                  ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))' 
+                background: selectedCategory === null
+                  ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))'
                   : 'transparent',
                 border: '1px solid var(--border-color)',
                 color: selectedCategory === null ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -114,7 +155,11 @@ const Shop: React.FC = () => {
                 textTransform: 'uppercase',
                 letterSpacing: '1px',
                 fontSize: '0.9rem',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center'
               }}
             >
               All Items
@@ -125,13 +170,17 @@ const Shop: React.FC = () => {
                 onClick={() => setSelectedCategory(category.id)}
                 style={{
                   padding: '0.75rem 1.5rem',
-                  background: selectedCategory === category.id 
-                    ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))' 
+                  background: selectedCategory === category.id
+                    ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))'
                     : 'transparent',
                   border: '1px solid var(--border-color)',
                   color: selectedCategory === category.id ? 'var(--text-primary)' : 'var(--text-secondary)',
                   borderRadius: '8px',
                   cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
                   fontFamily: 'Exo 2, sans-serif',
                   fontWeight: 600,
                   textTransform: 'uppercase',
@@ -146,7 +195,7 @@ const Shop: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Shop Items */}
+        {/* Shop Items - click opens modal */}
         {items.length > 0 ? (
           <div style={{
             display: 'grid',
@@ -160,11 +209,13 @@ const Shop: React.FC = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.05 }}
+                onClick={() => setSelectedItem(item)}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   position: 'relative',
-                  overflow: 'hidden'
+                  overflow: 'hidden',
+                  cursor: 'pointer'
                 }}
               >
                 {item.discount && item.discount > 0 && (
@@ -221,7 +272,7 @@ const Shop: React.FC = () => {
 
                 {item.features && item.features.length > 0 && (
                   <div style={{ marginBottom: '1.5rem' }}>
-                    {item.features.map((feature, idx) => (
+                    {item.features.slice(0, 3).map((feature, idx) => (
                       <div key={idx} style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -246,7 +297,16 @@ const Shop: React.FC = () => {
                   borderTop: '1px solid var(--border-color)'
                 }}>
                   <div>
-                    {item.discount && item.discount > 0 ? (
+                    {getDisplayPrice(item) <= 0 ? (
+                      <div style={{
+                        fontFamily: 'Orbitron, sans-serif',
+                        fontSize: '1.5rem',
+                        color: 'var(--primary-blue)',
+                        fontWeight: 700
+                      }}>
+                        Free
+                      </div>
+                    ) : item.discount && item.discount > 0 ? (
                       <div>
                         <div style={{
                           color: 'var(--text-muted)',
@@ -254,7 +314,7 @@ const Shop: React.FC = () => {
                           fontSize: '0.9rem',
                           marginBottom: '0.25rem'
                         }}>
-                          {item.price} {item.currency}
+                          {convertPrice(item.price)} {currency}
                         </div>
                         <div style={{
                           fontFamily: 'Orbitron, sans-serif',
@@ -262,7 +322,7 @@ const Shop: React.FC = () => {
                           color: 'var(--primary-blue)',
                           fontWeight: 700
                         }}>
-                          {(item.price * (1 - item.discount / 100)).toFixed(2)} {item.currency}
+                          {convertPrice(getDisplayPrice(item))} {currency}
                         </div>
                       </div>
                     ) : (
@@ -272,20 +332,19 @@ const Shop: React.FC = () => {
                         color: 'var(--primary-blue)',
                         fontWeight: 700
                       }}>
-                        {item.price} {item.currency}
+                        {convertPrice(item.price)} {currency}
                       </div>
                     )}
                   </div>
 
-                  <motion.button
+                  <motion.span
                     className="btn"
+                    style={{ padding: '0.75rem 1.5rem' }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    style={{ padding: '0.75rem 1.5rem' }}
                   >
-                    <Tag size={18} />
-                    Buy Now
-                  </motion.button>
+                    <Tag size={18} /> View
+                  </motion.span>
                 </div>
               </motion.div>
             ))}
@@ -318,13 +377,90 @@ const Shop: React.FC = () => {
               lineHeight: 1.8,
               fontSize: '1.05rem'
             }}>
-              {selectedCategory !== null 
-                ? 'No items in this category yet. Check back soon!' 
+              {selectedCategory !== null
+                ? 'No items in this category yet. Check back soon!'
                 : 'Shop items coming soon!'}
             </p>
           </motion.div>
         )}
       </motion.div>
+
+      {/* Product Modal - floating popup */}
+      <AnimatePresence>
+        {selectedItem && (
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedItem(null)}
+          >
+            <motion.div
+              className="modal-floating"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                <h2 style={{
+                  fontFamily: 'Orbitron, sans-serif',
+                  fontSize: '1.8rem',
+                  color: 'var(--primary-blue)',
+                  margin: 0
+                }}>
+                  {selectedItem.name}
+                </h2>
+                <button onClick={() => setSelectedItem(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem' }}>
+                  <X size={24} color="var(--text-secondary)" />
+                </button>
+              </div>
+              {selectedItem.imageUrl && (
+                <div style={{
+                  width: '100%',
+                  height: '240px',
+                  background: `url(${selectedItem.imageUrl}) center/cover`,
+                  borderRadius: '12px',
+                  marginBottom: '1.5rem',
+                  border: '1px solid var(--border-color)'
+                }} />
+              )}
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '1.5rem' }}>
+                {selectedItem.description}
+              </p>
+              {selectedItem.features && selectedItem.features.length > 0 && (
+                <div style={{ marginBottom: '1.5rem' }}>
+                  {selectedItem.features.map((f, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <Check size={16} color="var(--primary-blue)" />
+                      <span>{f}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingTop: '1.5rem',
+                borderTop: '1px solid var(--border-color)'
+              }}>
+                <div style={{
+                  fontFamily: 'Orbitron, sans-serif',
+                  fontSize: '2rem',
+                  color: 'var(--primary-blue)',
+                  fontWeight: 700
+                }}>
+                  {getDisplayPrice(selectedItem) <= 0 ? 'Free' : `${convertPrice(getDisplayPrice(selectedItem))} ${currency}`}
+                </div>
+                <button className="btn">
+                  <Tag size={18} /> Buy Now
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

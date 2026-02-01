@@ -6,9 +6,18 @@ export interface ServerInfo {
   downloadUrl: string;
   virusTotalUrl?: string;
   descriptions: Description[];
+  downloadLinks?: DownloadLink[];
   type?: 'classic' | 'deathmatch';
   ip?: string;
   port?: number;
+}
+
+export interface DownloadLink {
+  id: number;
+  serverInfoId: number;
+  label: string;
+  url: string;
+  order: number;
 }
 
 export interface Description {
@@ -100,7 +109,10 @@ export interface Clan {
   tax: number;
   motd?: string;
   rank?: number;
-  members?: ClanMember[];
+  members?: (ClanMember | Player)[];
+  totalKills?: number;
+  totalDeaths?: number;
+  totalFarm?: number;
 }
 
 export interface ClanMember {
@@ -181,6 +193,7 @@ export interface ShopItem {
   order: number;
   features?: string[];
   discount?: number;
+  rconCommand?: string;
 }
 
 export interface Theme {

@@ -47,8 +47,33 @@ func GetClan(w http.ResponseWriter, r *http.Request) {
 	database.DB.Model(&models.Clan{}).Where("experience > ?", clan.Experience).Count(&rank)
 	clan.Rank = int(rank) + 1
 
+	// Load clan members as players for display + aggregated stats
+	var memberPlayers []models.Player
+	database.DB.Where("clan_id = ?", id).Find(&memberPlayers)
+	for i := range memberPlayers {
+		var s models.PlayerStats
+		if database.DB.Where("steam_id = ?", memberPlayers[i].SteamID).First(&s).Error == nil {
+			memberPlayers[i].Stats = &s
+		}
+	}
+
+	var totalKills, totalDeaths, totalFarm int
+	for _, m := range memberPlayers {
+		totalKills += m.KilledPlayers
+		totalDeaths += m.Deaths
+		if m.Stats != nil {
+			totalFarm += m.Stats.Wood + m.Stats.Metal + m.Stats.Sulfur
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(clan)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"id": clan.ID, "hexId": clan.HexID, "name": clan.Name, "abbrev": clan.Abbrev,
+		"leaderSteamId": clan.LeaderSteamID, "created": clan.Created, "level": clan.Level,
+		"experience": clan.Experience, "memberCount": clan.MemberCount, "tax": clan.Tax,
+		"motd": clan.MOTD, "rank": clan.Rank, "updatedAt": clan.UpdatedAt,
+		"members": memberPlayers, "totalKills": totalKills, "totalDeaths": totalDeaths, "totalFarm": totalFarm,
+	})
 }
 
 func CreateClan(w http.ResponseWriter, r *http.Request) {

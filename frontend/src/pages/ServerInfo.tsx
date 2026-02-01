@@ -49,7 +49,10 @@ const ServerInfo: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="section-title">{t('serverInfo.title')}</h1>
+        <div className="page-header" style={{ marginBottom: '2rem' }}>
+          <Info size={48} color="var(--primary-blue)" style={{ filter: 'drop-shadow(0 0 20px var(--glow-blue))' }} />
+          <h1 className="section-title" style={{ marginBottom: 0 }}>{t('serverInfo.title')}</h1>
+        </div>
 
         {/* Server Description Section */}
         {descriptionDetails.length > 0 && (

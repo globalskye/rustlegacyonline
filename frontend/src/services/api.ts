@@ -1,10 +1,17 @@
 import * as Types from '../types';
 
-// API base: /api for Docker (same-origin), localhost:8080/api for dev
+// API base: /api for Docker (same-origin), localhost:8000/api for dev
 const getApiUrl = () => {
-  const url = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+  const url = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
   return url.endsWith('/') ? url.slice(0, -1) : url;
 };
+
+export type AuthHeaderGetter = () => Record<string, string> | null;
+
+let authGetter: AuthHeaderGetter | null = null;
+export function setApiAuthGetter(getter: AuthHeaderGetter | null) {
+  authGetter = getter;
+}
 
 class ApiService {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -12,13 +19,14 @@ class ApiService {
     const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     const url = base.startsWith('http') ? `${base}${path}` : `${window.location.origin}${base}${path}`;
 
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
-    });
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(options?.headers as Record<string, string> || {}),
+    };
+    const auth = authGetter?.();
+    if (auth) Object.assign(headers, auth);
+
+    const response = await fetch(url, { ...options, headers });
 
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
@@ -380,8 +388,50 @@ class ApiService {
     return this.request<Types.ServerStatus[]>(`/server-status${query}`);
   }
 
+  async getServerStatusClassic(): Promise<Types.ServerStatus[]> {
+    return this.request<Types.ServerStatus[]>('/server-status/classic');
+  }
+
+  async getServerStatusDeathmatch(): Promise<Types.ServerStatus[]> {
+    return this.request<Types.ServerStatus[]>('/server-status/deathmatch');
+  }
+
   async getAllServers(): Promise<Types.ServerInfo[]> {
     return this.request<Types.ServerInfo[]>('/servers');
+  }
+
+  async getCurrencyRates(): Promise<Record<string, number>> {
+    return this.request<Record<string, number>>('/currency/rates');
+  }
+
+  async getDownloadLinks(serverId?: number): Promise<Types.DownloadLink[]> {
+    const q = serverId ? `?serverId=${serverId}` : '';
+    return this.request<Types.DownloadLink[]>(`/download-links${q}`);
+  }
+
+  async createDownloadLink(data: Omit<Types.DownloadLink, 'id'>): Promise<Types.DownloadLink> {
+    return this.request<Types.DownloadLink>('/download-links', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateDownloadLink(id: number, data: Partial<Types.DownloadLink>): Promise<Types.DownloadLink> {
+    return this.request<Types.DownloadLink>(`/download-links/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteDownloadLink(id: number): Promise<void> {
+    return this.request<void>(`/download-links/${id}`, { method: 'DELETE' });
+  }
+
+  async executeRcon(command: string, steamId?: string): Promise<{ response: string }> {
+    return this.request<{ response: string }>('/rcon/execute', {
+      method: 'POST',
+      body: JSON.stringify({ command, steamId }),
+    });
   }
 }
 

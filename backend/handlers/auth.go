@@ -2,11 +2,37 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"rust-legacy-site/database"
-	"rust-legacy-site/pkg/auth"
+	authpkg "rust-legacy-site/pkg/auth"
+
+	"gorm.io/gorm"
 )
+
+func AuthMe(w http.ResponseWriter, r *http.Request) {
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		http.Error(w, `{"error":"unauthorized"}`, http.StatusUnauthorized)
+		return
+	}
+	// Support Bearer token
+		if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		claims, err := authpkg.ValidateToken(authHeader[7:])
+		if err != nil {
+			http.Error(w, `{"error":"invalid token"}`, http.StatusUnauthorized)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"username": claims.Username,
+			"adminId":  claims.AdminID,
+		})
+		return
+	}
+	http.Error(w, `{"error":"unauthorized"}`, http.StatusUnauthorized)
+}
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	var req struct {
@@ -22,8 +48,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := auth.Login(database.DB, req.Username, req.Password)
+	token, err := authpkg.Login(database.DB, req.Username, req.Password)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			http.Error(w, `{"error":"invalid credentials"}`, http.StatusUnauthorized)
+			return
+		}
+		log.Printf("[Auth] Login error: %v", err)
 		http.Error(w, `{"error":"login failed"}`, http.StatusInternalServerError)
 		return
 	}

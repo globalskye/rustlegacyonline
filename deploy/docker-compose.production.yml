@@ -30,12 +30,17 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      PORT: 8080
+      PORT: 8000
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USER: ${DB_USER:-rustlegacy}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME:-rustlegacy}
+      STATS_SYNC_ENDPOINT: ${STATS_SYNC_ENDPOINT:-}
+      RCON_HOST: ${RCON_HOST:-}
+      RCON_PORT: ${RCON_PORT:-}
+      RCON_PASSWORD: ${RCON_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-rustlegacy-default-secret}
     networks:
       - rustlegacy-network
 
@@ -45,6 +50,8 @@ services:
       dockerfile: frontend/Dockerfile
       args:
         REACT_APP_API_URL: ${REACT_APP_API_URL:-/api}
+        REACT_APP_GOOGLE_ANALYTICS_ID: ${REACT_APP_GOOGLE_ANALYTICS_ID:-}
+        REACT_APP_YANDEX_METRIKA_ID: ${REACT_APP_YANDEX_METRIKA_ID:-}
     container_name: rustlegacy-frontend
     restart: always
     ports:

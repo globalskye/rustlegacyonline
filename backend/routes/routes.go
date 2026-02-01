@@ -13,13 +13,20 @@ func Setup(r *mux.Router) {
 	// Health
 	api.HandleFunc("/health", handlers.HealthCheck).Methods("GET")
 
+	// Auth (public)
+	api.HandleFunc("/auth/login", handlers.Login).Methods("POST")
+	api.HandleFunc("/auth/me", handlers.AuthMe).Methods("GET")
+
 	// Server Info
 	api.HandleFunc("/server-info", handlers.GetServerInfo).Methods("GET")
 	api.HandleFunc("/server-info", handlers.UpdateServerInfo).Methods("PUT")
 	api.HandleFunc("/servers", handlers.GetAllServers).Methods("GET")
 
-	// Server Status (live query)
+	// Server Status (live query). ?type=classic or ?type=deathmatch for specific server
 	api.HandleFunc("/server-status", handlers.GetServerStatus).Methods("GET")
+	api.HandleFunc("/server-status/classic", handlers.GetServerStatusClassic).Methods("GET")
+	api.HandleFunc("/server-status/deathmatch", handlers.GetServerStatusDeathmatch).Methods("GET")
+	api.HandleFunc("/server-status/report", handlers.ReportServerOnline).Methods("POST")
 
 	// Features
 	api.HandleFunc("/features", handlers.GetFeatures).Methods("GET")
@@ -106,4 +113,16 @@ func Setup(r *mux.Router) {
 	api.HandleFunc("/theme", handlers.UpdateTheme).Methods("PUT")
 	api.HandleFunc("/font-settings", handlers.GetFontSettings).Methods("GET")
 	api.HandleFunc("/font-settings", handlers.UpdateFontSettings).Methods("PUT")
+
+	// Currency (public)
+	api.HandleFunc("/currency/rates", handlers.GetCurrencyRates).Methods("GET")
+
+	// Download Links
+	api.HandleFunc("/download-links", handlers.GetDownloadLinks).Methods("GET")
+	api.HandleFunc("/download-links", handlers.CreateDownloadLink).Methods("POST")
+	api.HandleFunc("/download-links/{id}", handlers.UpdateDownloadLink).Methods("PUT")
+	api.HandleFunc("/download-links/{id}", handlers.DeleteDownloadLink).Methods("DELETE")
+
+	// RCON (protected - admin only)
+	api.HandleFunc("/rcon/execute", handlers.ExecuteRcon).Methods("POST")
 }

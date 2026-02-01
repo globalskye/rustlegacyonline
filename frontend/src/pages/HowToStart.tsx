@@ -48,7 +48,9 @@ const HowToStart: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="section-title">{t('howToStart.title')}</h1>
+        <div className="page-header" style={{ marginBottom: '0.5rem' }}>
+          <h1 className="section-title" style={{ marginBottom: 0 }}>{t('howToStart.title')}</h1>
+        </div>
         <p className="section-subtitle">{t('howToStart.subtitle')}</p>
 
         <div style={{
@@ -148,7 +150,7 @@ const HowToStart: React.FC = () => {
           })}
         </div>
 
-        {/* Quick Links */}
+        {/* Quick Links - multiple download links + VirusTotal */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -162,7 +164,22 @@ const HowToStart: React.FC = () => {
             flexWrap: 'wrap'
           }}
         >
-          {serverInfo?.downloadUrl && (
+          {serverInfo?.downloadLinks && serverInfo.downloadLinks.length > 0 ? (
+            serverInfo.downloadLinks.map((link) => (
+              <motion.a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Download className="btn-icon" />
+                {link.label || t('hero.download')}
+              </motion.a>
+            ))
+          ) : serverInfo?.downloadUrl ? (
             <motion.a
               href={serverInfo.downloadUrl}
               className="btn"
@@ -172,7 +189,7 @@ const HowToStart: React.FC = () => {
               <Download className="btn-icon" />
               {t('hero.download')}
             </motion.a>
-          )}
+          ) : null}
 
           {serverInfo?.virusTotalUrl && (
             <motion.a

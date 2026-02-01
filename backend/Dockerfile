@@ -6,14 +6,11 @@ WORKDIR /app
 # Install build dependencies
 RUN apk add --no-cache git
 
-# Copy go mod files
-COPY backend/go.mod backend/go.sum ./
-
-# Download dependencies
-RUN go mod download
-
-# Copy source code
+# Copy go mod files and source
 COPY backend/ ./
+
+# Download deps and verify (ensures go.sum is used)
+RUN go mod download && go mod verify
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
@@ -28,6 +25,6 @@ WORKDIR /root/
 # Copy the binary from builder
 COPY --from=builder /app/main .
 
-EXPOSE 8080
+EXPOSE 8000
 
 CMD ["./main"]

@@ -11,6 +11,7 @@ import (
 func GetServerInfo(w http.ResponseWriter, r *http.Request) {
 	var serverInfo models.ServerInfo
 	var descriptions []models.Description
+	var downloadLinks []models.DownloadLink
 
 	if err := database.DB.First(&serverInfo).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -18,18 +19,20 @@ func GetServerInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	database.DB.Where("server_info_id = ?", serverInfo.ID).Find(&descriptions)
+	database.DB.Where("server_info_id = ?", serverInfo.ID).Order("\"order\" ASC").Find(&downloadLinks)
 
 	response := map[string]interface{}{
-		"id":            serverInfo.ID,
-		"name":          serverInfo.Name,
-		"maxPlayers":    serverInfo.MaxPlayers,
-		"gameVersion":   serverInfo.GameVersion,
-		"downloadUrl":   serverInfo.DownloadURL,
-		"virusTotalUrl": serverInfo.VirusTotalURL,
-		"type":          serverInfo.Type,
-		"ip":            serverInfo.IP,
-		"port":          serverInfo.Port,
-		"descriptions":  descriptions,
+		"id":             serverInfo.ID,
+		"name":           serverInfo.Name,
+		"maxPlayers":     serverInfo.MaxPlayers,
+		"gameVersion":    serverInfo.GameVersion,
+		"downloadUrl":    serverInfo.DownloadURL,
+		"virusTotalUrl":  serverInfo.VirusTotalURL,
+		"type":           serverInfo.Type,
+		"ip":             serverInfo.IP,
+		"port":           serverInfo.Port,
+		"descriptions":   descriptions,
+		"downloadLinks":  downloadLinks,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

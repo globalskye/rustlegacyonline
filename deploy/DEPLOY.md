@@ -118,6 +118,54 @@ deploy/
 
 ---
 
+## Дополнительные настройки
+
+### Переменные окружения бэкенда
+
+| Переменная | Описание |
+|------------|----------|
+| `STATS_SYNC_ENDPOINT` | URL для POST статистики каждые 2 мин (игроки, кланы, сервер). Используй `http://IP` для Rust Legacy (TLS 1.0) |
+| `RCON_HOST`, `RCON_PORT`, `RCON_PASSWORD` | RCON для выдачи товаров через магазин (команда с `*` = SteamID) |
+| `JWT_SECRET` | Секрет для JWT токенов админки |
+
+### Эндпоинты мониторинга
+
+- `GET /api/server-status` — все серверы
+- `GET /api/server-status/classic` — только classic
+- `GET /api/server-status/deathmatch` — только deathmatch
+- `POST /api/server-status/report` — принять онлайн от плагина TopSystem (body: `{"classic":{"currentPlayers":5}}` или `{"deathmatch":{...}}`)
+
+### TopSystem плагин — Report Online
+
+В `oxide/config/TopSystem.json`:
+- `Report Online URL` — URL бэкенда, например `http://YOUR_SITE/api/server-status/report`
+- `Server Type` — `classic` или `deathmatch` (в зависимости от сервера)
+
+Плагин будет POSTить текущий онлайн каждые N секунд (синхронно с Sync).
+
+### Переменные фронтенда
+
+| Переменная | Описание |
+|------------|----------|
+| `REACT_APP_GOOGLE_ANALYTICS_ID` | ID Google Analytics (G-XXXXXX) |
+| `REACT_APP_YANDEX_METRIKA_ID` | ID Яндекс Метрики |
+
+### Защита админки через nginx (опционально)
+
+В `nginx-ssl.conf` можно добавить Basic Auth для `/admin`:
+
+```nginx
+location /admin {
+    auth_basic "Admin";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+    try_files $uri $uri/ /index.html;
+}
+```
+
+Создать пароль: `htpasswd -c /etc/nginx/.htpasswd admin`
+
+---
+
 ## Проблемы
 
 **Порт 80 занят**

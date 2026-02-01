@@ -14,10 +14,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/server-info",
+              "raw": "http://localhost:8000/api/server-info",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "8080",
+              "port": "8000",
               "path": ["api", "server-info"]
             }
           }
@@ -37,10 +37,10 @@
               "raw": "{\n  \"id\": 1,\n  \"name\": \"My Rust Server\",\n  \"maxPlayers\": 150,\n  \"gameVersion\": \"Legacy\",\n  \"downloadUrl\": \"https://example.com/download\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/server-info",
+              "raw": "http://localhost:8000/api/server-info",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "8080",
+              "port": "8000",
               "path": ["api", "server-info"]
             }
           }
@@ -56,10 +56,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/features?lang=ru",
+              "raw": "http://localhost:8000/api/features?lang=ru",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "8080",
+              "port": "8000",
               "path": ["api", "features"],
               "query": [
                 {
@@ -85,10 +85,10 @@
               "raw": "{\n  \"serverInfoId\": 1,\n  \"language\": \"ru\",\n  \"title\": \"Новая особенность\",\n  \"description\": \"Описание новой особенности\",\n  \"icon\": \"zap\",\n  \"order\": 5\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/features",
+              "raw": "http://localhost:8000/api/features",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "8080",
+              "port": "8000",
               "path": ["api", "features"]
             }
           }
@@ -104,10 +104,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/news?lang=ru&published=true",
+              "raw": "http://localhost:8000/api/news?lang=ru&published=true",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "8080",
+              "port": "8000",
               "path": ["api", "news"],
               "query": [
                 {
@@ -137,10 +137,10 @@
               "raw": "{\n  \"language\": \"ru\",\n  \"title\": \"Обновление сервера\",\n  \"content\": \"Сегодня на сервер были добавлены новые функции!\",\n  \"imageUrl\": \"https://example.com/image.jpg\",\n  \"published\": true,\n  \"publishedAt\": \"2025-01-27T12:00:00Z\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/news",
+              "raw": "http://localhost:8000/api/news",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "8080",
+              "port": "8000",
               "path": ["api", "news"]
             }
           }
@@ -156,10 +156,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/players",
+              "raw": "http://localhost:8000/api/players",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "8080",
+              "port": "8000",
               "path": ["api", "players"]
             }
           }
@@ -170,10 +170,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/players?online=true",
+              "raw": "http://localhost:8000/api/players?online=true",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "8080",
+              "port": "8000",
               "path": ["api", "players"],
               "query": [
                 {

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Zap } from 'lucide-react';
+import { Menu, X, Zap, Sun, Moon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useApp } from '../context/AppContext';
 
 const Navigation: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const { theme, setTheme, resolvedTheme } = useApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -54,6 +56,13 @@ const Navigation: React.FC = () => {
           </div>
 
           <div className="nav-actions">
+            <button
+              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+              className="lang-btn"
+              title={resolvedTheme === 'dark' ? 'Light mode' : 'Dark mode'}
+            >
+              {resolvedTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             <button 
               onClick={() => changeLanguage('en')}
               className={`lang-btn ${i18n.language === 'en' ? 'active' : ''}`}
@@ -66,6 +75,9 @@ const Navigation: React.FC = () => {
             >
               RU
             </button>
+            <Link to="/admin" className="lang-btn" style={{ textDecoration: 'none', textAlign: 'center' }}>
+              Admin
+            </Link>
             
             <button 
               className="mobile-menu-btn"

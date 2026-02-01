@@ -220,20 +220,32 @@ type ShopCategory struct {
 }
 
 type ShopItem struct {
-	ID          uint      `gorm:"primaryKey" json:"id"`
-	CategoryID  uint      `json:"categoryId"`
-	Language    string    `json:"language"`
-	Name        string    `json:"name"`
-	Description string    `json:"description" gorm:"type:text"`
-	Price       float64   `json:"price"`
-	Currency    string    `json:"currency"`
-	ImageURL    string    `json:"imageUrl"`
-	Enabled     bool      `json:"enabled"`
-	Order       int       `json:"order"`
-	Features    string    `json:"features" gorm:"type:text"`
-	Discount    int       `json:"discount"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	ID           uint      `gorm:"primaryKey" json:"id"`
+	CategoryID   uint      `json:"categoryId"`
+	Language     string    `json:"language"`
+	Name         string    `json:"name"`
+	Description  string    `json:"description" gorm:"type:text"`
+	Price        float64   `json:"price"`
+	Currency     string    `json:"currency"`
+	ImageURL     string    `json:"imageUrl"`
+	Enabled      bool      `json:"enabled"`
+	Order        int       `json:"order"`
+	Features     string    `json:"features" gorm:"type:text"`
+	Discount     int       `json:"discount"`
+	RconCommand  string    `json:"rconCommand"` // e.g. "give * wood 1000" - * = SteamID
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+}
+
+// DownloadLink - multiple download links for the game client
+type DownloadLink struct {
+	ID           uint      `gorm:"primaryKey" json:"id"`
+	ServerInfoID uint      `json:"serverInfoId"`
+	Label        string    `json:"label"`        // e.g. "Google Drive", "Mirror 1"
+	URL          string    `json:"url"`
+	Order        int       `json:"order"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
 }
 
 type Theme struct {

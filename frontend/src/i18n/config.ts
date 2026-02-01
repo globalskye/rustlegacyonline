@@ -122,15 +122,29 @@ const resources = {
   }
 };
 
+const getInitialLanguage = () => {
+  const stored = localStorage.getItem('rustlegacy-lang');
+  if (stored) return stored;
+  const browser = navigator.language?.toLowerCase() || '';
+  return browser.startsWith('ru') ? 'ru' : 'en';
+};
+
+const initialLng = getInitialLanguage();
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'en',
+    lng: initialLng,
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false
     }
   });
+if (typeof document !== 'undefined') document.documentElement.lang = initialLng;
+
+i18n.on('languageChanged', (lng) => {
+  localStorage.setItem('rustlegacy-lang', lng);
+  if (typeof document !== 'undefined') document.documentElement.lang = lng;
+});
 
 export default i18n;

@@ -3,9 +3,13 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Build arg for API URL (use /api for same-origin in production)
+# Build args for API URL and analytics
 ARG REACT_APP_API_URL=/api
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
+ARG REACT_APP_GOOGLE_ANALYTICS_ID=
+ENV REACT_APP_GOOGLE_ANALYTICS_ID=$REACT_APP_GOOGLE_ANALYTICS_ID
+ARG REACT_APP_YANDEX_METRIKA_ID=
+ENV REACT_APP_YANDEX_METRIKA_ID=$REACT_APP_YANDEX_METRIKA_ID
 
 # Copy package files
 COPY frontend/package*.json ./

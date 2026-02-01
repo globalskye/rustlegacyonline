@@ -68,13 +68,7 @@ const LegalDocument: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '1rem',
-          marginBottom: '3rem'
-        }}>
+        <div className="page-header" style={{ marginBottom: '3rem' }}>
           <IconComponent size={48} color="var(--primary-blue)" style={{ filter: 'drop-shadow(0 0 20px var(--glow-blue))' }} />
           <h1 className="section-title" style={{ marginBottom: 0 }}>{getTitle()}</h1>
         </div>

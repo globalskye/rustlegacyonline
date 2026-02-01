@@ -9,8 +9,19 @@ import (
 	"rust-legacy-site/pkg/gameserver"
 )
 
+func GetServerStatusClassic(w http.ResponseWriter, r *http.Request) {
+	getServerStatusByType(w, "classic")
+}
+
+func GetServerStatusDeathmatch(w http.ResponseWriter, r *http.Request) {
+	getServerStatusByType(w, "deathmatch")
+}
+
 func GetServerStatus(w http.ResponseWriter, r *http.Request) {
-	serverType := r.URL.Query().Get("type")
+	getServerStatusByType(w, r.URL.Query().Get("type"))
+}
+
+func getServerStatusByType(w http.ResponseWriter, serverType string) {
 
 	var servers []models.ServerInfo
 	query := database.DB
@@ -25,21 +36,36 @@ func GetServerStatus(w http.ResponseWriter, r *http.Request) {
 
 	var statuses []models.ServerStatus
 	for _, server := range servers {
-		// Query live status via Source engine A2S_INFO
+		// Prefer reported online from plugin (PlayerClient.All), fallback to A2S_INFO
 		info := gameserver.Query(server.IP, server.Port)
+		currentPlayers := info.Players
+		if reported, ok := getReportedOnline(server.Type); ok {
+			currentPlayers = reported
+		}
 
 		var players []models.Player
-		database.DB.Where("is_online = ?", true).Limit(10).Find(&players)
+		if reportedPlayers, ok := getReportedOnlinePlayers(server.Type); ok {
+			for _, p := range reportedPlayers {
+				players = append(players, models.Player{
+					SteamID:       p.SteamID,
+					Username:      p.Username,
+					IsOnline:      true,
+				})
+			}
+		}
+		if len(players) == 0 {
+			database.DB.Where("is_online = ?", true).Limit(10).Find(&players)
+		}
 
 		status := models.ServerStatus{
 			ServerID:       server.ID,
 			ServerName:     server.Name,
 			ServerType:     server.Type,
-			IsOnline:       info.Status == "Online",
-			CurrentPlayers: info.Players,
+			IsOnline:       info.Status == "Online" || currentPlayers > 0,
+			CurrentPlayers: currentPlayers,
 			MaxPlayers:     info.MaxPlayers,
 			Map:            info.Map,
-			Uptime:         0, // Source engine doesn't expose uptime in A2S_INFO
+			Uptime:         0,
 			IP:             server.IP,
 			Port:           server.Port,
 			ActivePlayers:  players,

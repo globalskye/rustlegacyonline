@@ -1,9 +1,10 @@
 module rust-legacy-site
 
-go 1.21
+go 1.22
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
+	github.com/gorcon/rcon v1.3.0
 	github.com/gorilla/mux v1.8.1
 	github.com/rs/cors v1.10.1
 	golang.org/x/crypto v0.17.0

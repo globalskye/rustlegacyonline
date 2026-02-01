@@ -80,6 +80,7 @@ func Migrate() error {
 		&models.Setting{},
 		&models.ShopCategory{},
 		&models.ShopItem{},
+		&models.DownloadLink{},
 		&models.Theme{},
 		&models.FontSettings{},
 	)
@@ -401,6 +402,25 @@ func Seed() error {
 	}
 
 	log.Println("Database seeded successfully")
+	return nil
+}
+
+// SeedAdminIfEmpty creates default admin (admin/admin123) if no admin users exist
+func SeedAdminIfEmpty() error {
+	var count int64
+	DB.Model(&models.AdminUser{}).Count(&count)
+	if count > 0 {
+		return nil
+	}
+	adminHash, err := hashPassword("admin123")
+	if err != nil {
+		return err
+	}
+	admin := models.AdminUser{Username: "admin", PasswordHash: adminHash}
+	if err := DB.Create(&admin).Error; err != nil {
+		return err
+	}
+	log.Println("[Database] Created default admin user (admin/admin123)")
 	return nil
 }
 
