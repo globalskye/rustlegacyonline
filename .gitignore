@@ -32,3 +32,6 @@ Thumbs.db
 # Deploy
 deploy/data/
 deploy/.env
+
+# Large files
+all-images.tar
