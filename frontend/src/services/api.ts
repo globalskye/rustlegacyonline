@@ -35,6 +35,17 @@ class ApiService {
     return response.json();
   }
 
+  async getCompanyInfo(): Promise<Types.CompanyInfo> {
+    return this.request<Types.CompanyInfo>('/company-info');
+  }
+
+  async updateCompanyInfo(data: Partial<Types.CompanyInfo>): Promise<Types.CompanyInfo> {
+    return this.request<Types.CompanyInfo>('/company-info', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
   async getServerInfo(): Promise<Types.ServerInfo> {
     return this.request<Types.ServerInfo>('/server-info');
   }
@@ -432,6 +443,10 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify({ command, steamId }),
     });
+  }
+
+  async clearClansAndPlayers(): Promise<{ ok: boolean }> {
+    return this.request<{ ok: boolean }>('/admin/clear-clans-players', { method: 'DELETE' });
   }
 }
 

@@ -3,7 +3,7 @@ import { Routes, Route, NavLink, useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion';
 import {
   Settings, Package, ShoppingCart, Download, BarChart3, FileText, CreditCard,
-  Shield, Plug, List, Sun, Moon, Monitor, LogOut, Zap
+  Shield, Plug, List, Sun, Moon, Monitor, LogOut, Zap, Building2
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
@@ -20,6 +20,7 @@ import AdminRules from '../components/admin/AdminRules';
 import AdminPayments from '../components/admin/AdminPayments';
 import AdminLegal from '../components/admin/AdminLegal';
 import AdminNews from '../components/admin/AdminNews';
+import AdminCompanyInfo from '../components/admin/AdminCompanyInfo';
 
 const Admin: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -67,6 +68,7 @@ const Admin: React.FC = () => {
     { path: 'rules', label: 'Rules', icon: Shield },
     { path: 'payments', label: 'Payment Methods', icon: CreditCard },
     { path: 'legal', label: 'Legal Docs', icon: FileText },
+    { path: 'company', label: 'Company Info', icon: Building2 },
   ];
 
   if (checking && !isAdmin) {
@@ -105,6 +107,22 @@ const Admin: React.FC = () => {
                 </button>
               ))}
             </div>
+            <button
+              onClick={async () => {
+                if (window.confirm('Delete ALL clans and players? Data will be replaced by TopSystem sync.')) {
+                  try {
+                    await apiService.clearClansAndPlayers();
+                    showMessage('Cleared. TopSystem will sync real data.', 'success');
+                  } catch {
+                    showMessage('Failed', 'error');
+                  }
+                }
+              }}
+              className="btn btn-secondary"
+              style={{ padding: '0.5rem 1rem', background: '#ef4444', borderColor: '#ef4444' }}
+            >
+              Clear clans & players
+            </button>
             <button onClick={() => { logout(); navigate('/'); }} className="btn btn-secondary">
               <LogOut size={18} /> Logout
             </button>
@@ -161,6 +179,7 @@ const Admin: React.FC = () => {
           <Route path="rules" element={<AdminRules onMessage={showMessage} />} />
           <Route path="payments" element={<AdminPayments onMessage={showMessage} />} />
           <Route path="legal" element={<AdminLegal onMessage={showMessage} />} />
+          <Route path="company" element={<AdminCompanyInfo onMessage={showMessage} />} />
         </Routes>
       </motion.div>
     </div>

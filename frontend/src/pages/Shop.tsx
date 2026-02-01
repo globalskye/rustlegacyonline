@@ -438,6 +438,24 @@ const Shop: React.FC = () => {
                   ))}
                 </div>
               )}
+              {selectedItem.specs && (
+                <div style={{ marginBottom: '1rem', padding: '1rem', background: 'var(--bg-darker)', borderRadius: 8 }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{i18n.language === 'ru' ? 'Характеристики' : 'Specifications'}</div>
+                  <div style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-line' }}>{selectedItem.specs}</div>
+                </div>
+              )}
+              {selectedItem.packageContents && (
+                <div style={{ marginBottom: '1rem', padding: '1rem', background: 'var(--bg-darker)', borderRadius: 8 }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{i18n.language === 'ru' ? 'Комплектация' : 'Package contents'}</div>
+                  <div style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-line' }}>{selectedItem.packageContents}</div>
+                </div>
+              )}
+              {selectedItem.warranty && (
+                <div style={{ marginBottom: '1rem', padding: '1rem', background: 'var(--bg-darker)', borderRadius: 8 }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{i18n.language === 'ru' ? 'Гарантийные условия' : 'Warranty'}</div>
+                  <div style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-line' }}>{selectedItem.warranty}</div>
+                </div>
+              )}
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',

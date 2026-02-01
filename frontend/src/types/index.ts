@@ -194,6 +194,20 @@ export interface ShopItem {
   features?: string[];
   discount?: number;
   rconCommand?: string;
+  warranty?: string;
+  specs?: string;
+  packageContents?: string;
+}
+
+export interface CompanyInfo {
+  id?: number;
+  legalName: string;
+  address: string;
+  phone: string;
+  inn: string;
+  ogrn: string;
+  bankRequisites?: string;
+  deliveryInfo: string;
 }
 
 export interface Theme {

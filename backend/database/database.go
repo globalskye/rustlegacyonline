@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"rust-legacy-site/models"
 
@@ -83,6 +82,7 @@ func Migrate() error {
 		&models.DownloadLink{},
 		&models.Theme{},
 		&models.FontSettings{},
+		&models.CompanyInfo{},
 	)
 
 	if err != nil {
@@ -247,11 +247,31 @@ func Seed() error {
 	}
 
 	// ========================================
+	// COMPANY INFO (обязательная информация об организации)
+	// ========================================
+	var companyCount int64
+	DB.Model(&models.CompanyInfo{}).Count(&companyCount)
+	if companyCount == 0 {
+		companyInfo := models.CompanyInfo{
+			LegalName:      "ИП / ООО [Укажите наименование]",
+			Address:        "[Юридический или фактический адрес]",
+			Phone:          "[Номер телефона]",
+			INN:            "[ИНН]",
+			OGRN:           "[ОГРН]",
+			BankRequisites: "[Банковские реквизиты]",
+			DeliveryInfo:   "Доставка цифровых товаров (игровые предметы, VIP) осуществляется мгновенно в игру после оплаты через RCON. Физические товары не доставляются.",
+		}
+		DB.Create(&companyInfo)
+	}
+
+	// ========================================
 	// LEGAL DOCUMENTS
 	// ========================================
 	legalDocs := []models.LegalDocument{
 		{Language: "en", Type: "terms", Title: "Terms of Service", Content: "<h3>1. Acceptance of Terms</h3><p>By accessing this server, you agree to these terms.</p>"},
 		{Language: "ru", Type: "terms", Title: "Пользовательское соглашение", Content: "<h3>1. Принятие условий</h3><p>Используя сервер, вы соглашаетесь с условиями.</p>"},
+		{Language: "en", Type: "company_info", Title: "Company Information", Content: "<p>See the Company page for full details.</p>"},
+		{Language: "ru", Type: "company_info", Title: "Реквизиты организации", Content: "<p>Полная информация размещена на странице «Реквизиты».</p>"},
 	}
 	for _, doc := range legalDocs {
 		if err := DB.Create(&doc).Error; err != nil {
@@ -259,73 +279,7 @@ func Seed() error {
 		}
 	}
 
-	// ========================================
-	// CLANS - Rust Legacy format
-	// ========================================
-	clanCreated := time.Date(2026, 1, 30, 15, 0, 33, 0, time.UTC)
-	clans := []models.Clan{
-		{HexID: "0x38471ABB", Name: "WaR", Abbrev: "", LeaderSteamID: "76561197970954269", Created: clanCreated, Level: 10, Experience: 352736, MemberCount: 7, Tax: 30, Balance: 62661},
-		{HexID: "0x38476E78", Name: "[GGWP]", Abbrev: "[GGWP]", LeaderSteamID: "76561197964659748", Created: time.Date(2026, 1, 30, 15, 1, 16, 0, time.UTC), Level: 6, Experience: 8352, MemberCount: 3, Tax: 10, Balance: 5263},
-		{HexID: "0x38477121", Name: "PRASE", Abbrev: "PRASE", LeaderSteamID: "76561197967379561", Created: time.Date(2026, 1, 30, 15, 1, 17, 0, time.UTC), Level: 12, Experience: 271350, MemberCount: 3, Tax: 30, Balance: 35864},
-	}
-	for _, clan := range clans {
-		if err := DB.Create(&clan).Error; err != nil {
-			return err
-		}
-	}
-
-	// Clan members
-	clanMembers := []models.ClanMember{
-		{ClanID: 1, SteamID: "76561197970954269", Permissions: "invite,dismiss,management"},
-		{ClanID: 1, SteamID: "76561197982325931", Permissions: "invite,dismiss,management"},
-		{ClanID: 1, SteamID: "76561197962419158", Permissions: "invite,dismiss,management"},
-		{ClanID: 1, SteamID: "76561197960596043", Permissions: "invite,dismiss,management"},
-		{ClanID: 1, SteamID: "76561197963954610", Permissions: "0"},
-		{ClanID: 1, SteamID: "76561197960641812", Permissions: "0"},
-		{ClanID: 1, SteamID: "76561197960397316", Permissions: "0"},
-		{ClanID: 2, SteamID: "76561197964659748", Permissions: "invite,dismiss,management"},
-		{ClanID: 2, SteamID: "76561197960538670", Permissions: "invite,dismiss,management"},
-		{ClanID: 2, SteamID: "76561197961458770", Permissions: "0"},
-		{ClanID: 3, SteamID: "76561197967379561", Permissions: "invite,dismiss,management"},
-		{ClanID: 3, SteamID: "76561197961407422", Permissions: "management,expdetails"},
-		{ClanID: 3, SteamID: "76561197970267653", Permissions: "0"},
-	}
-	for _, m := range clanMembers {
-		DB.Create(&m)
-	}
-
-	// ========================================
-	// PLAYERS - Rust Legacy format
-	// ========================================
-	clan1ID := uint(1)
-	clan2ID := uint(2)
-	clan3ID := uint(3)
-	players := []models.Player{
-		{SteamID: "76561197961407422", Username: "koolas", Rank: 60, Language: "RUS", KilledPlayers: 16, KilledMutants: 3, KilledAnimals: 15, Deaths: 60, PlayTime: 981, FirstConnectDate: time.Date(2026, 1, 30, 15, 0, 10, 0, time.UTC), LastConnectDate: time.Date(2026, 2, 1, 0, 52, 52, 0, time.UTC), ClanID: &clan3ID, IsOnline: false},
-		{SteamID: "76561197970954269", Username: "WaR_Leader", Rank: 85, Language: "ENG", KilledPlayers: 142, KilledMutants: 28, KilledAnimals: 89, Deaths: 45, PlayTime: 2450, FirstConnectDate: time.Date(2026, 1, 28, 10, 0, 0, 0, time.UTC), LastConnectDate: time.Now(), ClanID: &clan1ID, IsOnline: true},
-		{SteamID: "76561197982325931", Username: "RaiderPro", Rank: 72, Language: "RUS", KilledPlayers: 98, KilledMutants: 15, KilledAnimals: 56, Deaths: 67, PlayTime: 1890, FirstConnectDate: time.Date(2026, 1, 29, 12, 0, 0, 0, time.UTC), LastConnectDate: time.Now().Add(-1 * time.Hour), ClanID: &clan1ID, IsOnline: false},
-		{SteamID: "76561197964659748", Username: "GGWP_Boss", Rank: 55, Language: "ENG", KilledPlayers: 45, KilledMutants: 8, KilledAnimals: 34, Deaths: 89, PlayTime: 1200, FirstConnectDate: time.Date(2026, 1, 30, 15, 5, 0, 0, time.UTC), LastConnectDate: time.Now(), ClanID: &clan2ID, IsOnline: true},
-		{SteamID: "76561197967379561", Username: "PRASE_Chief", Rank: 78, Language: "RUS", KilledPlayers: 112, KilledMutants: 22, KilledAnimals: 78, Deaths: 52, PlayTime: 2100, FirstConnectDate: time.Date(2026, 1, 29, 8, 0, 0, 0, time.UTC), LastConnectDate: time.Now(), ClanID: &clan3ID, IsOnline: true},
-		{SteamID: "76561197970267653", Username: "SoloHunter", Rank: 42, Language: "RUS", KilledPlayers: 28, KilledMutants: 5, KilledAnimals: 23, Deaths: 95, PlayTime: 650, FirstConnectDate: time.Date(2026, 1, 31, 9, 0, 0, 0, time.UTC), LastConnectDate: time.Now().Add(-30 * time.Minute), ClanID: &clan3ID, IsOnline: false},
-	}
-	for _, player := range players {
-		if err := DB.Create(&player).Error; err != nil {
-			return err
-		}
-	}
-
-	// Player extended stats (from JSON)
-	playerStats := []models.PlayerStats{
-		{SteamID: "76561197961407422", RaidObjects: 0, TimeMinutes: 981, Wood: 28353, Metal: 2631, Sulfur: 2365, Leather: 8, Cloth: 88, Fat: 55, Suicides: 51},
-		{SteamID: "76561197970954269", RaidObjects: 12, TimeMinutes: 2450, Wood: 125000, Metal: 45000, Sulfur: 28000, Leather: 45, Cloth: 120, Fat: 89, Suicides: 3},
-		{SteamID: "76561197982325931", RaidObjects: 8, TimeMinutes: 1890, Wood: 89000, Metal: 32000, Sulfur: 19000, Leather: 32, Cloth: 95, Fat: 67, Suicides: 12},
-		{SteamID: "76561197964659748", RaidObjects: 2, TimeMinutes: 1200, Wood: 45000, Metal: 15000, Sulfur: 8000, Leather: 18, Cloth: 55, Fat: 34, Suicides: 28},
-		{SteamID: "76561197967379561", RaidObjects: 15, TimeMinutes: 2100, Wood: 150000, Metal: 52000, Sulfur: 35000, Leather: 52, Cloth: 140, Fat: 95, Suicides: 5},
-		{SteamID: "76561197970267653", RaidObjects: 1, TimeMinutes: 650, Wood: 22000, Metal: 8000, Sulfur: 4500, Leather: 12, Cloth: 38, Fat: 22, Suicides: 19},
-	}
-	for _, s := range playerStats {
-		DB.Create(&s)
-	}
+	// Clans and players - no test data. Real data comes from TopSystem sync.
 
 	// ========================================
 	// ADMIN USER (password: admin123)
@@ -424,64 +378,7 @@ func SeedAdminIfEmpty() error {
 	return nil
 }
 
-// SeedClansIfEmpty seeds clans+players when table is empty (for existing DBs)
+// SeedClansIfEmpty - no longer seeds test data. Clans/players come from TopSystem sync.
 func SeedClansIfEmpty() error {
-	var clanCount int64
-	DB.Model(&models.Clan{}).Count(&clanCount)
-	if clanCount > 0 {
-		return nil
-	}
-	log.Println("Seeding clans (table was empty)...")
-
-	clanCreated := time.Date(2026, 1, 30, 15, 0, 33, 0, time.UTC)
-	clans := []models.Clan{
-		{HexID: "0x38471ABB", Name: "WaR", Abbrev: "", LeaderSteamID: "76561197970954269", Created: clanCreated, Level: 10, Experience: 352736, MemberCount: 7, Tax: 30, Balance: 62661},
-		{HexID: "0x38476E78", Name: "[GGWP]", Abbrev: "[GGWP]", LeaderSteamID: "76561197964659748", Created: time.Date(2026, 1, 30, 15, 1, 16, 0, time.UTC), Level: 6, Experience: 8352, MemberCount: 3, Tax: 10, Balance: 5263},
-		{HexID: "0x38477121", Name: "PRASE", Abbrev: "PRASE", LeaderSteamID: "76561197967379561", Created: time.Date(2026, 1, 30, 15, 1, 17, 0, time.UTC), Level: 12, Experience: 271350, MemberCount: 3, Tax: 30, Balance: 35864},
-	}
-	for _, clan := range clans {
-		if err := DB.Create(&clan).Error; err != nil {
-			return err
-		}
-	}
-
-	clanMembers := []models.ClanMember{
-		{ClanID: 1, SteamID: "76561197970954269", Permissions: "invite,dismiss,management"},
-		{ClanID: 1, SteamID: "76561197982325931", Permissions: "invite,dismiss,management"},
-		{ClanID: 1, SteamID: "76561197962419158", Permissions: "invite,dismiss,management"},
-		{ClanID: 2, SteamID: "76561197964659748", Permissions: "invite,dismiss,management"},
-		{ClanID: 2, SteamID: "76561197960538670", Permissions: "invite,dismiss,management"},
-		{ClanID: 3, SteamID: "76561197967379561", Permissions: "invite,dismiss,management"},
-		{ClanID: 3, SteamID: "76561197961407422", Permissions: "management,expdetails"},
-		{ClanID: 3, SteamID: "76561197970267653", Permissions: "0"},
-	}
-	for _, m := range clanMembers {
-		DB.Create(&m)
-	}
-
-	clan1ID := uint(1)
-	clan2ID := uint(2)
-	clan3ID := uint(3)
-	players := []models.Player{
-		{SteamID: "76561197961407422", Username: "koolas", Rank: 60, Language: "RUS", KilledPlayers: 16, KilledMutants: 3, KilledAnimals: 15, Deaths: 60, PlayTime: 981, FirstConnectDate: time.Date(2026, 1, 30, 15, 0, 10, 0, time.UTC), LastConnectDate: time.Date(2026, 2, 1, 0, 52, 52, 0, time.UTC), ClanID: &clan3ID, IsOnline: false},
-		{SteamID: "76561197970954269", Username: "WaR_Leader", Rank: 85, Language: "ENG", KilledPlayers: 142, KilledMutants: 28, KilledAnimals: 89, Deaths: 45, PlayTime: 2450, FirstConnectDate: time.Date(2026, 1, 28, 10, 0, 0, 0, time.UTC), LastConnectDate: time.Now(), ClanID: &clan1ID, IsOnline: true},
-		{SteamID: "76561197982325931", Username: "RaiderPro", Rank: 72, Language: "RUS", KilledPlayers: 98, KilledMutants: 15, KilledAnimals: 56, Deaths: 67, PlayTime: 1890, FirstConnectDate: time.Date(2026, 1, 29, 12, 0, 0, 0, time.UTC), LastConnectDate: time.Now().Add(-1 * time.Hour), ClanID: &clan1ID, IsOnline: false},
-		{SteamID: "76561197964659748", Username: "GGWP_Boss", Rank: 55, Language: "ENG", KilledPlayers: 45, KilledMutants: 8, KilledAnimals: 34, Deaths: 89, PlayTime: 1200, FirstConnectDate: time.Date(2026, 1, 30, 15, 5, 0, 0, time.UTC), LastConnectDate: time.Now(), ClanID: &clan2ID, IsOnline: true},
-		{SteamID: "76561197967379561", Username: "PRASE_Chief", Rank: 78, Language: "RUS", KilledPlayers: 112, KilledMutants: 22, KilledAnimals: 78, Deaths: 52, PlayTime: 2100, FirstConnectDate: time.Date(2026, 1, 29, 8, 0, 0, 0, time.UTC), LastConnectDate: time.Now(), ClanID: &clan3ID, IsOnline: true},
-	}
-	for _, player := range players {
-		DB.FirstOrCreate(&player, models.Player{SteamID: player.SteamID})
-	}
-
-	playerStats := []models.PlayerStats{
-		{SteamID: "76561197961407422", RaidObjects: 0, TimeMinutes: 981, Wood: 28353, Metal: 2631, Sulfur: 2365, Leather: 8, Cloth: 88, Fat: 55, Suicides: 51},
-		{SteamID: "76561197970954269", RaidObjects: 12, TimeMinutes: 2450, Wood: 125000, Metal: 45000, Sulfur: 28000, Leather: 45, Cloth: 120, Fat: 89, Suicides: 3},
-		{SteamID: "76561197967379561", RaidObjects: 15, TimeMinutes: 2100, Wood: 150000, Metal: 52000, Sulfur: 35000, Leather: 52, Cloth: 140, Fat: 95, Suicides: 5},
-	}
-	for _, s := range playerStats {
-		DB.Save(&s)
-	}
-
-	log.Println("Clans seeded successfully")
 	return nil
 }

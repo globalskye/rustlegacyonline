@@ -7,7 +7,7 @@ import { apiService } from '../services/api';
 import * as Types from '../types';
 
 type TabType = 'players' | 'clans';
-type PlayerSortField = 'rank' | 'username' | 'kills' | 'deaths' | 'kd' | 'playTime' | 'mutants' | 'animals' | 'clan' | 'wood' | 'metal' | 'sulfur' | 'firstConnect' | 'lastConnect';
+type PlayerSortField = 'rank' | 'username' | 'kills' | 'deaths' | 'kd' | 'playTime' | 'mutants' | 'animals' | 'wood' | 'metal' | 'sulfur' | 'firstConnect' | 'lastConnect';
 
 const Statistics: React.FC = () => {
   const { t } = useTranslation();
@@ -68,7 +68,6 @@ const Statistics: React.FC = () => {
         case 'playTime': va = a.playTime ?? a.stats?.timeMinutes ?? 0; vb = b.playTime ?? b.stats?.timeMinutes ?? 0; break;
         case 'mutants': va = a.killedMutants ?? 0; vb = b.killedMutants ?? 0; break;
         case 'animals': va = a.killedAnimals ?? 0; vb = b.killedAnimals ?? 0; break;
-        case 'clan': va = (a.clan?.abbrev ?? a.clan?.name ?? '').toLowerCase(); vb = (b.clan?.abbrev ?? b.clan?.name ?? '').toLowerCase(); break;
         case 'wood': va = a.stats?.wood ?? 0; vb = b.stats?.wood ?? 0; break;
         case 'metal': va = a.stats?.metal ?? 0; vb = b.stats?.metal ?? 0; break;
         case 'sulfur': va = a.stats?.sulfur ?? 0; vb = b.stats?.sulfur ?? 0; break;
@@ -252,21 +251,12 @@ const Statistics: React.FC = () => {
                       {(selectedPlayer.rankPosition || selectedPlayer.rank) && (
                         <span style={{ color: 'var(--primary-blue)', fontWeight: 600 }}>Rank #{selectedPlayer.rankPosition || selectedPlayer.rank}</span>
                       )}
-                      {selectedPlayer.clan && (
-                        <button
-                          className="btn btn-secondary"
-                          style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.9rem' }}
-                          onClick={() => goToClan(selectedPlayer.clan!.id)}
-                        >
-                          <Users size={16} /> {selectedPlayer.clan.abbrev || selectedPlayer.clan.name}
-                        </button>
-                      )}
                     </div>
                   </div>
                   <button onClick={() => setSelectedPlayer(null)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div className="modal-stats-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
                   {[
                     { icon: Crosshair, value: selectedPlayer.killedPlayers || 0, label: 'Kills' },
                     { icon: Skull, value: selectedPlayer.deaths || 0, label: 'Deaths' },
@@ -282,7 +272,7 @@ const Statistics: React.FC = () => {
                 </div>
 
                 {selectedPlayer.stats && (
-                  <div style={{ padding: '1rem', background: 'var(--bg-darker)', borderRadius: 8, marginBottom: '1rem', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+                  <div className="modal-stats-grid-4" style={{ padding: '1rem', background: 'var(--bg-darker)', borderRadius: 8, marginBottom: '1rem', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
                     <div><strong>Wood</strong> {selectedPlayer.stats.wood?.toLocaleString()}</div>
                     <div><strong>Metal</strong> {selectedPlayer.stats.metal?.toLocaleString()}</div>
                     <div><strong>Sulfur</strong> {selectedPlayer.stats.sulfur?.toLocaleString()}</div>
@@ -294,7 +284,7 @@ const Statistics: React.FC = () => {
                   </div>
                 )}
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', marginBottom: '1rem' }}>
+                <div className="modal-stats-grid-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', marginBottom: '1rem' }}>
                   <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}><strong>Killed Mutants:</strong> {selectedPlayer.killedMutants ?? 0}</div>
                   <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}><strong>Killed Animals:</strong> {selectedPlayer.killedAnimals ?? 0}</div>
                 </div>
@@ -302,7 +292,6 @@ const Statistics: React.FC = () => {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                   <span>First: {formatDate(selectedPlayer.firstConnectDate)}</span>
                   <span>Last: {formatDate(selectedPlayer.lastConnectDate)}</span>
-                  <span>SteamID: {selectedPlayer.steamId}</span>
                   <span style={{ color: selectedPlayer.isOnline ? '#22c55e' : 'var(--text-muted)' }}>
                     {selectedPlayer.isOnline ? '🟢 Online' : '⚫ Offline'}
                   </span>
@@ -346,7 +335,7 @@ const Statistics: React.FC = () => {
                 </div>
 
                 {(selectedClan.totalKills !== undefined || selectedClan.totalFarm !== undefined) && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div className="modal-stats-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
                     {selectedClan.totalKills !== undefined && (
                       <div style={{ textAlign: 'center', padding: '1rem', background: 'var(--bg-darker)', borderRadius: 8 }}>
                         <div style={{ fontFamily: 'Orbitron', fontSize: '1.2rem' }}>{selectedClan.totalKills}</div>
@@ -421,7 +410,6 @@ const Statistics: React.FC = () => {
                     <th onClick={() => toggleSort('playTime')}><span>Playtime</span><SortIcon f="playTime" /></th>
                     <th onClick={() => toggleSort('mutants')}><span>Mutants</span><SortIcon f="mutants" /></th>
                     <th onClick={() => toggleSort('animals')}><span>Animals</span><SortIcon f="animals" /></th>
-                    <th onClick={() => toggleSort('clan')}><span>Clan</span><SortIcon f="clan" /></th>
                     <th onClick={() => toggleSort('wood')}><span>Wood</span><SortIcon f="wood" /></th>
                     <th onClick={() => toggleSort('metal')}><span>Metal</span><SortIcon f="metal" /></th>
                     <th onClick={() => toggleSort('sulfur')}><span>Sulfur</span><SortIcon f="sulfur" /></th>
@@ -451,7 +439,6 @@ const Statistics: React.FC = () => {
                       <td>{formatPlayTime(player.playTime || player.stats?.timeMinutes || 0)}</td>
                       <td>{player.killedMutants ?? 0}</td>
                       <td>{player.killedAnimals ?? 0}</td>
-                      <td>{player.clan?.abbrev || player.clan?.name || '—'}</td>
                       <td>{(player.stats?.wood ?? 0).toLocaleString()}</td>
                       <td>{(player.stats?.metal ?? 0).toLocaleString()}</td>
                       <td>{(player.stats?.sulfur ?? 0).toLocaleString()}</td>

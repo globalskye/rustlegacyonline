@@ -178,7 +178,7 @@ const Footer: React.FC = () => {
                 {t('legal.privacy')}
               </Link>
               <Link 
-                to="/legal/company"
+                to="/company"
                 style={{
                   color: 'var(--text-muted)',
                   textDecoration: 'none',

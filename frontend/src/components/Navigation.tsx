@@ -18,6 +18,7 @@ const Navigation: React.FC = () => {
 
   const navItems = [
     { path: '/', label: t('nav.home') },
+    { path: '/news', label: t('nav.news') },
     { path: '/how-to-start', label: t('nav.howToStart') },
     { path: '/server-info', label: t('nav.serverInfo') },
     { path: '/rules', label: t('nav.rules') },

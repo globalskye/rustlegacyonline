@@ -739,6 +739,39 @@ const Home: React.FC = () => {
         </section>
       )}
 
+      {/* FAQ Section */}
+      <section style={{ padding: '4rem 2rem', maxWidth: '900px', margin: '0 auto' }}>
+        <motion.h2 
+          className="section-title"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          {t('faq.title')}
+        </motion.h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
+          {[
+            { q: t('faq.q1'), a: t('faq.a1') },
+            { q: t('faq.q2'), a: t('faq.a2') },
+            { q: t('faq.q3'), a: t('faq.a3') },
+            { q: t('faq.q4'), a: t('faq.a4') },
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              className="card"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+            >
+              <h4 style={{ fontFamily: 'Orbitron', fontSize: '1rem', color: 'var(--primary-blue)', marginBottom: '0.5rem' }}>{item.q}</h4>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{item.a}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
       {/* Features Section */}
       <section style={{ padding: '4rem 2rem 8rem', maxWidth: '1400px', margin: '0 auto' }}>
         <motion.h2 

@@ -585,10 +585,61 @@ body {
   
   .section-title {
     letter-spacing: 2px;
+    font-size: 1.6rem;
   }
   
   [lang="ru"] .section-title {
     letter-spacing: 1px;
+  }
+  
+  .stats-table {
+    font-size: 0.8rem;
+  }
+  
+  .stats-table th,
+  .stats-table td {
+    padding: 0.5rem 0.4rem;
+  }
+  
+  .modal-floating {
+    margin: 0.5rem;
+    padding: 1rem;
+    max-height: 85vh;
+  }
+  
+  .card {
+    padding: 1rem;
+  }
+  
+  .admin-form .admin-form-grid-2,
+  .admin-form .admin-form-grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Statistics modal - responsive */
+@media (max-width: 600px) {
+  .modal-stats-grid-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .modal-stats-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Mobile - admin forms */
+@media (max-width: 768px) {
+  .admin-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .admin-form-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .admin-form-grid-3 {
+    grid-template-columns: 1fr !important;
   }
 }
 

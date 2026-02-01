@@ -220,22 +220,26 @@ type ShopCategory struct {
 }
 
 type ShopItem struct {
-	ID           uint      `gorm:"primaryKey" json:"id"`
-	CategoryID   uint      `json:"categoryId"`
-	Language     string    `json:"language"`
-	Name         string    `json:"name"`
-	Description  string    `json:"description" gorm:"type:text"`
-	Price        float64   `json:"price"`
-	Currency     string    `json:"currency"`
-	ImageURL     string    `json:"imageUrl"`
-	Enabled      bool      `json:"enabled"`
-	Order        int       `json:"order"`
-	Features     string    `json:"features" gorm:"type:text"`
-	Discount     int       `json:"discount"`
-	RconCommand  string    `json:"rconCommand"` // e.g. "give * wood 1000" - * = SteamID
-	CreatedAt    time.Time `json:"createdAt"`
-	UpdatedAt    time.Time `json:"updatedAt"`
+	ID              uint      `gorm:"primaryKey" json:"id"`
+	CategoryID      uint      `json:"categoryId"`
+	Language        string    `json:"language"`
+	Name            string    `json:"name"`
+	Description     string    `json:"description" gorm:"type:text"`
+	Price           float64   `json:"price"`
+	Currency        string    `json:"currency"`
+	ImageURL        string    `json:"imageUrl"`
+	Enabled         bool      `json:"enabled"`
+	Order           int       `json:"order"`
+	Features        string    `json:"features" gorm:"type:text"`
+	Discount        int       `json:"discount"`
+	RconCommand     string    `json:"rconCommand"`
+	Warranty        string    `json:"warranty" gorm:"type:text"`           // гарантийные условия
+	Specs           string    `json:"specs" gorm:"type:text"`              // характеристики
+	PackageContents string    `json:"packageContents" gorm:"type:text"`    // комплектация
+	CreatedAt       time.Time `json:"createdAt"`
+	UpdatedAt       time.Time `json:"updatedAt"`
 }
+
 
 // DownloadLink - multiple download links for the game client
 type DownloadLink struct {
@@ -270,6 +274,20 @@ type FontSettings struct {
 	H2Size      string `json:"h2Size"`
 	H3Size      string `json:"h3Size"`
 	BodySize    string `json:"bodySize"`
+}
+
+// CompanyInfo - обязательная информация об организации (для размещения на сайте)
+type CompanyInfo struct {
+	ID            uint      `gorm:"primaryKey" json:"id"`
+	LegalName     string    `json:"legalName" gorm:"type:text"`     // наименование юр. лица / ИП
+	Address       string    `json:"address" gorm:"type:text"`       // фактический или юридический адрес
+	Phone         string    `json:"phone"`                          // номер телефона
+	INN           string    `json:"inn"`                            // ИНН
+	OGRN          string    `json:"ogrn"`                           // ОГРН
+	BankRequisites string   `json:"bankRequisites" gorm:"type:text"` // банковские реквизиты
+	DeliveryInfo  string    `json:"deliveryInfo" gorm:"type:text"`  // информация о доставке
+	CreatedAt     time.Time `json:"createdAt"`
+	UpdatedAt     time.Time `json:"updatedAt"`
 }
 
 type ServerStatus struct {

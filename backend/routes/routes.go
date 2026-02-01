@@ -1,7 +1,10 @@
 package routes
 
 import (
+	"net/http"
+
 	"rust-legacy-site/handlers"
+	authpkg "rust-legacy-site/pkg/auth"
 
 	"github.com/gorilla/mux"
 )
@@ -17,9 +20,13 @@ func Setup(r *mux.Router) {
 	api.HandleFunc("/auth/login", handlers.Login).Methods("POST")
 	api.HandleFunc("/auth/me", handlers.AuthMe).Methods("GET")
 
-	// Server Info
+	// Company Info (GET public, PUT protected)
+	api.HandleFunc("/company-info", handlers.GetCompanyInfo).Methods("GET")
+	api.Handle("/company-info", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateCompanyInfo))).Methods("PUT")
+
+	// Server Info (GET public, PUT protected)
 	api.HandleFunc("/server-info", handlers.GetServerInfo).Methods("GET")
-	api.HandleFunc("/server-info", handlers.UpdateServerInfo).Methods("PUT")
+	api.Handle("/server-info", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateServerInfo))).Methods("PUT")
 	api.HandleFunc("/servers", handlers.GetAllServers).Methods("GET")
 
 	// Server Status (live query). ?type=classic or ?type=deathmatch for specific server
@@ -30,57 +37,57 @@ func Setup(r *mux.Router) {
 
 	// Features
 	api.HandleFunc("/features", handlers.GetFeatures).Methods("GET")
-	api.HandleFunc("/features", handlers.CreateFeature).Methods("POST")
-	api.HandleFunc("/features/{id}", handlers.UpdateFeature).Methods("PUT")
-	api.HandleFunc("/features/{id}", handlers.DeleteFeature).Methods("DELETE")
+	api.Handle("/features", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateFeature))).Methods("POST")
+	api.Handle("/features/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateFeature))).Methods("PUT")
+	api.Handle("/features/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteFeature))).Methods("DELETE")
 
 	// News
 	api.HandleFunc("/news", handlers.GetNews).Methods("GET")
-	api.HandleFunc("/news", handlers.CreateNews).Methods("POST")
+	api.Handle("/news", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateNews))).Methods("POST")
 	api.HandleFunc("/news/{id}", handlers.GetNewsItem).Methods("GET")
-	api.HandleFunc("/news/{id}", handlers.UpdateNews).Methods("PUT")
-	api.HandleFunc("/news/{id}", handlers.DeleteNews).Methods("DELETE")
+	api.Handle("/news/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateNews))).Methods("PUT")
+	api.Handle("/news/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteNews))).Methods("DELETE")
 
 	// How to Start
 	api.HandleFunc("/how-to-start", handlers.GetHowToStartSteps).Methods("GET")
-	api.HandleFunc("/how-to-start", handlers.CreateHowToStartStep).Methods("POST")
-	api.HandleFunc("/how-to-start/{id}", handlers.UpdateHowToStartStep).Methods("PUT")
-	api.HandleFunc("/how-to-start/{id}", handlers.DeleteHowToStartStep).Methods("DELETE")
+	api.Handle("/how-to-start", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateHowToStartStep))).Methods("POST")
+	api.Handle("/how-to-start/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateHowToStartStep))).Methods("PUT")
+	api.Handle("/how-to-start/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteHowToStartStep))).Methods("DELETE")
 
 	// Server Details
 	api.HandleFunc("/server-details", handlers.GetServerDetails).Methods("GET")
-	api.HandleFunc("/server-details", handlers.CreateServerDetail).Methods("POST")
-	api.HandleFunc("/server-details/{id}", handlers.UpdateServerDetail).Methods("PUT")
-	api.HandleFunc("/server-details/{id}", handlers.DeleteServerDetail).Methods("DELETE")
+	api.Handle("/server-details", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateServerDetail))).Methods("POST")
+	api.Handle("/server-details/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateServerDetail))).Methods("PUT")
+	api.Handle("/server-details/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteServerDetail))).Methods("DELETE")
 
 	// Plugins
 	api.HandleFunc("/plugins", handlers.GetPlugins).Methods("GET")
-	api.HandleFunc("/plugins", handlers.CreatePlugin).Methods("POST")
-	api.HandleFunc("/plugins/{id}", handlers.UpdatePlugin).Methods("PUT")
-	api.HandleFunc("/plugins/{id}", handlers.DeletePlugin).Methods("DELETE")
+	api.Handle("/plugins", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreatePlugin))).Methods("POST")
+	api.Handle("/plugins/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdatePlugin))).Methods("PUT")
+	api.Handle("/plugins/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeletePlugin))).Methods("DELETE")
 
 	// Commands
-	api.HandleFunc("/commands", handlers.CreateCommand).Methods("POST")
-	api.HandleFunc("/commands/{id}", handlers.UpdateCommand).Methods("PUT")
-	api.HandleFunc("/commands/{id}", handlers.DeleteCommand).Methods("DELETE")
+	api.Handle("/commands", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateCommand))).Methods("POST")
+	api.Handle("/commands/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateCommand))).Methods("PUT")
+	api.Handle("/commands/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteCommand))).Methods("DELETE")
 
 	// Rules
 	api.HandleFunc("/rules", handlers.GetRules).Methods("GET")
-	api.HandleFunc("/rules", handlers.CreateRule).Methods("POST")
-	api.HandleFunc("/rules/{id}", handlers.UpdateRule).Methods("PUT")
-	api.HandleFunc("/rules/{id}", handlers.DeleteRule).Methods("DELETE")
+	api.Handle("/rules", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateRule))).Methods("POST")
+	api.Handle("/rules/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateRule))).Methods("PUT")
+	api.Handle("/rules/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteRule))).Methods("DELETE")
 
 	// Payment Methods
 	api.HandleFunc("/payment-methods", handlers.GetPaymentMethods).Methods("GET")
-	api.HandleFunc("/payment-methods", handlers.CreatePaymentMethod).Methods("POST")
-	api.HandleFunc("/payment-methods/{id}", handlers.UpdatePaymentMethod).Methods("PUT")
-	api.HandleFunc("/payment-methods/{id}", handlers.DeletePaymentMethod).Methods("DELETE")
+	api.Handle("/payment-methods", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreatePaymentMethod))).Methods("POST")
+	api.Handle("/payment-methods/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdatePaymentMethod))).Methods("PUT")
+	api.Handle("/payment-methods/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeletePaymentMethod))).Methods("DELETE")
 
 	// Legal Documents
 	api.HandleFunc("/legal-documents", handlers.GetLegalDocuments).Methods("GET")
-	api.HandleFunc("/legal-documents", handlers.CreateLegalDocument).Methods("POST")
-	api.HandleFunc("/legal-documents/{id}", handlers.UpdateLegalDocument).Methods("PUT")
-	api.HandleFunc("/legal-documents/{id}", handlers.DeleteLegalDocument).Methods("DELETE")
+	api.Handle("/legal-documents", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateLegalDocument))).Methods("POST")
+	api.Handle("/legal-documents/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateLegalDocument))).Methods("PUT")
+	api.Handle("/legal-documents/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteLegalDocument))).Methods("DELETE")
 
 	// Players
 	api.HandleFunc("/players", handlers.GetPlayers).Methods("GET")
@@ -103,29 +110,32 @@ func Setup(r *mux.Router) {
 
 	// Shop
 	api.HandleFunc("/shop/categories", handlers.GetShopCategories).Methods("GET")
-	api.HandleFunc("/shop/categories", handlers.CreateShopCategory).Methods("POST")
-	api.HandleFunc("/shop/categories/{id}", handlers.UpdateShopCategory).Methods("PUT")
-	api.HandleFunc("/shop/categories/{id}", handlers.DeleteShopCategory).Methods("DELETE")
+	api.Handle("/shop/categories", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateShopCategory))).Methods("POST")
+	api.Handle("/shop/categories/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateShopCategory))).Methods("PUT")
+	api.Handle("/shop/categories/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteShopCategory))).Methods("DELETE")
 	api.HandleFunc("/shop/items", handlers.GetShopItems).Methods("GET")
-	api.HandleFunc("/shop/items", handlers.CreateShopItem).Methods("POST")
-	api.HandleFunc("/shop/items/{id}", handlers.UpdateShopItem).Methods("PUT")
-	api.HandleFunc("/shop/items/{id}", handlers.DeleteShopItem).Methods("DELETE")
+	api.Handle("/shop/items", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateShopItem))).Methods("POST")
+	api.Handle("/shop/items/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateShopItem))).Methods("PUT")
+	api.Handle("/shop/items/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteShopItem))).Methods("DELETE")
 
 	// Theme & Fonts
 	api.HandleFunc("/theme", handlers.GetTheme).Methods("GET")
-	api.HandleFunc("/theme", handlers.UpdateTheme).Methods("PUT")
+	api.Handle("/theme", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateTheme))).Methods("PUT")
 	api.HandleFunc("/font-settings", handlers.GetFontSettings).Methods("GET")
-	api.HandleFunc("/font-settings", handlers.UpdateFontSettings).Methods("PUT")
+	api.Handle("/font-settings", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateFontSettings))).Methods("PUT")
 
 	// Currency (public)
 	api.HandleFunc("/currency/rates", handlers.GetCurrencyRates).Methods("GET")
 
 	// Download Links
 	api.HandleFunc("/download-links", handlers.GetDownloadLinks).Methods("GET")
-	api.HandleFunc("/download-links", handlers.CreateDownloadLink).Methods("POST")
-	api.HandleFunc("/download-links/{id}", handlers.UpdateDownloadLink).Methods("PUT")
-	api.HandleFunc("/download-links/{id}", handlers.DeleteDownloadLink).Methods("DELETE")
+	api.Handle("/download-links", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateDownloadLink))).Methods("POST")
+	api.Handle("/download-links/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateDownloadLink))).Methods("PUT")
+	api.Handle("/download-links/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteDownloadLink))).Methods("DELETE")
 
-	// RCON (protected - admin only)
-	api.HandleFunc("/rcon/execute", handlers.ExecuteRcon).Methods("POST")
+	// RCON (protected)
+	api.Handle("/rcon/execute", authpkg.AuthMiddleware(http.HandlerFunc(handlers.ExecuteRcon))).Methods("POST")
+
+	// Admin (protected)
+	api.Handle("/admin/clear-clans-players", authpkg.AuthMiddleware(http.HandlerFunc(handlers.ClearClansAndPlayers))).Methods("DELETE")
 }

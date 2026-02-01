@@ -6,6 +6,7 @@ const resources = {
     translation: {
       nav: {
         home: 'Home',
+        news: 'News',
         howToStart: 'How to Start',
         serverInfo: 'Server Info',
         rules: 'Rules',
@@ -53,6 +54,17 @@ const resources = {
         companyInfo: 'Company Information',
         lastUpdated: 'Last updated'
       },
+      faq: {
+        title: 'FAQ',
+        q1: 'How do I download and play?',
+        a1: 'Download the client from the link above, verify on VirusTotal, then install and connect to our server.',
+        q2: 'Is it free to play?',
+        a2: 'Yes, the server is free. Optional VIP packages are available in the shop.',
+        q3: 'How does the shop work?',
+        a3: 'Digital items (VIP, resources) are delivered instantly in-game via RCON after payment.',
+        q4: 'Where can I see server rules?',
+        a4: 'Check the Rules page. Violations may result in a ban.',
+      },
       footer: {
         rights: 'All rights reserved.',
         paymentMethods: 'Payment Methods',
@@ -65,6 +77,7 @@ const resources = {
     translation: {
       nav: {
         home: 'Главная',
+        news: 'Новости',
         howToStart: 'Как начать',
         serverInfo: 'Инфо о сервере',
         rules: 'Правила',
@@ -111,6 +124,17 @@ const resources = {
         privacy: 'Политика конфиденциальности',
         companyInfo: 'Информация о компании',
         lastUpdated: 'Последнее обновление'
+      },
+      faq: {
+        title: 'Частые вопросы',
+        q1: 'Как скачать и начать играть?',
+        a1: 'Скачайте клиент по ссылке выше, проверьте на VirusTotal, установите и подключайтесь к серверу.',
+        q2: 'Игра бесплатная?',
+        a2: 'Да, сервер бесплатный. Опционально доступны VIP-пакеты в магазине.',
+        q3: 'Как работает магазин?',
+        a3: 'Цифровые товары (VIP, ресурсы) доставляются мгновенно в игру через RCON после оплаты.',
+        q4: 'Где посмотреть правила сервера?',
+        a4: 'На странице Правила. Нарушения могут привести к бану.',
       },
       footer: {
         rights: 'Все права защищены.',
