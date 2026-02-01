@@ -19,6 +19,7 @@ import AdminPlugins from '../components/admin/AdminPlugins';
 import AdminRules from '../components/admin/AdminRules';
 import AdminPayments from '../components/admin/AdminPayments';
 import AdminLegal from '../components/admin/AdminLegal';
+import AdminNews from '../components/admin/AdminNews';
 
 const Admin: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -59,6 +60,7 @@ const Admin: React.FC = () => {
     { path: 'shop', label: 'Shop', icon: ShoppingCart },
     { path: 'downloads', label: 'Download Links', icon: Download },
     { path: 'features', label: 'Features', icon: Zap },
+    { path: 'news', label: 'News', icon: FileText },
     { path: 'how-to-start', label: 'How To Start', icon: List },
     { path: 'server-details', label: 'Server Details', icon: FileText },
     { path: 'plugins', label: 'Plugins', icon: Plug },
@@ -152,6 +154,7 @@ const Admin: React.FC = () => {
           <Route path="shop" element={<AdminShop onMessage={showMessage} />} />
           <Route path="downloads" element={<AdminDownloadLinks onMessage={showMessage} />} />
           <Route path="features" element={<AdminFeatures onMessage={showMessage} />} />
+          <Route path="news" element={<AdminNews onMessage={showMessage} />} />
           <Route path="how-to-start" element={<AdminHowToStart onMessage={showMessage} />} />
           <Route path="server-details" element={<AdminServerDetails onMessage={showMessage} />} />
           <Route path="plugins" element={<AdminPlugins onMessage={showMessage} />} />

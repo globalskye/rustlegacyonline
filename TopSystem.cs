@@ -86,6 +86,18 @@ namespace Oxide.Plugins
             Config.WriteObject(new SyncConfig(), true);
         }
 
+        // Rust Legacy Mono - only HTTP works (no HTTPS/TLS)
+        string ToHttpUrl(string u)
+        {
+            if (string.IsNullOrEmpty(u)) return u;
+            u = u.TrimEnd('/');
+            if (u.StartsWith("https://", System.StringComparison.OrdinalIgnoreCase))
+                u = "http://" + u.Substring(8);
+            else if (!u.StartsWith("http://", System.StringComparison.OrdinalIgnoreCase))
+                u = "http://" + u;
+            return u;
+        }
+
         void LoadSyncConfig()
         {
             try
@@ -182,9 +194,9 @@ namespace Oxide.Plugins
                     clans.Add(new
                     {
                         id = idx++,
-                        hexId = c.HexID?.ToString() ?? "",
+                        hexId = c.ID.ToString() ?? "",
                         name = c.Name ?? "",
-                        abbrev = c.Abbrev ?? "",
+                        abbrev = c.Abbr ?? "",
                         leaderSteamId = c.LeaderID.ToString(),
                         level = c.Level != null ? c.Level.Id : 0,
                         experience = c.Experience,
@@ -209,22 +221,21 @@ namespace Oxide.Plugins
             };
 
             string json = JsonConvert.SerializeObject(payload);
-            string url = syncConfig.SyncEndpointUrl.TrimEnd('/');
-            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
-                url = "http://" + url;
+            string url = ToHttpUrl(syncConfig.SyncEndpointUrl);
 
-            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var headers = new Dictionary<string, string>();
+            headers.Add("Content-Type", "application/json");
 
             webrequest.EnqueuePost(url, json, (code, response) =>
             {
                 if (code == 200)
-                    Puts($"[TopSystem] Synced {players.Count} players, {clans.Count} clans to server");
+                    Puts("[TopSystem] Synced " + players.Count + " players, " + clans.Count + " clans to server");
                 else
-                    Puts($"[TopSystem] Sync failed: {code} - {response}");
+                    Puts("[TopSystem] Sync failed: " + code + " - " + response);
             }, this, headers);
 
-            // Report current online: steamId + nickname as JSON
-            if (!string.IsNullOrEmpty(syncConfig?.ReportOnlineUrl))
+            // Report current online: steamId + nickname (HTTP only, like RaidReport)
+            if (!string.IsNullOrEmpty(syncConfig.ReportOnlineUrl))
             {
                 string st = (syncConfig.ServerType ?? "classic").ToLower();
                 if (st != "classic" && st != "deathmatch") st = "classic";
@@ -234,15 +245,18 @@ namespace Oxide.Plugins
                     if (Users.HasFlag(u.userID, UserFlags.invis)) continue;
                     onlineList.Add(new OnlinePlayer { steamId = u.userID.ToString(), username = u.displayName ?? "Unknown" });
                 }
-                var payload = new Dictionary<string, object>();
-                payload[st] = new { currentPlayers = onlineList.Count, players = onlineList };
-                string reportJson = JsonConvert.SerializeObject(payload);
-                string reportUrl = syncConfig.ReportOnlineUrl.TrimEnd('/');
-                if (!reportUrl.StartsWith("http")) reportUrl = "http://" + reportUrl;
+                var reportPayload = new Dictionary<string, object>();
+                reportPayload[st] = new { currentPlayers = onlineList.Count, players = onlineList };
+                string reportJson = JsonConvert.SerializeObject(reportPayload);
+                string reportUrl = ToHttpUrl(syncConfig.ReportOnlineUrl);
+
+                var reportHeaders = new Dictionary<string, string>();
+                reportHeaders.Add("Content-Type", "application/json");
+
                 webrequest.EnqueuePost(reportUrl, reportJson, (c, res) =>
                 {
-                    if (c == 200) Puts($"[TopSystem] Reported online: " + onlineList.Count + " players to " + st);
-                }, this, headers);
+                    if (c == 200) Puts("[TopSystem] Reported online: " + onlineList.Count + " players to " + st);
+                }, this, reportHeaders);
             }
         }
         #endregion

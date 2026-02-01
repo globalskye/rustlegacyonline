@@ -86,6 +86,9 @@ func Setup(r *mux.Router) {
 	api.HandleFunc("/players", handlers.GetPlayers).Methods("GET")
 	api.HandleFunc("/players/{steamid}", handlers.GetPlayer).Methods("GET")
 
+	// Stats sync (receive from TopSystem plugin)
+	api.HandleFunc("/stats/sync", handlers.ReceiveStatsSync).Methods("POST")
+
 	// Import (sync from game server files)
 	api.HandleFunc("/import/clans", handlers.ImportClans).Methods("POST")
 	api.HandleFunc("/import/players", handlers.ImportPlayers).Methods("POST")

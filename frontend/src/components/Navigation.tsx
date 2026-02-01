@@ -75,9 +75,6 @@ const Navigation: React.FC = () => {
             >
               RU
             </button>
-            <Link to="/admin" className="lang-btn" style={{ textDecoration: 'none', textAlign: 'center' }}>
-              Admin
-            </Link>
             
             <button 
               className="mobile-menu-btn"

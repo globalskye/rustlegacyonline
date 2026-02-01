@@ -57,7 +57,7 @@ namespace Oxide.Plugins
 
             public Configuration()
             {
-                NotificationServiceURL = "http://62.122.214.201:8000";
+                NotificationServiceURL = "http://62.122.214.201";
                 ServerIdentifier = "DarkRust";
                 PrintLocation = true;
                 TestMode = false;
