@@ -133,6 +133,8 @@ func CreateShopItem(w http.ResponseWriter, r *http.Request) {
 	if len(input.Features) > 0 {
 		featuresJSON, _ := json.Marshal(input.Features)
 		input.ShopItem.Features = string(featuresJSON)
+	} else {
+		input.ShopItem.Features = "[]"
 	}
 
 	if err := database.DB.Create(&input.ShopItem).Error; err != nil {
@@ -168,6 +170,8 @@ func UpdateShopItem(w http.ResponseWriter, r *http.Request) {
 	if len(input.Features) > 0 {
 		featuresJSON, _ := json.Marshal(input.Features)
 		input.ShopItem.Features = string(featuresJSON)
+	} else {
+		input.ShopItem.Features = "[]"
 	}
 
 	item = input.ShopItem

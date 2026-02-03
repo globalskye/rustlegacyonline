@@ -10,6 +10,7 @@ export interface ServerInfo {
   type?: 'classic' | 'deathmatch';
   ip?: string;
   port?: number;
+  queryPort?: number;
 }
 
 export interface DownloadLink {

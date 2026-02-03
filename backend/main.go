@@ -9,6 +9,7 @@ import (
 	"rust-legacy-site/database"
 	"rust-legacy-site/routes"
 	"rust-legacy-site/pkg/statssync"
+	"rust-legacy-site/pkg/onlinehistory"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -55,6 +56,15 @@ func main() {
 		ticker := time.NewTicker(2 * time.Minute)
 		for range ticker.C {
 			statssync.Run()
+		}
+	}()
+
+	// Online history collector every 5 minutes (fallback when plugin doesn't report)
+	go func() {
+		onlinehistory.Collect()
+		ticker := time.NewTicker(5 * time.Minute)
+		for range ticker.C {
+			onlinehistory.Collect()
 		}
 	}()
 

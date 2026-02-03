@@ -13,7 +13,8 @@ type ServerInfo struct {
 	VirusTotalURL string    `json:"virusTotalUrl"`
 	Type          string    `json:"type"`
 	IP            string    `json:"ip"`
-	Port          int       `json:"port"`
+	Port          int       `json:"port"`       // game port (for connect)
+	QueryPort     int       `json:"queryPort"`  // A2S_INFO query port (often game port + 1)
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
 }
@@ -288,6 +289,15 @@ type CompanyInfo struct {
 	DeliveryInfo  string    `json:"deliveryInfo" gorm:"type:text"`  // информация о доставке
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
+}
+
+// OnlineHistory - история онлайна для графика
+type OnlineHistory struct {
+	ID         uint      `gorm:"primaryKey" json:"id"`
+	ServerID   uint      `json:"serverId"`
+	ServerType string    `json:"serverType"`
+	Players    int       `json:"players"`
+	RecordedAt time.Time `json:"recordedAt"`
 }
 
 type ServerStatus struct {

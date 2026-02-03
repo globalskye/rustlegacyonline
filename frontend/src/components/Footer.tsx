@@ -85,18 +85,23 @@ const Footer: React.FC = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'all 0.3s ease',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    overflow: 'hidden'
                   }}
                 >
-                  <img 
-                    src={method.imageUrl} 
-                    alt={method.name}
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '100%',
-                      objectFit: 'contain'
-                    }}
-                  />
+                  {method.imageUrl ? (
+                    <img 
+                      src={method.imageUrl.startsWith('/') ? method.imageUrl : method.imageUrl} 
+                      alt={method.name}
+                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="60" height="30"><rect fill="%23374151" width="60" height="30" rx="4"/><text x="30" y="20" font-size="10" fill="white" text-anchor="middle">${method.name}</text></svg>`);
+                      }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textAlign: 'center' }}>{method.name}</span>
+                  )}
                 </motion.div>
               ))}
             </div>

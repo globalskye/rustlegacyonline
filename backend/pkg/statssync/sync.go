@@ -94,7 +94,7 @@ func Run() {
 
 	// Query live server status (HTTP to IP - Rust Legacy TLS 1.0)
 	var statusPayload *ServerStatusPayload
-	info := gameserver.Query(server.IP, server.Port)
+	info := gameserver.Query(server.IP, server.Port, server.QueryPort)
 	statusPayload = &ServerStatusPayload{
 		IsOnline:       info.Status == "Online",
 		CurrentPlayers: info.Players,

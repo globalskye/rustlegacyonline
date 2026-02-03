@@ -83,6 +83,7 @@ func Migrate() error {
 		&models.Theme{},
 		&models.FontSettings{},
 		&models.CompanyInfo{},
+		&models.OnlineHistory{},
 	)
 
 	if err != nil {
@@ -111,6 +112,7 @@ func Seed() error {
 		Type:          "classic",
 		IP:            "185.202.223.101",
 		Port:          28015,
+		QueryPort:     28016,
 		DownloadURL:   "https://example.com/download/rust-legacy-client.zip",
 		VirusTotalURL: "https://www.virustotal.com/gui/file/YOUR_FILE_HASH",
 	}
@@ -124,7 +126,8 @@ func Seed() error {
 		GameVersion:   "Legacy",
 		Type:          "deathmatch",
 		IP:            "185.202.223.102",
-		Port:          28016,
+		Port:          28017,
+		QueryPort:     28018,
 		DownloadURL:   "https://example.com/download/rust-legacy-client.zip",
 		VirusTotalURL: "https://www.virustotal.com/gui/file/YOUR_FILE_HASH",
 	}
@@ -236,9 +239,10 @@ func Seed() error {
 	// PAYMENT METHODS
 	// ========================================
 	paymentMethods := []models.PaymentMethod{
-		{Name: "Visa", ImageURL: "https://via.placeholder.com/80x50/ffffff/0ea5e9?text=VISA", Order: 1, Enabled: true},
-		{Name: "MasterCard", ImageURL: "https://via.placeholder.com/80x50/ffffff/0ea5e9?text=MC", Order: 2, Enabled: true},
-		{Name: "PayPal", ImageURL: "https://via.placeholder.com/80x50/ffffff/0ea5e9?text=PayPal", Order: 3, Enabled: true},
+		{Name: "Visa", ImageURL: "/payments/visa.svg", Order: 1, Enabled: true},
+		{Name: "MasterCard", ImageURL: "/payments/mastercard.svg", Order: 2, Enabled: true},
+		{Name: "PayPal", ImageURL: "/payments/paypal.svg", Order: 3, Enabled: true},
+		{Name: "MIR", ImageURL: "/payments/mir.svg", Order: 4, Enabled: true},
 	}
 	for _, method := range paymentMethods {
 		if err := DB.Create(&method).Error; err != nil {
@@ -308,12 +312,13 @@ func Seed() error {
 	// ========================================
 	// SHOP ITEMS
 	// ========================================
+	// Category IDs: 1=VIP en, 2=VIP ru, 3=Resources en, 4=Resources ru
 	shopItems := []models.ShopItem{
 		{CategoryID: 1, Language: "en", Name: "VIP Bronze", Description: "Basic VIP package with priority queue and custom chat color", Price: 9.99, Currency: "USD", ImageURL: "https://via.placeholder.com/400x300/0ea5e9/ffffff?text=VIP+Bronze", Enabled: true, Order: 1, Features: "[\"Priority queue\",\"Custom chat color\",\"1 home location\"]", Discount: 0},
 		{CategoryID: 1, Language: "en", Name: "VIP Silver", Description: "Enhanced VIP package with 5 home locations and kit bonuses", Price: 19.99, Currency: "USD", ImageURL: "https://via.placeholder.com/400x300/06b6d4/ffffff?text=VIP+Silver", Enabled: true, Order: 2, Features: "[\"All Bronze benefits\",\"5 home locations\",\"Daily kit\",\"Teleport cooldown -50%\"]", Discount: 15},
 		{CategoryID: 1, Language: "en", Name: "VIP Gold", Description: "Ultimate VIP - all perks plus clan boost and exclusive cosmetics", Price: 49.99, Currency: "USD", ImageURL: "https://via.placeholder.com/400x300/fbbf24/000000?text=VIP+Gold", Enabled: true, Order: 3, Features: "[\"All Silver benefits\",\"Unlimited homes\",\"Clan XP boost +25%\",\"Exclusive skin pack\",\"Support priority\"]", Discount: 25},
-		{CategoryID: 2, Language: "en", Name: "Starter Resource Pack", Description: "Wood x5000, Stone x3000, Metal x1000", Price: 4.99, Currency: "USD", ImageURL: "https://via.placeholder.com/400x300/22c55e/ffffff?text=Resources", Enabled: true, Order: 1, Features: "[\"Instant delivery\",\"No cooldown\"]", Discount: 0},
-		{CategoryID: 2, Language: "en", Name: "Mega Resource Pack", Description: "Wood x50000, Stone x30000, Metal x10000, Sulfur x5000", Price: 19.99, Currency: "USD", ImageURL: "https://via.placeholder.com/400x300/14b8a6/ffffff?text=Mega+Pack", Enabled: true, Order: 2, Features: "[\"Instant delivery\",\"Best value\",\"-20% vs individual\"]", Discount: 20},
+		{CategoryID: 3, Language: "en", Name: "Starter Resource Pack", Description: "Wood x5000, Stone x3000, Metal x1000", Price: 4.99, Currency: "USD", ImageURL: "https://via.placeholder.com/400x300/22c55e/ffffff?text=Resources", Enabled: true, Order: 1, Features: "[\"Instant delivery\",\"No cooldown\"]", Discount: 0},
+		{CategoryID: 3, Language: "en", Name: "Mega Resource Pack", Description: "Wood x50000, Stone x30000, Metal x10000, Sulfur x5000", Price: 19.99, Currency: "USD", ImageURL: "https://via.placeholder.com/400x300/14b8a6/ffffff?text=Mega+Pack", Enabled: true, Order: 2, Features: "[\"Instant delivery\",\"Best value\",\"-20% vs individual\"]", Discount: 20},
 	}
 	for _, item := range shopItems {
 		if err := DB.Create(&item).Error; err != nil {

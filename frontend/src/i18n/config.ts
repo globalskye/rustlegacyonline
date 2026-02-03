@@ -21,7 +21,14 @@ const resources = {
       },
       stats: {
         maxPlayers: 'Max Players',
-        version: 'Version'
+        version: 'Version',
+        nextFullWipe: 'Next full wipe',
+        nextPartialWipe: 'Next partial wipe',
+        onlineChart: 'Online chart',
+        showChart: 'Show chart',
+        hideChart: 'Hide chart',
+        last24h: 'Last 24h',
+        last7d: 'Last 7 days'
       },
       news: {
         title: 'Latest News'
@@ -92,7 +99,14 @@ const resources = {
       },
       stats: {
         maxPlayers: 'Макс. игроков',
-        version: 'Версия'
+        version: 'Версия',
+        nextFullWipe: 'До полного вайпа',
+        nextPartialWipe: 'До частичного вайпа',
+        onlineChart: 'График онлайна',
+        showChart: 'Показать график',
+        hideChart: 'Скрыть график',
+        last24h: 'За 24ч',
+        last7d: 'За 7 дней'
       },
       news: {
         title: 'Последние новости'

@@ -28,12 +28,16 @@ func Setup(r *mux.Router) {
 	api.HandleFunc("/server-info", handlers.GetServerInfo).Methods("GET")
 	api.Handle("/server-info", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateServerInfo))).Methods("PUT")
 	api.HandleFunc("/servers", handlers.GetAllServers).Methods("GET")
+	api.Handle("/servers", authpkg.AuthMiddleware(http.HandlerFunc(handlers.CreateServer))).Methods("POST")
+	api.Handle("/servers/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateServer))).Methods("PUT")
+	api.Handle("/servers/{id}", authpkg.AuthMiddleware(http.HandlerFunc(handlers.DeleteServer))).Methods("DELETE")
 
 	// Server Status (live query). ?type=classic or ?type=deathmatch for specific server
 	api.HandleFunc("/server-status", handlers.GetServerStatus).Methods("GET")
 	api.HandleFunc("/server-status/classic", handlers.GetServerStatusClassic).Methods("GET")
 	api.HandleFunc("/server-status/deathmatch", handlers.GetServerStatusDeathmatch).Methods("GET")
 	api.HandleFunc("/server-status/report", handlers.ReportServerOnline).Methods("POST")
+	api.HandleFunc("/server-status/history", handlers.GetOnlineHistory).Methods("GET")
 
 	// Features
 	api.HandleFunc("/features", handlers.GetFeatures).Methods("GET")

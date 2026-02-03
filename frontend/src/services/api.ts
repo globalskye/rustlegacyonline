@@ -394,6 +394,34 @@ class ApiService {
     });
   }
 
+  async getServerStatusHistory(hours = 24, serverType?: string): Promise<{ serverId: number; serverType: string; players: number; recordedAt: string }[]> {
+    let url = `/server-status/history?hours=${hours}`;
+    if (serverType) url += `&type=${serverType}`;
+    return this.request(url);
+  }
+
+  async getAllServers(): Promise<Types.ServerInfo[]> {
+    return this.request<Types.ServerInfo[]>('/servers');
+  }
+
+  async createServer(data: Omit<Types.ServerInfo, 'id' | 'createdAt' | 'updatedAt'>): Promise<Types.ServerInfo> {
+    return this.request<Types.ServerInfo>('/servers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateServer(id: number, data: Partial<Types.ServerInfo>): Promise<Types.ServerInfo> {
+    return this.request<Types.ServerInfo>(`/servers/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteServer(id: number): Promise<void> {
+    return this.request<void>(`/servers/${id}`, { method: 'DELETE' });
+  }
+
   async getServerStatus(serverType?: 'classic' | 'deathmatch'): Promise<Types.ServerStatus[]> {
     const query = serverType ? `?type=${serverType}` : '';
     return this.request<Types.ServerStatus[]>(`/server-status${query}`);
@@ -405,10 +433,6 @@ class ApiService {
 
   async getServerStatusDeathmatch(): Promise<Types.ServerStatus[]> {
     return this.request<Types.ServerStatus[]>('/server-status/deathmatch');
-  }
-
-  async getAllServers(): Promise<Types.ServerInfo[]> {
-    return this.request<Types.ServerInfo[]>('/servers');
   }
 
   async getCurrencyRates(): Promise<Record<string, number>> {

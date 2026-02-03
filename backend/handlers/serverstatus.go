@@ -37,7 +37,7 @@ func getServerStatusByType(w http.ResponseWriter, serverType string) {
 	var statuses []models.ServerStatus
 	for _, server := range servers {
 		// Prefer reported online from plugin (PlayerClient.All), fallback to A2S_INFO
-		info := gameserver.Query(server.IP, server.Port)
+		info := gameserver.Query(server.IP, server.Port, server.QueryPort)
 		currentPlayers := info.Players
 		if reported, ok := getReportedOnline(server.Type); ok {
 			currentPlayers = reported
@@ -57,13 +57,17 @@ func getServerStatusByType(w http.ResponseWriter, serverType string) {
 			database.DB.Where("is_online = ?", true).Limit(10).Find(&players)
 		}
 
+		maxPlayers := info.MaxPlayers
+		if maxPlayers <= 0 {
+			maxPlayers = server.MaxPlayers
+		}
 		status := models.ServerStatus{
 			ServerID:       server.ID,
 			ServerName:     server.Name,
 			ServerType:     server.Type,
 			IsOnline:       info.Status == "Online" || currentPlayers > 0,
 			CurrentPlayers: currentPlayers,
-			MaxPlayers:     info.MaxPlayers,
+			MaxPlayers:     maxPlayers,
 			Map:            info.Map,
 			Uptime:         0,
 			IP:             server.IP,

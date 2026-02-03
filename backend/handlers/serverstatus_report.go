@@ -5,7 +5,34 @@ import (
 	"net/http"
 	"sync"
 	"time"
+
+	"rust-legacy-site/database"
+	"rust-legacy-site/models"
 )
+
+var lastHistorySave = make(map[string]time.Time)
+var lastHistoryMu sync.Mutex
+
+func saveOnlineHistory(serverType string, players int, at time.Time) {
+	lastHistoryMu.Lock()
+	if last, ok := lastHistorySave[serverType]; ok && at.Sub(last) < 2*time.Minute {
+		lastHistoryMu.Unlock()
+		return
+	}
+	lastHistorySave[serverType] = at
+	lastHistoryMu.Unlock()
+
+	var srv models.ServerInfo
+	if err := database.DB.Where("type = ?", serverType).First(&srv).Error; err != nil {
+		return
+	}
+	database.DB.Create(&models.OnlineHistory{
+		ServerID:   srv.ID,
+		ServerType: serverType,
+		Players:    players,
+		RecordedAt: at,
+	})
+}
 
 // Reported online per server type (from TopSystem/plugin)
 var (
@@ -51,10 +78,12 @@ func ReportServerOnline(w http.ResponseWriter, r *http.Request) {
 	if p.Classic != nil {
 		p.Classic.ReportedAt = now
 		reportedOnline["classic"] = *p.Classic
+		saveOnlineHistory("classic", p.Classic.CurrentPlayers, now)
 	}
 	if p.Deathmatch != nil {
 		p.Deathmatch.ReportedAt = now
 		reportedOnline["deathmatch"] = *p.Deathmatch
+		saveOnlineHistory("deathmatch", p.Deathmatch.CurrentPlayers, now)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"ok": "true"})

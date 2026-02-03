@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Download, Users, Zap, Shield, Info, ChevronRight, Play, CheckCircle, AlertCircle, Server, Activity, Clock } from 'lucide-react';
+import { Download, Users, Zap, Shield, Info, ChevronRight, Play, CheckCircle, AlertCircle, Server, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
 import * as Types from '../types';
+import { OnlineChart } from '../components/OnlineChart';
+import { WipeCountdown } from '../components/WipeCountdown';
 
 const Home: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -261,10 +263,11 @@ const Home: React.FC = () => {
 
                 {server.isOnline && (
                   <>
-                    {/* Server Stats */}
+                    {/* Server Stats + Wipe Schedule */}
+                    <WipeCountdown />
                     <div style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(3, 1fr)',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
                       gap: '1rem',
                       marginBottom: '1.5rem'
                     }}>
@@ -284,40 +287,8 @@ const Home: React.FC = () => {
                         }}>
                           {server.currentPlayers}/{server.maxPlayers}
                         </div>
-                        <div style={{
-                          fontSize: '0.8rem',
-                          color: 'var(--text-muted)',
-                          textTransform: 'uppercase'
-                        }}>
-                          Players
-                        </div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Players</div>
                       </div>
-
-                      <div style={{
-                        background: 'rgba(15, 23, 42, 0.6)',
-                        padding: '1rem',
-                        borderRadius: '8px',
-                        border: '1px solid var(--border-color)',
-                        textAlign: 'center'
-                      }}>
-                        <Activity size={24} color="var(--primary-blue)" style={{ marginBottom: '0.5rem' }} />
-                        <div style={{
-                          fontFamily: 'Orbitron, sans-serif',
-                          fontSize: '1.8rem',
-                          color: 'var(--text-primary)',
-                          marginBottom: '0.25rem'
-                        }}>
-                          {server.map}
-                        </div>
-                        <div style={{
-                          fontSize: '0.8rem',
-                          color: 'var(--text-muted)',
-                          textTransform: 'uppercase'
-                        }}>
-                          Map
-                        </div>
-                      </div>
-
                       <div style={{
                         background: 'rgba(15, 23, 42, 0.6)',
                         padding: '1rem',
@@ -334,34 +305,12 @@ const Home: React.FC = () => {
                         }}>
                           {formatUptime(server.uptime)}
                         </div>
-                        <div style={{
-                          fontSize: '0.8rem',
-                          color: 'var(--text-muted)',
-                          textTransform: 'uppercase'
-                        }}>
-                          Uptime
-                        </div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Uptime</div>
                       </div>
                     </div>
 
-                    {/* Connection Info */}
-                    <div style={{
-                      background: 'rgba(15, 23, 42, 0.6)',
-                      padding: '1rem',
-                      borderRadius: '8px',
-                      border: '1px solid var(--border-color)',
-                      marginBottom: '1.5rem'
-                    }}>
-                      <div style={{
-                        fontFamily: 'monospace',
-                        color: 'var(--primary-blue)',
-                        fontSize: '1.1rem',
-                        textAlign: 'center',
-                        letterSpacing: '1px'
-                      }}>
-                        {server.ip}:{server.port}
-                      </div>
-                    </div>
+                    {/* Online Chart */}
+                    <OnlineChart serverType={server.serverType} serverName={server.serverName} />
 
                     {/* Active Players */}
                     {server.activePlayers && server.activePlayers.length > 0 && (

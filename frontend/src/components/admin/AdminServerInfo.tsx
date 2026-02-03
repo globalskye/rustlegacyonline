@@ -32,7 +32,8 @@ export default function AdminServerInfo({ onMessage }: { onMessage: (t: string, 
         <label>VirusTotal URL <input type="url" value={data.virusTotalUrl || ''} onChange={e => setData({ ...data, virusTotalUrl: e.target.value })} /></label>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <label>IP <input value={data.ip || ''} onChange={e => setData({ ...data, ip: e.target.value })} /></label>
-          <label>Port <input type="number" value={data.port ?? ''} onChange={e => setData({ ...data, port: +e.target.value })} /></label>
+          <label>Game Port <input type="number" value={data.port ?? ''} onChange={e => setData({ ...data, port: +e.target.value })} /></label>
+          <label>Query Port <input type="number" value={data.queryPort ?? ''} onChange={e => setData({ ...data, queryPort: +e.target.value })} placeholder="game port + 1" title="A2S_INFO port" /></label>
         </div>
         <button type="submit" className="btn">Save</button>
       </form>

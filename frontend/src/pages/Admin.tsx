@@ -3,13 +3,14 @@ import { Routes, Route, NavLink, useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion';
 import {
   Settings, Package, ShoppingCart, Download, BarChart3, FileText, CreditCard,
-  Shield, Plug, List, Sun, Moon, Monitor, LogOut, Zap, Building2
+  Shield, Plug, List, Sun, Moon, Monitor, LogOut, Zap, Building2, Server
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 import { apiService } from '../services/api';
 import * as Types from '../types';
 import AdminServerInfo from '../components/admin/AdminServerInfo';
+import AdminServers from '../components/admin/AdminServers';
 import AdminShop from '../components/admin/AdminShop';
 import AdminDownloadLinks from '../components/admin/AdminDownloadLinks';
 import AdminFeatures from '../components/admin/AdminFeatures';
@@ -58,6 +59,7 @@ const Admin: React.FC = () => {
 
   const navSections = [
     { path: 'server', label: 'Server Info', icon: Settings },
+    { path: 'servers', label: 'Servers', icon: Server },
     { path: 'shop', label: 'Shop', icon: ShoppingCart },
     { path: 'downloads', label: 'Download Links', icon: Download },
     { path: 'features', label: 'Features', icon: Zap },
@@ -169,6 +171,7 @@ const Admin: React.FC = () => {
         <Routes>
           <Route index element={<Navigate to="server" replace />} />
           <Route path="server" element={<AdminServerInfo onMessage={showMessage} />} />
+          <Route path="servers" element={<AdminServers onMessage={showMessage} />} />
           <Route path="shop" element={<AdminShop onMessage={showMessage} />} />
           <Route path="downloads" element={<AdminDownloadLinks onMessage={showMessage} />} />
           <Route path="features" element={<AdminFeatures onMessage={showMessage} />} />
