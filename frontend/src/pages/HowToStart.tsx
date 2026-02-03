@@ -53,6 +53,47 @@ const HowToStart: React.FC = () => {
         </div>
         <p className="section-subtitle">{t('howToStart.subtitle')}</p>
 
+        {/* Download — компактная строка */}
+        {(serverInfo?.downloadLinks?.length || serverInfo?.downloadUrl || serverInfo?.virusTotalUrl) ? (
+          <div className="howto-download-row">
+            {serverInfo?.downloadLinks && serverInfo.downloadLinks.length > 0 ? (
+              serverInfo.downloadLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="howto-download-btn"
+                >
+                  <Download size={16} />
+                  <span>{link.label || t('hero.download')}</span>
+                </a>
+              ))
+            ) : serverInfo?.downloadUrl ? (
+              <a
+                href={serverInfo.downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="howto-download-btn"
+              >
+                <Download size={16} />
+                <span>{t('hero.download')}</span>
+              </a>
+            ) : null}
+            {serverInfo?.virusTotalUrl && (
+              <a
+                href={serverInfo.virusTotalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="howto-download-btn howto-download-btn-secondary"
+              >
+                <Shield size={16} />
+                <span>{t('hero.checkVirus')}</span>
+              </a>
+            )}
+          </div>
+        ) : null}
+
         <div style={{
           display: 'flex',
           flexDirection: 'column',
@@ -65,17 +106,11 @@ const HowToStart: React.FC = () => {
             return (
               <motion.div
                 key={step.id}
-                className="card"
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: step.imageUrl ? '1fr 1fr' : '1fr',
-                  gap: '2rem',
-                  alignItems: 'center'
-                }}
+                className={`card howto-step-card ${step.imageUrl ? 'has-image' : ''}`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
               >
                 <div>
                   <div style={{
@@ -87,7 +122,7 @@ const HowToStart: React.FC = () => {
                     <div style={{
                       width: 50,
                       height: 50,
-                      background: 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))',
+                      background: 'var(--primary-blue)',
                       borderRadius: '50%',
                       display: 'flex',
                       alignItems: 'center',
@@ -97,7 +132,7 @@ const HowToStart: React.FC = () => {
                       <IconComponent size={24} color="#ffffff" />
                     </div>
                     <div style={{
-                      fontFamily: 'Orbitron, sans-serif',
+                      fontFamily: 'Poppins, sans-serif',
                       fontSize: '1.2rem',
                       color: 'var(--text-muted)',
                       textTransform: 'uppercase',
@@ -108,7 +143,7 @@ const HowToStart: React.FC = () => {
                   </div>
 
                   <h3 style={{
-                    fontFamily: 'Orbitron, sans-serif',
+                    fontFamily: 'Poppins, sans-serif',
                     fontSize: '1.8rem',
                     color: 'var(--primary-blue)',
                     marginBottom: '1rem',
@@ -128,7 +163,7 @@ const HowToStart: React.FC = () => {
                 </div>
 
                 {step.imageUrl && (
-                  <div style={{
+                  <div className="howto-step-image" style={{
                     borderRadius: '8px',
                     overflow: 'hidden',
                     border: '1px solid var(--border-color)',
@@ -149,62 +184,6 @@ const HowToStart: React.FC = () => {
             );
           })}
         </div>
-
-        {/* Quick Links - multiple download links + VirusTotal */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          style={{
-            marginTop: '4rem',
-            display: 'flex',
-            gap: '1.5rem',
-            justifyContent: 'center',
-            flexWrap: 'wrap'
-          }}
-        >
-          {serverInfo?.downloadLinks && serverInfo.downloadLinks.length > 0 ? (
-            serverInfo.downloadLinks.map((link) => (
-              <motion.a
-                key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Download className="btn-icon" />
-                {link.label || t('hero.download')}
-              </motion.a>
-            ))
-          ) : serverInfo?.downloadUrl ? (
-            <motion.a
-              href={serverInfo.downloadUrl}
-              className="btn"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Download className="btn-icon" />
-              {t('hero.download')}
-            </motion.a>
-          ) : null}
-
-          {serverInfo?.virusTotalUrl && (
-            <motion.a
-              href={serverInfo.virusTotalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-secondary"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Shield className="btn-icon" />
-              {t('hero.checkVirus')}
-            </motion.a>
-          )}
-        </motion.div>
       </motion.div>
     </div>
   );

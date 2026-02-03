@@ -158,7 +158,7 @@ const Statistics: React.FC = () => {
           }}
         >
           <BarChart3 size={120} color="var(--primary-blue)" style={{ filter: 'drop-shadow(0 0 30px var(--glow-blue))' }} />
-          <h2 style={{ fontFamily: 'Orbitron', fontSize: '1.5rem', color: 'var(--text-primary)', letterSpacing: '1px' }}>
+          <h2 style={{ fontFamily: 'Poppins', fontSize: '1.5rem', color: 'var(--text-primary)', letterSpacing: '1px' }}>
             Loading statistics...
           </h2>
         </motion.div>
@@ -179,12 +179,12 @@ const Statistics: React.FC = () => {
             onClick={() => { setActiveTab('players'); setSelectedClan(null); setSelectedPlayer(null); }}
             style={{
               padding: '0.75rem 1.5rem',
-              background: activeTab === 'players' ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))' : 'transparent',
+              background: activeTab === 'players' ? 'var(--primary-blue)' : 'transparent',
               border: '1px solid var(--border-color)',
               color: activeTab === 'players' ? 'var(--text-primary)' : 'var(--text-secondary)',
               borderRadius: '8px',
               cursor: 'pointer',
-              fontFamily: 'Orbitron',
+              fontFamily: 'Poppins',
               fontWeight: 600,
               display: 'inline-flex',
               alignItems: 'center',
@@ -198,12 +198,12 @@ const Statistics: React.FC = () => {
             onClick={() => { setActiveTab('clans'); setSelectedPlayer(null); setSelectedClan(null); }}
             style={{
               padding: '0.75rem 1.5rem',
-              background: activeTab === 'clans' ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))' : 'transparent',
+              background: activeTab === 'clans' ? 'var(--primary-blue)' : 'transparent',
               border: '1px solid var(--border-color)',
               color: activeTab === 'clans' ? 'var(--text-primary)' : 'var(--text-secondary)',
               borderRadius: '8px',
               cursor: 'pointer',
-              fontFamily: 'Orbitron',
+              fontFamily: 'Poppins',
               fontWeight: 600,
               display: 'inline-flex',
               alignItems: 'center',
@@ -237,7 +237,7 @@ const Statistics: React.FC = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <div style={{
                       width: 64, height: 64,
-                      background: 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))',
+                      background: 'var(--primary-blue)',
                       borderRadius: '12px',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       boxShadow: '0 0 20px var(--glow-blue)'
@@ -245,7 +245,7 @@ const Statistics: React.FC = () => {
                       <User size={32} color="#fff" />
                     </div>
                     <div>
-                      <h2 style={{ fontFamily: 'Orbitron', fontSize: '1.8rem', color: 'var(--text-primary)', margin: 0 }}>
+                      <h2 style={{ fontFamily: 'Poppins', fontSize: '1.8rem', color: 'var(--text-primary)', margin: 0 }}>
                         {selectedPlayer.username}
                       </h2>
                       {(selectedPlayer.rankPosition || selectedPlayer.rank) && (
@@ -253,7 +253,19 @@ const Statistics: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  <button onClick={() => setSelectedPlayer(null)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {(selectedPlayer.clanId || selectedPlayer.clan) && (
+                      <button
+                        onClick={() => goToClan(selectedPlayer.clan?.id ?? selectedPlayer.clanId!)}
+                        className="btn btn-secondary"
+                        style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                      >
+                        <Users size={18} />
+                        {selectedPlayer.clan?.abbrev || selectedPlayer.clan?.name || t('stats.clan')}
+                      </button>
+                    )}
+                    <button onClick={() => setSelectedPlayer(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem' }}>✕</button>
+                  </div>
                 </div>
 
                 <div className="modal-stats-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
@@ -265,7 +277,7 @@ const Statistics: React.FC = () => {
                   ].map(({ icon: Icon, value, label }) => (
                     <div key={label} style={{ textAlign: 'center', padding: '1rem', background: 'var(--bg-darker)', borderRadius: 8, border: '1px solid var(--border-color)' }}>
                       <Icon size={24} color="var(--primary-blue)" style={{ marginBottom: '0.5rem' }} />
-                      <div style={{ fontFamily: 'Orbitron', fontSize: '1.2rem', fontWeight: 700 }}>{value}</div>
+                      <div style={{ fontFamily: 'Poppins', fontSize: '1.2rem', fontWeight: 700 }}>{value}</div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{label}</div>
                     </div>
                   ))}
@@ -321,7 +333,7 @@ const Statistics: React.FC = () => {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                   <div>
-                    <h2 style={{ fontFamily: 'Orbitron', fontSize: '1.8rem', color: 'var(--text-primary)', margin: 0 }}>
+                    <h2 style={{ fontFamily: 'Poppins', fontSize: '1.8rem', color: 'var(--text-primary)', margin: 0 }}>
                       {selectedClan.abbrev || selectedClan.name}
                     </h2>
                     <div style={{ color: 'var(--text-secondary)' }}>{selectedClan.name}</div>
@@ -338,19 +350,19 @@ const Statistics: React.FC = () => {
                   <div className="modal-stats-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
                     {selectedClan.totalKills !== undefined && (
                       <div style={{ textAlign: 'center', padding: '1rem', background: 'var(--bg-darker)', borderRadius: 8 }}>
-                        <div style={{ fontFamily: 'Orbitron', fontSize: '1.2rem' }}>{selectedClan.totalKills}</div>
+                        <div style={{ fontFamily: 'Poppins', fontSize: '1.2rem' }}>{selectedClan.totalKills}</div>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Total Kills</div>
                       </div>
                     )}
                     {selectedClan.totalDeaths !== undefined && (
                       <div style={{ textAlign: 'center', padding: '1rem', background: 'var(--bg-darker)', borderRadius: 8 }}>
-                        <div style={{ fontFamily: 'Orbitron', fontSize: '1.2rem' }}>{selectedClan.totalDeaths}</div>
+                        <div style={{ fontFamily: 'Poppins', fontSize: '1.2rem' }}>{selectedClan.totalDeaths}</div>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Total Deaths</div>
                       </div>
                     )}
                     {selectedClan.totalFarm !== undefined && (
                       <div style={{ textAlign: 'center', padding: '1rem', background: 'var(--bg-darker)', borderRadius: 8 }}>
-                        <div style={{ fontFamily: 'Orbitron', fontSize: '1.2rem' }}>{(selectedClan.totalFarm / 1000).toFixed(0)}k</div>
+                        <div style={{ fontFamily: 'Poppins', fontSize: '1.2rem' }}>{(selectedClan.totalFarm / 1000).toFixed(0)}k</div>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Total Farm</div>
                       </div>
                     )}
@@ -395,7 +407,7 @@ const Statistics: React.FC = () => {
         {/* Players Table */}
         {activeTab === 'players' && (
           <>
-            <h2 style={{ fontFamily: 'Orbitron', fontSize: '1.5rem', color: 'var(--primary-blue)', marginBottom: '1.5rem', textAlign: 'center' }}>
+            <h2 style={{ fontFamily: 'Poppins', fontSize: '1.5rem', color: 'var(--primary-blue)', marginBottom: '1.5rem', textAlign: 'center' }}>
               Players ({sortedPlayers.length})
             </h2>
             <div className="stats-table-wrapper">
@@ -456,7 +468,7 @@ const Statistics: React.FC = () => {
         {/* Clans List */}
         {activeTab === 'clans' && (
           <>
-        <h2 style={{ fontFamily: 'Orbitron', fontSize: '1.5rem', color: 'var(--primary-blue)', marginBottom: '1.5rem', textAlign: 'center' }}>
+        <h2 style={{ fontFamily: 'Poppins', fontSize: '1.5rem', color: 'var(--primary-blue)', marginBottom: '1.5rem', textAlign: 'center' }}>
           Top Clans
         </h2>
         <div style={{ display: 'grid', gap: '1rem' }}>
@@ -476,12 +488,12 @@ const Statistics: React.FC = () => {
                 background: index < 3 ? ['#fbbf24', '#94a3af', '#fb923c'][index] : 'var(--primary-blue)',
                 borderRadius: '12px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: 'Orbitron', fontSize: '1.5rem', fontWeight: 900, color: '#fff'
+                fontFamily: 'Poppins', fontSize: '1.5rem', fontWeight: 900, color: '#fff'
               }}>
                 {index + 1}
               </div>
               <div>
-                <div style={{ fontFamily: 'Orbitron', fontSize: '1.2rem', color: 'var(--text-primary)' }}>
+                <div style={{ fontFamily: 'Poppins', fontSize: '1.2rem', color: 'var(--text-primary)' }}>
                   {clan.abbrev || clan.name} {clan.name}
                 </div>
                 <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
@@ -490,7 +502,7 @@ const Statistics: React.FC = () => {
                   <span>{clan.memberCount} members</span>
                 </div>
               </div>
-              <div style={{ fontFamily: 'Orbitron', fontSize: '1.2rem', color: 'var(--primary-blue)', fontWeight: 700 }}>
+              <div style={{ fontFamily: 'Poppins', fontSize: '1.2rem', color: 'var(--primary-blue)', fontWeight: 700 }}>
                 #{clan.rank || index + 1}
               </div>
             </motion.div>

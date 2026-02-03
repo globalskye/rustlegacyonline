@@ -46,7 +46,7 @@ export const OnlineChart: React.FC<{ serverType?: string; serverName?: string }>
   }, [expanded, hours, serverType, i18n.language]);
 
   return (
-    <div className="card" style={{ marginTop: '1rem' }}>
+    <div className="card monitoring-chart-card" style={{ marginTop: '1rem', overflow: 'hidden' }}>
       <button
         onClick={() => setExpanded(!expanded)}
         style={{
@@ -59,7 +59,7 @@ export const OnlineChart: React.FC<{ serverType?: string; serverName?: string }>
           color: 'var(--text-primary)',
           cursor: 'pointer',
           padding: '0.5rem 0',
-          fontFamily: 'Orbitron',
+          fontFamily: 'Poppins',
           fontSize: '1rem',
         }}
       >

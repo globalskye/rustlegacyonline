@@ -23,7 +23,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadServerStatuses, 30000);
+    const interval = setInterval(loadServerStatuses, 10000); // обновление раз в 10 сек
     return () => clearInterval(interval);
   }, [i18n.language]);
 
@@ -89,7 +89,7 @@ const Home: React.FC = () => {
       <div style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} style={{ textAlign: 'center' }}>
           <Server size={80} color="var(--primary-blue)" style={{ marginBottom: '1rem', filter: 'drop-shadow(0 0 20px var(--glow-blue))' }} />
-          <p style={{ color: 'var(--text-secondary)', fontFamily: 'Orbitron' }}>Loading...</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Loading...</p>
         </motion.div>
       </div>
     );
@@ -117,41 +117,15 @@ const Home: React.FC = () => {
       />
       
       {/* Server Monitoring Section */}
-      <section style={{
-        position: 'relative',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '6rem 2rem 2rem',
-        overflow: 'hidden'
-      }}>
+      <section className="monitoring-section">
         <motion.div 
-          style={{
-            maxWidth: '1400px',
-            width: '100%',
-            position: 'relative',
-            zIndex: 10
-          }}
+          className="monitoring-inner"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <motion.h1 
-            style={{
-              fontFamily: 'Orbitron, sans-serif',
-              fontSize: 'clamp(2rem, 6vw, 3.5rem)',
-              fontWeight: 900,
-              background: 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              textTransform: 'uppercase',
-              letterSpacing: '6px',
-              marginBottom: '3rem',
-              textAlign: 'center',
-              textShadow: '0 0 60px var(--glow-blue)'
-            }}
+            className="monitoring-title"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -160,104 +134,31 @@ const Home: React.FC = () => {
           </motion.h1>
 
           {/* Server Status Cards */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))',
-            gap: '2rem',
-            marginBottom: '3rem'
-          }}>
+          <div className="monitoring-cards">
             {serverStatuses.map((server, index) => (
               <motion.div
                 key={server.serverId}
-                className="card"
+                className={`card monitoring-card ${server.isOnline ? 'monitoring-online' : 'monitoring-offline'}`}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
-                style={{
-                  background: server.isOnline 
-                    ? 'linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(6, 182, 212, 0.05))'
-                    : 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05))',
-                  border: server.isOnline 
-                    ? '2px solid var(--border-bright)'
-                    : '2px solid rgba(239, 68, 68, 0.5)'
-                }}
               >
                 {/* Server Header */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '1.5rem'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{
-                      width: 50,
-                      height: 50,
-                      background: server.isOnline 
-                        ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))'
-                        : 'linear-gradient(135deg, #ef4444, #dc2626)',
-                      borderRadius: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      boxShadow: server.isOnline 
-                        ? '0 0 20px var(--glow-blue)'
-                        : '0 0 20px rgba(239, 68, 68, 0.5)'
-                    }}>
+                <div className="monitoring-header">
+                  <div className="monitoring-header-left">
+                    <div className={`monitoring-icon ${server.isOnline ? 'online' : 'offline'}`}>
                       <Server size={26} color="#ffffff" />
                     </div>
                     <div>
-                      <h2 style={{
-                        fontFamily: 'Orbitron, sans-serif',
-                        fontSize: '1.5rem',
-                        color: 'var(--text-primary)',
-                        marginBottom: '0.25rem',
-                        letterSpacing: '1px'
-                      }}>
-                        {server.serverName}
-                      </h2>
-                      <div style={{
-                        fontSize: '0.9rem',
-                        color: 'var(--text-muted)',
-                        textTransform: 'uppercase',
-                        letterSpacing: '1px'
-                      }}>
+                      <h2 className="monitoring-server-name">{server.serverName}</h2>
+                      <div className="monitoring-server-type">
                         {server.serverType === 'classic' ? 'Classic Mode' : 'Deathmatch'}
                       </div>
                     </div>
                   </div>
-                  
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.5rem 1rem',
-                    background: server.isOnline 
-                      ? 'rgba(34, 197, 94, 0.2)'
-                      : 'rgba(239, 68, 68, 0.2)',
-                    borderRadius: '6px',
-                    border: server.isOnline 
-                      ? '1px solid rgba(34, 197, 94, 0.5)'
-                      : '1px solid rgba(239, 68, 68, 0.5)'
-                  }}>
-                    <div style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: '50%',
-                      background: server.isOnline ? '#22c55e' : '#ef4444',
-                      boxShadow: server.isOnline 
-                        ? '0 0 10px #22c55e'
-                        : '0 0 10px #ef4444'
-                    }} />
-                    <span style={{
-                      color: server.isOnline ? '#22c55e' : '#ef4444',
-                      fontWeight: 600,
-                      textTransform: 'uppercase',
-                      fontSize: '0.85rem',
-                      letterSpacing: '1px'
-                    }}>
-                      {server.isOnline ? 'Online' : 'Offline'}
-                    </span>
+                  <div className={`monitoring-status-badge ${server.isOnline ? 'online' : 'offline'}`}>
+                    <div className="monitoring-status-dot" />
+                    <span>{server.isOnline ? 'Online' : 'Offline'}</span>
                   </div>
                 </div>
 
@@ -265,47 +166,16 @@ const Home: React.FC = () => {
                   <>
                     {/* Server Stats + Wipe Schedule */}
                     <WipeCountdown />
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-                      gap: '1rem',
-                      marginBottom: '1.5rem'
-                    }}>
-                      <div style={{
-                        background: 'rgba(15, 23, 42, 0.6)',
-                        padding: '1rem',
-                        borderRadius: '8px',
-                        border: '1px solid var(--border-color)',
-                        textAlign: 'center'
-                      }}>
+                    <div className="monitoring-stats-grid">
+                      <div className="monitoring-stat-box">
                         <Users size={24} color="var(--primary-blue)" style={{ marginBottom: '0.5rem' }} />
-                        <div style={{
-                          fontFamily: 'Orbitron, sans-serif',
-                          fontSize: '1.8rem',
-                          color: 'var(--text-primary)',
-                          marginBottom: '0.25rem'
-                        }}>
-                          {server.currentPlayers}/{server.maxPlayers}
-                        </div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Players</div>
+                        <div className="monitoring-stat-value">{server.currentPlayers}/{server.maxPlayers}</div>
+                        <div className="monitoring-stat-label">Players</div>
                       </div>
-                      <div style={{
-                        background: 'rgba(15, 23, 42, 0.6)',
-                        padding: '1rem',
-                        borderRadius: '8px',
-                        border: '1px solid var(--border-color)',
-                        textAlign: 'center'
-                      }}>
+                      <div className="monitoring-stat-box">
                         <Clock size={24} color="var(--primary-blue)" style={{ marginBottom: '0.5rem' }} />
-                        <div style={{
-                          fontFamily: 'Orbitron, sans-serif',
-                          fontSize: '1.8rem',
-                          color: 'var(--text-primary)',
-                          marginBottom: '0.25rem'
-                        }}>
-                          {formatUptime(server.uptime)}
-                        </div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Uptime</div>
+                        <div className="monitoring-stat-value">{formatUptime(server.uptime)}</div>
+                        <div className="monitoring-stat-label">Uptime</div>
                       </div>
                     </div>
 
@@ -314,52 +184,24 @@ const Home: React.FC = () => {
 
                     {/* Active Players */}
                     {server.activePlayers && server.activePlayers.length > 0 && (
-                      <div>
-                        <h3 style={{
-                          fontFamily: 'Orbitron, sans-serif',
-                          fontSize: '1.1rem',
-                          color: 'var(--text-primary)',
-                          marginBottom: '1rem',
-                          textTransform: 'uppercase',
-                          letterSpacing: '1px'
-                        }}>
+                      <div className="monitoring-players">
+                        <h3 className="monitoring-players-title">
                           Active Players ({server.activePlayers.length})
                         </h3>
-                        <div style={{
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '0.5rem'
-                        }}>
+                        <div className="monitoring-players-list">
                           {server.activePlayers.slice(0, 10).map((player) => (
                             <motion.button
                               key={player.steamId}
+                              className="monitoring-player-btn"
                               onClick={() => handlePlayerClick(player.steamId)}
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
-                              style={{
-                                padding: '0.5rem 1rem',
-                                background: 'rgba(14, 165, 233, 0.1)',
-                                border: '1px solid var(--border-color)',
-                                borderRadius: '6px',
-                                color: 'var(--text-secondary)',
-                                fontSize: '0.9rem',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                                fontFamily: 'Exo 2, sans-serif',
-                                fontWeight: 600
-                              }}
                             >
                               {player.username}
                             </motion.button>
                           ))}
                           {server.activePlayers.length > 10 && (
-                            <div style={{
-                              padding: '0.5rem 1rem',
-                              color: 'var(--text-muted)',
-                              fontSize: '0.9rem',
-                              display: 'flex',
-                              alignItems: 'center'
-                            }}>
+                            <div className="monitoring-more-players">
                               +{server.activePlayers.length - 10} more
                             </div>
                           )}
@@ -421,18 +263,18 @@ const Home: React.FC = () => {
                     width: 60,
                     height: 60,
                     margin: '0 auto 1.5rem',
-                    background: 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))',
+                    background: 'var(--primary-blue)',
                     borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 0 20px var(--glow-blue)'
+                    boxShadow: '0 4px 12px var(--glow-blue)'
                   }}>
                     <IconComponent size={30} color="#ffffff" />
                   </div>
 
                   <div style={{
-                    fontFamily: 'Orbitron, sans-serif',
+                    fontFamily: 'Poppins, sans-serif',
                     fontSize: '0.9rem',
                     color: 'var(--text-muted)',
                     marginBottom: '1rem',
@@ -443,7 +285,7 @@ const Home: React.FC = () => {
                   </div>
 
                   <h3 style={{
-                    fontFamily: 'Orbitron, sans-serif',
+                    fontFamily: 'Poppins, sans-serif',
                     fontSize: '1.3rem',
                     color: 'var(--primary-blue)',
                     marginBottom: '1rem',
@@ -516,7 +358,7 @@ const Home: React.FC = () => {
               >
                 <div>
                   <h3 style={{
-                    fontFamily: 'Orbitron, sans-serif',
+                    fontFamily: 'Poppins, sans-serif',
                     fontSize: '1.5rem',
                     color: 'var(--primary-blue)',
                     marginBottom: '1rem',
@@ -605,7 +447,7 @@ const Home: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="card"
             style={{
-              background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(6, 182, 212, 0.05))',
+              background: 'rgba(56, 189, 248, 0.08)',
               border: '2px solid var(--border-bright)',
               marginBottom: '2rem',
               marginTop: '3rem'
@@ -619,7 +461,7 @@ const Home: React.FC = () => {
               <AlertCircle size={32} color="var(--primary-blue)" style={{ flexShrink: 0, marginTop: '0.2rem' }} />
               <div>
                 <h3 style={{
-                  fontFamily: 'Orbitron, sans-serif',
+                  fontFamily: 'Poppins, sans-serif',
                   fontSize: '1.3rem',
                   color: 'var(--primary-blue)',
                   marginBottom: '0.5rem',
@@ -653,7 +495,7 @@ const Home: React.FC = () => {
                 transition={{ duration: 0.6, delay: index * 0.05 }}
               >
                 <h3 style={{
-                  fontFamily: 'Orbitron, sans-serif',
+                  fontFamily: 'Poppins, sans-serif',
                   fontSize: '1.2rem',
                   color: 'var(--text-primary)',
                   marginBottom: '1rem',
@@ -714,7 +556,7 @@ const Home: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
             >
-              <h4 style={{ fontFamily: 'Orbitron', fontSize: '1rem', color: 'var(--primary-blue)', marginBottom: '0.5rem' }}>{item.q}</h4>
+              <h4 style={{ fontFamily: 'Poppins', fontSize: '1rem', color: 'var(--primary-blue)', marginBottom: '0.5rem' }}>{item.q}</h4>
               <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{item.a}</p>
             </motion.div>
           ))}
@@ -761,7 +603,7 @@ const Home: React.FC = () => {
                   <IconComponent size={60} />
                 </div>
                 <h3 style={{
-                  fontFamily: 'Orbitron, sans-serif',
+                  fontFamily: 'Poppins, sans-serif',
                   fontSize: '1.3rem',
                   color: 'var(--text-primary)',
                   textTransform: 'uppercase',

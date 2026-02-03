@@ -77,7 +77,7 @@ const Company: React.FC = () => {
                 {info?.phone || '—'}
               </a>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className="company-grid-2">
               <div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.inn}</div>
                 <div style={{ fontSize: '1.05rem', color: 'var(--text-secondary)' }}>{info?.inn || '—'}</div>

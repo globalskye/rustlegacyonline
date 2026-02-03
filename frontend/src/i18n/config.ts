@@ -11,7 +11,8 @@ const resources = {
         serverInfo: 'Server Info',
         rules: 'Rules',
         shop: 'Shop',
-        statistics: 'Statistics'
+        statistics: 'Statistics',
+        admin: 'Admin'
       },
       hero: {
         title: 'Rust Legacy',
@@ -20,6 +21,7 @@ const resources = {
         checkVirus: 'Check on VirusTotal'
       },
       stats: {
+        clan: 'Clan',
         maxPlayers: 'Max Players',
         version: 'Version',
         nextFullWipe: 'Next full wipe',
@@ -89,7 +91,8 @@ const resources = {
         serverInfo: 'Инфо о сервере',
         rules: 'Правила',
         shop: 'Магазин',
-        statistics: 'Статистика'
+        statistics: 'Статистика',
+        admin: 'Админка'
       },
       hero: {
         title: 'Rust Legacy',
@@ -98,6 +101,7 @@ const resources = {
         checkVirus: 'Проверить на VirusTotal'
       },
       stats: {
+        clan: 'Клан',
         maxPlayers: 'Макс. игроков',
         version: 'Версия',
         nextFullWipe: 'До полного вайпа',

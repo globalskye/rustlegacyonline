@@ -150,13 +150,13 @@ const Shop: React.FC = () => {
               style={{
                 padding: '0.75rem 1.5rem',
                 background: selectedCategory === null
-                  ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))'
+                  ? 'var(--primary-blue)'
                   : 'transparent',
                 border: '1px solid var(--border-color)',
                 color: selectedCategory === null ? 'var(--text-primary)' : 'var(--text-secondary)',
                 borderRadius: '8px',
                 cursor: 'pointer',
-                fontFamily: 'Exo 2, sans-serif',
+                fontFamily: 'DM Sans, sans-serif',
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '1px',
@@ -177,7 +177,7 @@ const Shop: React.FC = () => {
                 style={{
                   padding: '0.75rem 1.5rem',
                   background: selectedCategory === category.id
-                    ? 'linear-gradient(135deg, var(--primary-blue), var(--accent-cyan))'
+                    ? 'var(--primary-blue)'
                     : 'transparent',
                   border: '1px solid var(--border-color)',
                   color: selectedCategory === category.id ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -187,7 +187,7 @@ const Shop: React.FC = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   textAlign: 'center',
-                  fontFamily: 'Exo 2, sans-serif',
+                  fontFamily: 'DM Sans, sans-serif',
                   fontWeight: 600,
                   textTransform: 'uppercase',
                   letterSpacing: '1px',
@@ -233,7 +233,7 @@ const Shop: React.FC = () => {
                     color: 'white',
                     padding: '0.5rem 1rem',
                     borderRadius: '6px',
-                    fontFamily: 'Orbitron, sans-serif',
+                    fontFamily: 'Poppins, sans-serif',
                     fontWeight: 700,
                     fontSize: '0.9rem',
                     zIndex: 10,
@@ -257,7 +257,7 @@ const Shop: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
                   <Package size={24} color="var(--primary-blue)" />
                   <h3 style={{
-                    fontFamily: 'Orbitron, sans-serif',
+                    fontFamily: 'Poppins, sans-serif',
                     fontSize: '1.4rem',
                     color: 'var(--text-primary)',
                     letterSpacing: '1px',
@@ -305,7 +305,7 @@ const Shop: React.FC = () => {
                   <div>
                     {getDisplayPrice(item) <= 0 ? (
                       <div style={{
-                        fontFamily: 'Orbitron, sans-serif',
+                        fontFamily: 'Poppins, sans-serif',
                         fontSize: '1.5rem',
                         color: 'var(--primary-blue)',
                         fontWeight: 700
@@ -323,7 +323,7 @@ const Shop: React.FC = () => {
                           {convertPrice(item.price)} {currency}
                         </div>
                         <div style={{
-                          fontFamily: 'Orbitron, sans-serif',
+                          fontFamily: 'Poppins, sans-serif',
                           fontSize: '1.8rem',
                           color: 'var(--primary-blue)',
                           fontWeight: 700
@@ -333,7 +333,7 @@ const Shop: React.FC = () => {
                       </div>
                     ) : (
                       <div style={{
-                        fontFamily: 'Orbitron, sans-serif',
+                        fontFamily: 'Poppins, sans-serif',
                         fontSize: '1.8rem',
                         color: 'var(--primary-blue)',
                         fontWeight: 700
@@ -364,13 +364,13 @@ const Shop: React.FC = () => {
             style={{
               textAlign: 'center',
               padding: '4rem 2rem',
-              background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(6, 182, 212, 0.05))',
+              background: 'rgba(56, 189, 248, 0.08)',
               border: '2px solid var(--border-bright)'
             }}
           >
             <Package size={64} color="var(--text-muted)" style={{ marginBottom: '1rem' }} />
             <h2 style={{
-              fontFamily: 'Orbitron, sans-serif',
+              fontFamily: 'Poppins, sans-serif',
               fontSize: '1.5rem',
               color: 'var(--text-primary)',
               marginBottom: '1rem',
@@ -410,7 +410,7 @@ const Shop: React.FC = () => {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                 <h2 style={{
-                  fontFamily: 'Orbitron, sans-serif',
+                  fontFamily: 'Poppins, sans-serif',
                   fontSize: '1.8rem',
                   color: 'var(--primary-blue)',
                   margin: 0
@@ -470,7 +470,7 @@ const Shop: React.FC = () => {
                 borderTop: '1px solid var(--border-color)'
               }}>
                 <div style={{
-                  fontFamily: 'Orbitron, sans-serif',
+                  fontFamily: 'Poppins, sans-serif',
                   fontSize: '2rem',
                   color: 'var(--primary-blue)',
                   fontWeight: 700

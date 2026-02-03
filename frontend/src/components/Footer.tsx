@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
             style={{ marginBottom: '3rem', textAlign: 'center' }}
           >
             <h3 style={{
-              fontFamily: 'Orbitron, sans-serif',
+              fontFamily: 'Poppins, sans-serif',
               fontSize: '1.5rem',
               color: 'var(--primary-blue)',
               marginBottom: '1.5rem',
@@ -125,7 +125,7 @@ const Footer: React.FC = () => {
           {/* About */}
           <div>
             <h4 style={{
-              fontFamily: 'Orbitron, sans-serif',
+              fontFamily: 'Poppins, sans-serif',
               fontSize: '1.2rem',
               color: 'var(--primary-blue)',
               marginBottom: '1rem',
@@ -146,7 +146,7 @@ const Footer: React.FC = () => {
           {/* Legal Links */}
           <div>
             <h4 style={{
-              fontFamily: 'Orbitron, sans-serif',
+              fontFamily: 'Poppins, sans-serif',
               fontSize: '1.2rem',
               color: 'var(--primary-blue)',
               marginBottom: '1rem',
@@ -201,7 +201,7 @@ const Footer: React.FC = () => {
           {/* Support */}
           <div>
             <h4 style={{
-              fontFamily: 'Orbitron, sans-serif',
+              fontFamily: 'Poppins, sans-serif',
               fontSize: '1.2rem',
               color: 'var(--primary-blue)',
               marginBottom: '1rem',

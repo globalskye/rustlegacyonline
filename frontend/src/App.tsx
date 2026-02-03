@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ScrollToTop } from './components/ScrollToTop';
 import { AppProvider, useLanguageDetect } from './context/AppContext';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
@@ -44,6 +45,7 @@ function AppContent() {
 const App: React.FC = () => {
   return (
     <Router>
+      <ScrollToTop />
       <AppProvider>
         <Analytics />
         <AppContent />

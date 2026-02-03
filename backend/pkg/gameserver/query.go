@@ -47,13 +47,13 @@ func Query(ip string, port int, queryPort int) Info {
 		Time:       time.Now().Unix(),
 	}
 
-	conn, err := net.DialTimeout("udp", addr, 3*time.Second)
+	conn, err := net.DialTimeout("udp", addr, 2*time.Second)
 	if err != nil {
 		return info
 	}
 	defer conn.Close()
 
-	conn.SetDeadline(time.Now().Add(3 * time.Second))
+	conn.SetDeadline(time.Now().Add(2 * time.Second))
 
 	// A2S_INFO request
 	request := []byte{0xFF, 0xFF, 0xFF, 0xFF, 0x54}
@@ -75,7 +75,7 @@ func Query(ip string, port int, queryPort int) Info {
 		request = []byte{0xFF, 0xFF, 0xFF, 0xFF, 0x54}
 		request = append(request, challenge...)
 		request = append(request, []byte("Source Engine Query\x00")...)
-		conn.SetDeadline(time.Now().Add(3 * time.Second))
+		conn.SetDeadline(time.Now().Add(2 * time.Second))
 		if _, err := conn.Write(request); err != nil {
 			return info
 		}

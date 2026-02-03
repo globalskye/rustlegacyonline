@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"rust-legacy-site/database"
+	"rust-legacy-site/handlers"
 	"rust-legacy-site/routes"
 	"rust-legacy-site/pkg/statssync"
 	"rust-legacy-site/pkg/onlinehistory"
@@ -58,6 +59,9 @@ func main() {
 			statssync.Run()
 		}
 	}()
+
+	// Server status cache — обновление раз в 10 сек, первый прогрев сразу
+	go handlers.InitServerStatusCache()
 
 	// Online history collector every 5 minutes (fallback when plugin doesn't report)
 	go func() {

@@ -31,15 +31,17 @@ export interface WipeInfo {
   countdownPartial: string;
 }
 
-export function getWipeInfo(): WipeInfo {
+/** locale: 'en' | 'ru' — для отображения даты на языке сайта */
+export function getWipeInfo(locale?: string): WipeInfo {
   const nextFull = getNextOccurrence(FRIDAY, FULL_WIPE_UTC_H, FULL_WIPE_UTC_M);
   const nextPartial = getNextOccurrence(TUESDAY, PARTIAL_WIPE_UTC_H, PARTIAL_WIPE_UTC_M);
   const now = new Date();
   const msUntilFull = nextFull.getTime() - now.getTime();
   const msUntilPartial = nextPartial.getTime() - now.getTime();
 
+  const loc = locale === 'ru' ? 'ru-RU' : locale === 'en' ? 'en-US' : undefined;
   const formatTime = (d: Date) =>
-    d.toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+    d.toLocaleString(loc, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
 
   const formatCountdown = (ms: number) => {
     if (ms <= 0) return '—';

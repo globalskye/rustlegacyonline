@@ -43,7 +43,7 @@ const Rules: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="card"
           style={{
-            background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(6, 182, 212, 0.05))',
+            background: 'rgba(56, 189, 248, 0.08)',
             border: '2px solid var(--border-bright)',
             marginBottom: '3rem'
           }}
@@ -56,7 +56,7 @@ const Rules: React.FC = () => {
             <AlertCircle size={32} color="var(--primary-blue)" style={{ flexShrink: 0, marginTop: '0.2rem' }} />
             <div>
               <h3 style={{
-                fontFamily: 'Orbitron, sans-serif',
+                fontFamily: 'Poppins, sans-serif',
                 fontSize: '1.3rem',
                 color: 'var(--primary-blue)',
                 marginBottom: '0.5rem',
@@ -95,7 +95,7 @@ const Rules: React.FC = () => {
                 transition={{ duration: 0.6, delay: index * 0.05 }}
               >
                 <h2 style={{
-                  fontFamily: 'Orbitron, sans-serif',
+                  fontFamily: 'Poppins, sans-serif',
                   fontSize: '1.3rem',
                   color: 'var(--text-primary)',
                   marginBottom: '1rem',

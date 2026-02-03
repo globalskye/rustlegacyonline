@@ -49,7 +49,7 @@ const News: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
               >
-                <h2 style={{ fontFamily: 'Orbitron', fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                <h2 style={{ fontFamily: 'Poppins', fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
                   {item.title}
                 </h2>
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>

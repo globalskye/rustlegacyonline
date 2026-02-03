@@ -64,7 +64,7 @@ const ServerInfo: React.FC = () => {
             style={{ marginBottom: '4rem' }}
           >
             <h2 style={{
-              fontFamily: 'Orbitron, sans-serif',
+              fontFamily: 'Poppins, sans-serif',
               fontSize: '2rem',
               color: 'var(--primary-blue)',
               marginBottom: '2rem',
@@ -99,7 +99,7 @@ const ServerInfo: React.FC = () => {
                 >
                   <div>
                     <h3 style={{
-                      fontFamily: 'Orbitron, sans-serif',
+                      fontFamily: 'Poppins, sans-serif',
                       fontSize: '1.5rem',
                       color: 'var(--text-primary)',
                       marginBottom: '1rem',
@@ -219,7 +219,7 @@ const ServerInfo: React.FC = () => {
             style={{ marginTop: '4rem' }}
           >
             <h2 style={{
-              fontFamily: 'Orbitron, sans-serif',
+              fontFamily: 'Poppins, sans-serif',
               fontSize: '2rem',
               color: 'var(--primary-blue)',
               marginBottom: '2rem',
@@ -254,7 +254,7 @@ const ServerInfo: React.FC = () => {
                     }}>
                       <div>
                         <h3 style={{
-                          fontFamily: 'Orbitron, sans-serif',
+                          fontFamily: 'Poppins, sans-serif',
                           fontSize: '1.3rem',
                           color: 'var(--text-primary)',
                           marginBottom: '0.5rem',
@@ -296,7 +296,7 @@ const ServerInfo: React.FC = () => {
                             borderTop: '1px solid var(--border-color)'
                           }}>
                             <h4 style={{
-                              fontFamily: 'Orbitron, sans-serif',
+                              fontFamily: 'Poppins, sans-serif',
                               fontSize: '1.1rem',
                               color: 'var(--primary-blue)',
                               marginBottom: '1rem',

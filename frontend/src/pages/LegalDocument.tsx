@@ -85,7 +85,7 @@ const LegalDocument: React.FC = () => {
             }}
           >
             <h2 style={{
-              fontFamily: 'Orbitron, sans-serif',
+              fontFamily: 'Poppins, sans-serif',
               fontSize: '1.8rem',
               color: 'var(--text-primary)',
               marginBottom: '1rem',

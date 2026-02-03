@@ -3,7 +3,7 @@ import { Routes, Route, NavLink, useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion';
 import {
   Settings, Package, ShoppingCart, Download, BarChart3, FileText, CreditCard,
-  Shield, Plug, List, Sun, Moon, Monitor, LogOut, Zap, Building2, Server
+  Shield, Plug, List, Sun, Moon, Monitor, LogOut, Zap, Building2, Server, Database
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
@@ -109,6 +109,16 @@ const Admin: React.FC = () => {
                 </button>
               ))}
             </div>
+            <a
+              href={process.env.REACT_APP_ADMINER_URL || '/adminer/'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
+            >
+              <Database size={18} />
+              Adminer
+            </a>
             <button
               onClick={async () => {
                 if (window.confirm('Delete ALL clans and players? Data will be replaced by TopSystem sync.')) {
