@@ -224,7 +224,7 @@ const Shop: React.FC = () => {
                   cursor: 'pointer'
                 }}
               >
-                {item.discount && item.discount > 0 && (
+                {(item.discount ?? 0) > 0 && (
                   <div style={{
                     position: 'absolute',
                     top: '1rem',
@@ -312,7 +312,7 @@ const Shop: React.FC = () => {
                       }}>
                         Free
                       </div>
-                    ) : item.discount && item.discount > 0 ? (
+                    ) : (item.discount ?? 0) > 0 ? (
                       <div>
                         <div style={{
                           color: 'var(--text-muted)',
