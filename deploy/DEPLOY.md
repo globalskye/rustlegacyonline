@@ -178,9 +178,15 @@ sudo lsof -i :80
 - Проверь, что домен указывает на сервер
 - Убедись, что порт 80 открыт (firewall: `sudo ufw allow 80`)
 
-**БД не поднимается**
-- Проверь DB_PASSWORD в .env
-- Полный перезапуск: `./deploy.sh stop` → `./deploy.sh build`
+**БД: password authentication failed**
+Пароль в .env должен совпадать с тем, что был при первой инициализации тома. Если менял DB_PASSWORD — сбрось:
+```bash
+docker exec -it rustlegacy-postgres psql -U postgres -d rustlegacy -c "ALTER USER rustlegacy WITH PASSWORD 'твой_пароль_из_env';"
+```
+Замени `твой_пароль_из_env` на значение DB_PASSWORD из deploy/.env. Потом `./deploy.sh restart`.
+
+**host not found in upstream "backend"**
+Исправлено: nginx использует resolver, backend резолвится при запросе. Убедись, что backend запущен (проверь пароль БД выше).
 
 ---
 
