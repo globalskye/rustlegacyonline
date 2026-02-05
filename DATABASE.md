@@ -1,39 +1,38 @@
 # База данных PostgreSQL — подключение и безопасность
 
+**Все пароли задаются в `.env`** (см. `.env.example` в корне и `deploy/.env.example` для прода).
+
 ## Локальная разработка (docker-compose)
 
-### Параметры подключения
-| Параметр | Значение |
-|----------|----------|
-| **Host** | `localhost` |
-| **Port** | `5432` |
-| **Database** | `rustlegacy` |
-| **User** | `rustlegacy` |
-| **Password** | `rustlegacy_password` |
+### Настройка
+```bash
+cp .env.example .env
+# Отредактируй .env — там DB_USER, DB_PASSWORD, DB_NAME
+```
 
-### Подключение из DBeaver / pgAdmin / DataGrip
-```
-Host: localhost
-Port: 5432
-Database: rustlegacy
-Username: rustlegacy
-Password: rustlegacy_password
-```
+### Параметры подключения (из .env)
+| Параметр | Переменная | По умолчанию |
+|----------|------------|--------------|
+| **Host** | — | `localhost` |
+| **Port** | `DB_PORT` | `5432` |
+| **Database** | `DB_NAME` | `rustlegacy` |
+| **User** | `DB_USER` | `rustlegacy` |
+| **Password** | `DB_PASSWORD` | `rustlegacy_password` |
 
 ### Adminer (в браузере)
 1. Запустить: `docker-compose up -d`
 2. Открыть: **http://localhost:8081**
 3. Система: **PostgreSQL**
 4. Сервер: **postgres**
-5. Пользователь: **rustlegacy**
-6. Пароль: **rustlegacy_password**
-7. База: **rustlegacy**
+5. Пользователь: **из .env → DB_USER**
+6. Пароль: **из .env → DB_PASSWORD**
+7. База: **из .env → DB_NAME**
 
 ---
 
 ## Production (сервер)
 
-Параметры задаются в `.env` (см. `deploy/.env.example`):
+**Все пароли в `deploy/.env`** (скопируй из `deploy/.env.example` и задай `DB_PASSWORD`):
 
 | Переменная | Описание |
 |------------|----------|

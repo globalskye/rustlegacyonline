@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, NavLink, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Settings, Package, ShoppingCart, Download, BarChart3, FileText, CreditCard,
-  Shield, Plug, List, Sun, Moon, Monitor, LogOut, Zap, Building2, Server, Database
+  Settings, ShoppingCart, Download, FileText, CreditCard,
+  Shield, Plug, List, LogOut, Zap, Building2, Server, Database
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
@@ -26,7 +26,7 @@ import AdminCompanyInfo from '../components/admin/AdminCompanyInfo';
 const Admin: React.FC = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { isAdmin, login, logout, theme, setTheme } = useApp();
+  const { isAdmin, login, logout } = useApp();
   const [checking, setChecking] = useState(true);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
@@ -91,24 +91,6 @@ const Admin: React.FC = () => {
             Admin Panel
           </h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ display: 'flex', gap: '0.25rem' }}>
-              {(['light', 'dark', 'auto'] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setTheme(t)}
-                  className="btn btn-secondary"
-                  style={{
-                    padding: '0.5rem',
-                    background: theme === t ? 'var(--primary-blue)' : undefined,
-                    borderColor: theme === t ? 'var(--primary-blue)' : undefined,
-                  }}
-                >
-                  {t === 'light' && <Sun size={18} />}
-                  {t === 'dark' && <Moon size={18} />}
-                  {t === 'auto' && <Monitor size={18} />}
-                </button>
-              ))}
-            </div>
             <a
               href={process.env.REACT_APP_ADMINER_URL || '/adminer/'}
               target="_blank"

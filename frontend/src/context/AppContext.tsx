@@ -2,12 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { setApiAuthGetter } from '../services/api';
 import i18n from '../i18n/config';
 
-type Theme = 'light' | 'dark' | 'auto';
-
 interface AppContextType {
-  theme: Theme;
-  setTheme: (t: Theme) => void;
-  resolvedTheme: 'light' | 'dark';
   isAdmin: boolean;
   login: (user: string, pass: string) => Promise<boolean>;
   logout: () => void;
@@ -16,39 +11,18 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
-const THEME_KEY = 'rustlegacy-theme';
 const AUTH_KEY = 'rustlegacy-auth';
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    const s = localStorage.getItem(THEME_KEY);
-    return (s as Theme) || 'auto';
-  });
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark');
   const [authToken, setAuthToken] = useState<string | null>(() => 
     localStorage.getItem(AUTH_KEY)
   );
 
   useEffect(() => {
-    const applyTheme = (isDark: boolean) => {
-      setResolvedTheme(isDark ? 'dark' : 'light');
-      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', isDark ? '#1a1a2e' : '#f5f1eb');
-    };
-    if (theme === 'auto') {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)');
-      applyTheme(mq.matches);
-      mq.addEventListener('change', (e) => applyTheme(e.matches));
-      return () => mq.removeEventListener('change', () => {});
-    }
-    applyTheme(theme === 'dark');
-  }, [theme]);
-
-  const setTheme = (t: Theme) => {
-    setThemeState(t);
-    localStorage.setItem(THEME_KEY, t);
-  };
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', '#1a1a2e');
+  }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
     const api = process.env.REACT_APP_API_URL || '/api';
@@ -84,9 +58,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AppContext.Provider value={{
-      theme,
-      setTheme,
-      resolvedTheme,
       isAdmin: !!authToken,
       login,
       logout,

@@ -27,34 +27,6 @@
   --overlay-bg: rgba(0, 0, 0, 0.7);
 }
 
-/* Светлая тема — тёплые бежевые тона */
-[data-theme="light"] {
-  --primary-blue: #0c7ab0;
-  --primary-blue-dark: #0a6590;
-  --primary-blue-darker: #085175;
-  --accent-green: #16a34a;
-  --accent-cyan: #0d9488;
-  --bg-dark: #ebe6df;
-  --bg-darker: #f5f1eb;
-  --bg-card: #fdfbf8;
-  --bg-card-hover: #f8f4ee;
-  --bg-navbar: rgba(253, 251, 248, 0.95);
-  --bg-mobile-menu: rgba(253, 251, 248, 0.98);
-  --bg-monitoring: rgba(253, 251, 248, 0.95);
-  --bg-stat-box: rgba(245, 241, 235, 0.9);
-  --text-primary: #2d2a26;
-  --text-secondary: #4a4540;
-  --text-muted: #6b6560;
-  --glow-blue: rgba(12, 122, 176, 0.12);
-  --glow-green: rgba(22, 163, 74, 0.15);
-  --border-color: rgba(180, 170, 158, 0.5);
-  --border-bright: rgba(12, 122, 176, 0.45);
-  --nav-hover-bg: rgba(12, 122, 176, 0.06);
-  --shadow-card: 0 4px 24px rgba(45, 42, 38, 0.06);
-  --shadow-modal: 0 25px 50px -12px rgba(45, 42, 38, 0.1);
-  --overlay-bg: rgba(45, 42, 38, 0.35);
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -94,13 +66,6 @@ body {
   z-index: -1;
 }
 
-[data-theme="light"] .background-layer {
-  background: 
-    radial-gradient(circle at 20% 20%, rgba(12, 122, 176, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(180, 150, 120, 0.04) 0%, transparent 50%),
-    linear-gradient(180deg, #faf8f4 0%, #f0ebe4 100%);
-}
-
 /* Grid overlay — убрана для уютного стиля */
 .grid-overlay {
   display: none;
@@ -117,10 +82,6 @@ body {
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-color);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-}
-
-[data-theme="light"] .navbar {
-  box-shadow: 0 1px 12px rgba(15, 23, 42, 0.06);
 }
 
 .nav-container {
@@ -490,12 +451,6 @@ body {
   background: var(--bg-monitoring);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
-[data-theme="light"] .monitoring-card.monitoring-online {
-  border-color: rgba(22, 163, 74, 0.5);
-}
-[data-theme="light"] .monitoring-card.monitoring-offline {
-  border-color: rgba(239, 68, 68, 0.4);
-}
 .monitoring-header {
   display: flex;
   flex-wrap: wrap;
@@ -563,12 +518,6 @@ body {
   background: rgba(239, 68, 68, 0.2);
   border: 1px solid rgba(239, 68, 68, 0.5);
   color: #dc2626;
-}
-[data-theme="light"] .monitoring-status-badge.online {
-  color: #15803d;
-}
-[data-theme="light"] .monitoring-status-badge.offline {
-  color: #b91c1c;
 }
 .monitoring-status-dot {
   width: 8px;
@@ -964,9 +913,6 @@ body {
 .online-highlight {
   background: rgba(34, 197, 94, 0.15) !important;
   border-color: rgba(34, 197, 94, 0.4) !important;
-}
-[data-theme="light"] .stats-table-row.online-highlight {
-  background: rgba(22, 163, 74, 0.1) !important;
 }
 
 /* Admin forms */
