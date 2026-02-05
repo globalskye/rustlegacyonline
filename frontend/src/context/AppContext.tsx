@@ -33,6 +33,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const applyTheme = (isDark: boolean) => {
       setResolvedTheme(isDark ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', isDark ? '#1a1a2e' : '#f5f1eb');
     };
     if (theme === 'auto') {
       const mq = window.matchMedia('(prefers-color-scheme: dark)');

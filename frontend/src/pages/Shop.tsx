@@ -7,6 +7,11 @@ import * as Types from '../types';
 
 const CURRENCIES = ['USD', 'EUR', 'CZK', 'RUB', 'BYN'] as const;
 
+// Fallback курсы, если API недоступен
+const FALLBACK_RATES: Record<string, number> = {
+  USD: 1, EUR: 0.92, CZK: 22, RUB: 95, BYN: 3.2,
+};
+
 const Shop: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [categories, setCategories] = useState<Types.ShopCategory[]>([]);
@@ -14,7 +19,7 @@ const Shop: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedItem, setSelectedItem] = useState<Types.ShopItem | null>(null);
   const [currency, setCurrency] = useState<string>('USD');
-  const [rates, setRates] = useState<Record<string, number>>({ USD: 1 });
+  const [rates, setRates] = useState<Record<string, number>>(FALLBACK_RATES);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +31,9 @@ const Shop: React.FC = () => {
   }, [selectedCategory, i18n.language]);
 
   useEffect(() => {
-    apiService.getCurrencyRates().then(setRates).catch(() => {});
+    apiService.getCurrencyRates()
+      .then((r) => setRates({ ...FALLBACK_RATES, ...r }))
+      .catch(() => setRates(FALLBACK_RATES));
   }, []);
 
   const loadData = async () => {
@@ -140,7 +147,7 @@ const Shop: React.FC = () => {
               flexWrap: 'wrap',
               marginBottom: '3rem',
               padding: '1rem',
-              background: 'rgba(15, 23, 42, 0.6)',
+              background: 'var(--bg-stat-box)',
               borderRadius: '12px',
               border: '1px solid var(--border-color)'
             }}
@@ -364,7 +371,7 @@ const Shop: React.FC = () => {
             style={{
               textAlign: 'center',
               padding: '4rem 2rem',
-              background: 'rgba(56, 189, 248, 0.08)',
+              background: 'var(--nav-hover-bg)',
               border: '2px solid var(--border-bright)'
             }}
           >
