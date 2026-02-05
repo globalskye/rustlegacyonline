@@ -7,9 +7,10 @@ import { apiService } from '../services/api';
 import * as Types from '../types';
 
 const Footer: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [paymentMethods, setPaymentMethods] = useState<Types.PaymentMethod[]>([]);
   const [serverInfo, setServerInfo] = useState<Types.ServerInfo | null>(null);
+  const [companyInfo, setCompanyInfo] = useState<Types.CompanyInfo | null>(null);
 
   useEffect(() => {
     loadData();
@@ -17,12 +18,14 @@ const Footer: React.FC = () => {
 
   const loadData = async () => {
     try {
-      const [payments, info] = await Promise.all([
+      const [payments, info, company] = await Promise.all([
         apiService.getPaymentMethods(),
-        apiService.getServerInfo()
+        apiService.getServerInfo(),
+        apiService.getCompanyInfo().catch(() => null)
       ]);
       setPaymentMethods((payments || []).filter(p => p.enabled).sort((a, b) => a.order - b.order));
       setServerInfo(info || null);
+      setCompanyInfo(company || null);
     } catch (error) {
       console.error('Error loading footer data:', error);
       setPaymentMethods([]);
@@ -211,23 +214,30 @@ const Footer: React.FC = () => {
               {t('footer.support')}
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-              <a 
-                href="mailto:support@example.com"
-                style={{
-                  color: 'var(--text-muted)',
-                  textDecoration: 'none',
-                  fontSize: '0.95rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  transition: 'color 0.3s ease'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-blue)'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
-              >
-                <Mail size={18} />
-                support@example.com
-              </a>
+              {companyInfo?.email ? (
+                <a 
+                  href={`mailto:${companyInfo.email}`}
+                  style={{
+                    color: 'var(--text-muted)',
+                    textDecoration: 'none',
+                    fontSize: '0.95rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    transition: 'color 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-blue)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                >
+                  <Mail size={18} />
+                  {companyInfo.email}
+                </a>
+              ) : (
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Mail size={18} />
+                  —
+                </span>
+              )}
               <a 
                 href="#"
                 style={{
@@ -257,7 +267,7 @@ const Footer: React.FC = () => {
           color: 'var(--text-muted)',
           fontSize: '0.9rem'
         }}>
-          © 2025 {serverInfo?.name || 'Rust Legacy Server'}. {t('footer.rights')}
+          © 2026 {serverInfo?.name || 'Rust Legacy Server'}. {t('footer.rights')}
         </div>
       </div>
     </footer>

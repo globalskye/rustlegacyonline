@@ -6,6 +6,7 @@ import { TrendingUp, ChevronDown, ChevronUp } from 'lucide-react';
 import { apiService } from '../services/api';
 
 interface DataPoint {
+  ts: number;
   time: string;
   players: number;
   fullTime: string;
@@ -24,20 +25,23 @@ export const OnlineChart: React.FC<{ serverType?: string; serverName?: string }>
       apiService.getServerStatusHistory(hours, serverType)
         .then(records => {
           const bucketMinutes = hours <= 24 ? 30 : 120;
+          const bucketMs = bucketMinutes * 60 * 1000;
           const byBucket = new Map<number, number[]>();
           records.forEach(r => {
             const d = new Date(r.recordedAt).getTime();
-            const bucket = Math.floor(d / (bucketMinutes * 60 * 1000)) * bucketMinutes * 60 * 1000;
+            if (Number.isNaN(d)) return;
+            const bucket = Math.floor(d / bucketMs) * bucketMs;
             if (!byBucket.has(bucket)) byBucket.set(bucket, []);
-            byBucket.get(bucket)!.push(r.players);
+            byBucket.get(bucket)!.push(r.players ?? 0);
           });
           const points: DataPoint[] = Array.from(byBucket.entries())
             .map(([ts, vals]) => ({
+              ts,
               time: new Date(ts).toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' }),
-              players: Math.max(...vals),
+              players: vals.length > 0 ? Math.max(...vals) : 0,
               fullTime: new Date(ts).toLocaleString(i18n.language),
             }))
-            .sort((a, b) => a.fullTime.localeCompare(b.fullTime));
+            .sort((a, b) => a.ts - b.ts);
           setData(points);
         })
         .catch(() => setData([]))

@@ -205,6 +205,7 @@ export interface CompanyInfo {
   legalName: string;
   address: string;
   phone: string;
+  email?: string;
   inn: string;
   ogrn: string;
   bankRequisites?: string;

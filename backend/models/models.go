@@ -283,6 +283,7 @@ type CompanyInfo struct {
 	LegalName     string    `json:"legalName" gorm:"type:text"`     // наименование юр. лица / ИП
 	Address       string    `json:"address" gorm:"type:text"`       // фактический или юридический адрес
 	Phone         string    `json:"phone"`                          // номер телефона
+	Email         string    `json:"email"`                          // email для связи
 	INN           string    `json:"inn"`                            // ИНН
 	OGRN          string    `json:"ogrn"`                           // ОГРН
 	BankRequisites string   `json:"bankRequisites" gorm:"type:text"` // банковские реквизиты

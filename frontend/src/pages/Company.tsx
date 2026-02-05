@@ -31,6 +31,7 @@ const Company: React.FC = () => {
     legalName: 'Наименование юридического лица / ИП',
     address: 'Юридический или фактический адрес',
     phone: 'Номер телефона',
+    email: 'Email',
     inn: 'ИНН',
     ogrn: 'ОГРН',
     bankRequisites: 'Банковские реквизиты',
@@ -40,6 +41,7 @@ const Company: React.FC = () => {
     legalName: 'Legal entity / sole proprietor name',
     address: 'Legal or physical address',
     phone: 'Phone number',
+    email: 'Email',
     inn: 'INN (Tax ID)',
     ogrn: 'OGRN',
     bankRequisites: 'Bank requisites',
@@ -77,6 +79,14 @@ const Company: React.FC = () => {
                 {info?.phone || '—'}
               </a>
             </div>
+            {info?.email && (
+              <div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.email}</div>
+                <a href={`mailto:${info.email}`} style={{ color: 'var(--primary-blue)', fontSize: '1.1rem', textDecoration: 'none' }}>
+                  {info.email}
+                </a>
+              </div>
+            )}
             <div className="company-grid-2">
               <div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.inn}</div>

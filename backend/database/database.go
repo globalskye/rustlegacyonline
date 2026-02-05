@@ -260,6 +260,7 @@ func Seed() error {
 			LegalName:      "ИП / ООО [Укажите наименование]",
 			Address:        "[Юридический или фактический адрес]",
 			Phone:          "[Номер телефона]",
+			Email:          "support@rustlegacy.online",
 			INN:            "[ИНН]",
 			OGRN:           "[ОГРН]",
 			BankRequisites: "[Банковские реквизиты]",
