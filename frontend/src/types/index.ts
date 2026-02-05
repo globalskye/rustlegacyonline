@@ -11,6 +11,7 @@ export interface ServerInfo {
   ip?: string;
   port?: number;
   queryPort?: number;
+  order?: number;
 }
 
 export interface DownloadLink {

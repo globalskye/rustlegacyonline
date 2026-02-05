@@ -4,7 +4,7 @@ import * as Types from '../../types';
 
 const serverEmpty: Partial<Types.ServerInfo> = {
   name: '', maxPlayers: 100, gameVersion: 'Legacy', type: 'classic',
-  ip: '', port: 28015, queryPort: 28016, downloadUrl: '', virusTotalUrl: ''
+  ip: '', port: 28015, queryPort: 28016, downloadUrl: '', virusTotalUrl: '', order: 0
 };
 
 export default function AdminServers({ onMessage }: { onMessage: (t: string, type: 'success' | 'error') => void }) {
@@ -79,6 +79,7 @@ export default function AdminServers({ onMessage }: { onMessage: (t: string, typ
             <label>Query Port <input type="number" value={form.queryPort ?? ''} onChange={e => setForm({ ...form, queryPort: +e.target.value })} placeholder="28016" title="A2S_INFO port (usually game port + 1)" /></label>
           </div>
           <label>Max Players <input type="number" value={form.maxPlayers ?? ''} onChange={e => setForm({ ...form, maxPlayers: +e.target.value })} /></label>
+          <label>Order (приоритет в мониторинге) <input type="number" value={form.order ?? 0} onChange={e => setForm({ ...form, order: +e.target.value })} placeholder="0 = первый" title="Меньше = выше в списке" /></label>
           <label>Game Version <input value={form.gameVersion || ''} onChange={e => setForm({ ...form, gameVersion: e.target.value })} /></label>
           <label>Download URL <input type="url" value={form.downloadUrl || ''} onChange={e => setForm({ ...form, downloadUrl: e.target.value })} /></label>
           <label>VirusTotal URL <input type="url" value={form.virusTotalUrl || ''} onChange={e => setForm({ ...form, virusTotalUrl: e.target.value })} /></label>
@@ -91,10 +92,10 @@ export default function AdminServers({ onMessage }: { onMessage: (t: string, typ
           {servers.map(s => (
             <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'var(--bg-darker)', borderRadius: 8 }}>
               <div>
-                <strong>{s.name}</strong> — {s.type} — {s.ip}:{s.port} (query: {s.queryPort || (s.port || 0) + 1})
+                <strong>{s.name}</strong> — {s.type} — order: {s.order ?? 0} — {s.ip}:{s.port} (query: {s.queryPort || (s.port || 0) + 1})
               </div>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem' }} onClick={() => { setEditing(s); setForm({ name: s.name, type: s.type, ip: s.ip, port: s.port, queryPort: s.queryPort, maxPlayers: s.maxPlayers, gameVersion: s.gameVersion, downloadUrl: s.downloadUrl, virusTotalUrl: s.virusTotalUrl }); }}>Edit</button>
+                <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem' }} onClick={() => { setEditing(s); setForm({ name: s.name, type: s.type, ip: s.ip, port: s.port, queryPort: s.queryPort, maxPlayers: s.maxPlayers, gameVersion: s.gameVersion, downloadUrl: s.downloadUrl, virusTotalUrl: s.virusTotalUrl, order: s.order ?? 0 }); }}>Edit</button>
                 <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem', background: '#ef4444', borderColor: '#ef4444' }} onClick={() => remove(s.id)}>Delete</button>
               </div>
             </div>

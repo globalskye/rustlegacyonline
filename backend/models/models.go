@@ -15,6 +15,7 @@ type ServerInfo struct {
 	IP            string    `json:"ip"`
 	Port          int       `json:"port"`       // game port (for connect)
 	QueryPort     int       `json:"queryPort"`  // A2S_INFO query port (often game port + 1)
+	Order         int       `json:"order" gorm:"column:sort_order"` // приоритет: меньше = выше
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
 }

@@ -76,7 +76,7 @@ func UpdateServerInfo(w http.ResponseWriter, r *http.Request) {
 
 func GetAllServers(w http.ResponseWriter, r *http.Request) {
 	var servers []models.ServerInfo
-	if err := database.DB.Order("id ASC").Find(&servers).Error; err != nil {
+	if err := database.DB.Order("sort_order ASC, id ASC").Find(&servers).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -124,6 +124,7 @@ func UpdateServer(w http.ResponseWriter, r *http.Request) {
 	srv.IP = input.IP
 	srv.Port = input.Port
 	srv.QueryPort = input.QueryPort
+	srv.Order = input.Order
 	if err := database.DB.Save(&srv).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

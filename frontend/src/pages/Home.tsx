@@ -189,7 +189,7 @@ const Home: React.FC = () => {
                           Active Players ({server.activePlayers.length})
                         </h3>
                         <div className="monitoring-players-list">
-                          {server.activePlayers.slice(0, 10).map((player) => (
+                          {server.activePlayers.map((player) => (
                             <motion.button
                               key={player.steamId}
                               className="monitoring-player-btn"
@@ -200,11 +200,6 @@ const Home: React.FC = () => {
                               {player.username}
                             </motion.button>
                           ))}
-                          {server.activePlayers.length > 10 && (
-                            <div className="monitoring-more-players">
-                              +{server.activePlayers.length - 10} more
-                            </div>
-                          )}
                         </div>
                       </div>
                     )}

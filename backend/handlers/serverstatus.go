@@ -61,7 +61,7 @@ func fetchStatuses(serverType string) []models.ServerStatus {
 	if serverType != "" {
 		query = query.Where("type = ?", serverType)
 	}
-	if err := query.Find(&servers).Error; err != nil {
+	if err := query.Order("sort_order ASC, id ASC").Find(&servers).Error; err != nil {
 		return nil
 	}
 	type serverResult struct {
