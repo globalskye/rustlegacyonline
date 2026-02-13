@@ -128,6 +128,7 @@ export const OnlineChart: React.FC<{ serverType?: string; serverName?: string }>
                     <XAxis dataKey="time" stroke="var(--text-muted)" fontSize={11} tickFormatter={(v) => v} />
                     <YAxis stroke="var(--text-muted)" fontSize={11} allowDecimals={false} />
                     <Tooltip
+                      cursor={false}
                       contentStyle={{ background: 'var(--bg-darker)', border: '1px solid var(--border-color)', borderRadius: 8 }}
                       labelStyle={{ color: 'var(--text-primary)' }}
                       formatter={(val: number | undefined) => [val ?? 0, i18n.language === 'ru' ? 'Игроков' : 'Players']}

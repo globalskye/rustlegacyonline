@@ -250,3 +250,31 @@ export interface ServerStatus {
   port: number;
   activePlayers: Player[];
 }
+
+// Admin: Discord & VK integration
+export interface SocialChannel {
+  id: string;
+  name: string;
+  purpose: string;
+}
+
+export interface AutoMessageRule {
+  eventType: string;
+  discordChannelId: string;
+  vkPeerId: string;
+  template: string;
+  enabled: boolean;
+}
+
+export interface SocialConfig {
+  discord: {
+    botToken: string;
+    channels: SocialChannel[];
+  };
+  vk: {
+    accessToken: string;
+    groupId: string;
+    targets: SocialChannel[];
+  };
+  autoMessages: AutoMessageRule[];
+}

@@ -472,6 +472,17 @@ class ApiService {
   async clearClansAndPlayers(): Promise<{ ok: boolean }> {
     return this.request<{ ok: boolean }>('/admin/clear-clans-players', { method: 'DELETE' });
   }
+
+  async getSocialConfig(): Promise<Types.SocialConfig> {
+    return this.request<Types.SocialConfig>('/admin/social');
+  }
+
+  async updateSocialConfig(config: Types.SocialConfig): Promise<{ ok: string }> {
+    return this.request<{ ok: string }>('/admin/social', {
+      method: 'PUT',
+      body: JSON.stringify(config),
+    });
+  }
 }
 
 export const apiService = new ApiService();

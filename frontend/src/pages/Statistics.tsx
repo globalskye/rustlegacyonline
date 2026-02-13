@@ -39,15 +39,20 @@ const Statistics: React.FC = () => {
 
   const loadData = async () => {
     try {
-      const [players, clans] = await Promise.all([
+      const [playersRes, clansRes] = await Promise.all([
         apiService.getPlayers(undefined, undefined, true),
         apiService.getClans(true)
       ]);
-      setAllPlayers(players || []);
-      setTopClans((clans || []).sort((a, b) => (b.experience || 0) - (a.experience || 0)).slice(0, 20));
+      // Always replace entirely: remove old data, set only fresh from server (no merge to avoid mutations/duplicates)
+      const playersList = Array.isArray(playersRes) ? playersRes : [];
+      const clansList = Array.isArray(clansRes) ? clansRes : [];
+      setAllPlayers([...playersList]);
+      setTopClans([...clansList].sort((a, b) => (b.experience || 0) - (a.experience || 0)).slice(0, 20));
       setLoading(false);
     } catch (error) {
       console.error('Error loading data:', error);
+      setAllPlayers([]);
+      setTopClans([]);
       setLoading(false);
     }
   };

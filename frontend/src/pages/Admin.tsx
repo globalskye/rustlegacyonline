@@ -3,7 +3,7 @@ import { Routes, Route, NavLink, useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion';
 import {
   Settings, ShoppingCart, Download, FileText, CreditCard,
-  Shield, Plug, List, LogOut, Zap, Building2, Server, Database
+  Shield, Plug, List, LogOut, Zap, Building2, Server, Database, MessageCircle
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
@@ -22,6 +22,7 @@ import AdminPayments from '../components/admin/AdminPayments';
 import AdminLegal from '../components/admin/AdminLegal';
 import AdminNews from '../components/admin/AdminNews';
 import AdminCompanyInfo from '../components/admin/AdminCompanyInfo';
+import AdminSocial from '../components/admin/AdminSocial';
 
 const Admin: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -71,6 +72,7 @@ const Admin: React.FC = () => {
     { path: 'payments', label: 'Payment Methods', icon: CreditCard },
     { path: 'legal', label: 'Legal Docs', icon: FileText },
     { path: 'company', label: 'Company Info', icon: Building2 },
+    { path: 'social', label: 'Discord & VK', icon: MessageCircle },
   ];
 
   if (checking && !isAdmin) {
@@ -175,6 +177,7 @@ const Admin: React.FC = () => {
           <Route path="payments" element={<AdminPayments onMessage={showMessage} />} />
           <Route path="legal" element={<AdminLegal onMessage={showMessage} />} />
           <Route path="company" element={<AdminCompanyInfo onMessage={showMessage} />} />
+          <Route path="social" element={<AdminSocial onMessage={showMessage} />} />
         </Routes>
       </motion.div>
     </div>
