@@ -280,3 +280,17 @@ export interface SocialConfig {
   };
   autoMessages: AutoMessageRule[];
 }
+
+export interface WipeSchedule {
+  weekday: number; // 0=Sun..6=Sat
+  hour: number;    // UTC
+  minute: number;
+}
+
+export interface SiteConfig {
+  vkUrl: string;
+  discordUrl: string;
+  telegramUrl: string;
+  fullWipe: WipeSchedule;
+  partialWipe: WipeSchedule;
+}

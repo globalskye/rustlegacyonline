@@ -1,11 +1,12 @@
-// Full wipe: every Friday 17:00 MSK (UTC+3) = 14:00 UTC
-// Partial wipe: every Tuesday 18:00 MSK (UTC+3) = 15:00 UTC
-const FRIDAY = 5;
-const TUESDAY = 2;
-const FULL_WIPE_UTC_H = 14;  // 17:00 MSK
-const FULL_WIPE_UTC_M = 0;
-const PARTIAL_WIPE_UTC_H = 15; // 18:00 MSK
-const PARTIAL_WIPE_UTC_M = 0;
+// Default: Full wipe Friday 19:00 MSK, Partial Tuesday 19:00 MSK (16:00 UTC)
+const DEFAULT_FULL = { weekday: 5, hour: 16, minute: 0 };
+const DEFAULT_PARTIAL = { weekday: 2, hour: 16, minute: 0 };
+
+export interface WipeScheduleInput {
+  weekday: number;
+  hour: number;
+  minute: number;
+}
 
 function getNextOccurrence(weekday: number, hourUTC: number, minUTC: number): Date {
   const now = new Date();
@@ -31,10 +32,12 @@ export interface WipeInfo {
   countdownPartial: string;
 }
 
-/** locale: 'en' | 'ru' — для отображения даты на языке сайта */
-export function getWipeInfo(locale?: string): WipeInfo {
-  const nextFull = getNextOccurrence(FRIDAY, FULL_WIPE_UTC_H, FULL_WIPE_UTC_M);
-  const nextPartial = getNextOccurrence(TUESDAY, PARTIAL_WIPE_UTC_H, PARTIAL_WIPE_UTC_M);
+/** locale: 'en' | 'ru' — для отображения даты на языке сайта. config — из API site-config */
+export function getWipeInfo(locale?: string, config?: { fullWipe?: WipeScheduleInput; partialWipe?: WipeScheduleInput }): WipeInfo {
+  const full = config?.fullWipe || DEFAULT_FULL;
+  const partial = config?.partialWipe || DEFAULT_PARTIAL;
+  const nextFull = getNextOccurrence(full.weekday, full.hour, full.minute);
+  const nextPartial = getNextOccurrence(partial.weekday, partial.hour, partial.minute);
   const now = new Date();
   const msUntilFull = nextFull.getTime() - now.getTime();
   const msUntilPartial = nextPartial.getTime() - now.getTime();

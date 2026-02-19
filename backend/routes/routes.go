@@ -146,6 +146,10 @@ func Setup(r *mux.Router) {
 	// RCON (protected)
 	api.Handle("/rcon/execute", authpkg.AuthMiddleware(http.HandlerFunc(handlers.ExecuteRcon))).Methods("POST")
 
+	// Site Config (GET public, PUT protected)
+	api.HandleFunc("/site-config", handlers.GetSiteConfig).Methods("GET")
+	api.Handle("/site-config", authpkg.AuthMiddleware(http.HandlerFunc(handlers.UpdateSiteConfig))).Methods("PUT")
+
 	// Admin (protected)
 	api.Handle("/admin/clear-clans-players", authpkg.AuthMiddleware(http.HandlerFunc(handlers.ClearClansAndPlayers))).Methods("DELETE")
 	api.Handle("/admin/social", authpkg.AuthMiddleware(http.HandlerFunc(handlers.GetSocialConfig))).Methods("GET")

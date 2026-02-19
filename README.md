@@ -83,6 +83,24 @@ docker-compose up --build
 # PostgreSQL на localhost:5432
 ```
 
+#### Сброс базы данных (полная перезаливка seed)
+
+```powershell
+# Windows
+.\scripts\reset-db.ps1
+```
+
+```bash
+# Linux / Mac
+./scripts/reset-db.sh
+```
+
+Или одной командой:
+```bash
+docker exec rust-legacy-postgres psql -U rustlegacy -d postgres -c "DROP DATABASE IF EXISTS rustlegacy WITH (FORCE); CREATE DATABASE rustlegacy;"
+docker restart rust-legacy-backend
+```
+
 ### Вариант 2: Локальная разработка
 
 #### 1. Запустите PostgreSQL

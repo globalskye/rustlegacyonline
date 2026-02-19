@@ -58,7 +58,7 @@ const Contact: React.FC = () => {
               {isRu ? 'Связаться с нами' : 'Contact Us'}
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
-              {isRu ? 'Спросите что угодно — мы ответим на почту.' : 'Ask anything — we\'ll reply to your email.'}
+              {isRu ? 'Спросите что угодно - мы ответим на почту.' : "Ask anything - we'll reply to your email."}
             </p>
           </div>
 
@@ -124,7 +124,7 @@ const Contact: React.FC = () => {
                   color: 'var(--success)', marginBottom: '1rem', fontSize: '0.95rem',
                 }}>
                   <CheckCircle size={20} />
-                  {isRu ? 'Сообщение отправлено! Мы ответим на вашу почту.' : 'Message sent! We\'ll reply to your email.'}
+                  {isRu ? 'Сообщение отправлено! Мы ответим на вашу почту.' : "Message sent! We'll reply to your email."}
                 </div>
               )}
               {result === 'error' && (
@@ -144,7 +144,7 @@ const Contact: React.FC = () => {
                   width: '100%', padding: '0.9rem 1.5rem', borderRadius: 8,
                   background: 'linear-gradient(135deg, var(--primary), var(--primary-darker))',
                   color: '#fff', border: 'none', fontSize: '1rem', fontWeight: 600,
-                  cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7,
+                  cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
                 }}
               >

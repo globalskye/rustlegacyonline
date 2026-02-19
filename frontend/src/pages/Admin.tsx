@@ -3,7 +3,7 @@ import { Routes, Route, NavLink, useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion';
 import {
   Settings, ShoppingCart, Download, FileText, CreditCard,
-  Shield, Plug, List, LogOut, Zap, Building2, Server, Database, MessageCircle
+  Shield, Plug, List, LogOut, Zap, Building2, Server, Database, MessageCircle, Globe
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
@@ -23,6 +23,7 @@ import AdminLegal from '../components/admin/AdminLegal';
 import AdminNews from '../components/admin/AdminNews';
 import AdminCompanyInfo from '../components/admin/AdminCompanyInfo';
 import AdminSocial from '../components/admin/AdminSocial';
+import AdminSiteConfig from '../components/admin/AdminSiteConfig';
 
 const Admin: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -60,6 +61,7 @@ const Admin: React.FC = () => {
 
   const navSections = [
     { path: 'server', label: 'Server Info', icon: Settings },
+    { path: 'site-config', label: 'Site Config (Соцсети + Вайп)', icon: Globe },
     { path: 'servers', label: 'Servers', icon: Server },
     { path: 'shop', label: 'Shop', icon: ShoppingCart },
     { path: 'downloads', label: 'Download Links', icon: Download },
@@ -165,6 +167,7 @@ const Admin: React.FC = () => {
         <Routes>
           <Route index element={<Navigate to="server" replace />} />
           <Route path="server" element={<AdminServerInfo onMessage={showMessage} />} />
+          <Route path="site-config" element={<AdminSiteConfig onMessage={showMessage} />} />
           <Route path="servers" element={<AdminServers onMessage={showMessage} />} />
           <Route path="shop" element={<AdminShop onMessage={showMessage} />} />
           <Route path="downloads" element={<AdminDownloadLinks onMessage={showMessage} />} />

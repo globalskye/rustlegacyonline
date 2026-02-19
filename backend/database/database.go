@@ -171,14 +171,14 @@ func Seed() error {
 	// HOW TO START STEPS
 	// ========================================
 	howToStartSteps := []models.HowToStartStep{
-		{Language: "en", StepNumber: 1, Title: "Download the Client", Content: "<p>Download our custom Rust Legacy client from the link above.</p>", ImageURL: "https://via.placeholder.com/600x400/0ea5e9/ffffff?text=Download+Client"},
-		{Language: "ru", StepNumber: 1, Title: "Скачайте клиент", Content: "<p>Скачайте наш кастомный клиент Rust Legacy по ссылке выше.</p>", ImageURL: "https://via.placeholder.com/600x400/0ea5e9/ffffff?text=Download+Client"},
-		{Language: "en", StepNumber: 2, Title: "Verify the Download", Content: "<p>For your security, verify the downloaded file on VirusTotal.</p>", ImageURL: "https://via.placeholder.com/600x400/06b6d4/ffffff?text=Verify+Download"},
-		{Language: "ru", StepNumber: 2, Title: "Проверьте загрузку", Content: "<p>Для вашей безопасности проверьте скачанный файл на VirusTotal.</p>", ImageURL: "https://via.placeholder.com/600x400/06b6d4/ffffff?text=Verify+Download"},
-		{Language: "en", StepNumber: 3, Title: "Install and Launch", Content: "<p>Extract the archive and run RustLegacy.exe.</p>", ImageURL: "https://via.placeholder.com/600x400/14b8a6/ffffff?text=Install+Game"},
-		{Language: "ru", StepNumber: 3, Title: "Установите и запустите", Content: "<p>Извлеките архив и запустите RustLegacy.exe.</p>", ImageURL: "https://via.placeholder.com/600x400/14b8a6/ffffff?text=Install+Game"},
-		{Language: "en", StepNumber: 4, Title: "Start Playing!", Content: "<p>You're all set! Use /kit starter for free starter kit.</p>", ImageURL: "https://via.placeholder.com/600x400/0284c7/ffffff?text=Start+Playing"},
-		{Language: "ru", StepNumber: 4, Title: "Начинайте играть!", Content: "<p>Все готово! Используйте /kit starter для стартового набора.</p>", ImageURL: "https://via.placeholder.com/600x400/0284c7/ffffff?text=Start+Playing"},
+		{Language: "en", StepNumber: 1, Title: "Download the Client Archive", Content: "<p>Download the client archive from the link above.</p>", ImageURL: ""},
+		{Language: "ru", StepNumber: 1, Title: "Скачайте архив клиента", Content: "<p>Скачайте архив клиента по ссылке выше.</p>", ImageURL: ""},
+		{Language: "en", StepNumber: 2, Title: "Extract the Archive", Content: "<p>Unzip the downloaded archive to a folder on your computer.</p>", ImageURL: ""},
+		{Language: "ru", StepNumber: 2, Title: "Разархивируйте архив", Content: "<p>Распакуйте скачанный архив в папку на компьютере.</p>", ImageURL: ""},
+		{Language: "en", StepNumber: 3, Title: "Run RustUpdate.exe", Content: "<p>Launch <strong>RustUpdate.exe</strong> to check and update the game to the latest version.</p>", ImageURL: ""},
+		{Language: "ru", StepNumber: 3, Title: "Запустите RustUpdate.exe", Content: "<p>Запустите <strong>RustUpdate.exe</strong>, чтобы проверить и обновить игру до последней версии.</p>", ImageURL: ""},
+		{Language: "en", StepNumber: 4, Title: "Enter the Game", Content: "<p>Start the game, enter your nickname, and open <strong>PlayGame</strong> to connect to the server.</p>", ImageURL: ""},
+		{Language: "ru", StepNumber: 4, Title: "Зайдите в игру", Content: "<p>Запустите игру, введите никнейм и откройте <strong>PlayGame</strong>, чтобы подключиться к серверу.</p>", ImageURL: ""},
 	}
 	for _, step := range howToStartSteps {
 		if err := DB.Create(&step).Error; err != nil {
@@ -226,8 +226,14 @@ func Seed() error {
 	// RULES
 	// ========================================
 	rules := []models.Rule{
-		{Language: "en", Title: "🚫 Cheating and Exploits", Content: "<p>✗ Any cheats, hacks, or third-party software</p><p><strong>Penalty:</strong> Permanent ban</p>", Order: 1},
-		{Language: "ru", Title: "🚫 Читы и эксплойты", Content: "<p>✗ Любые читы, хаки или стороннее ПО</p><p><strong>Наказание:</strong> Перманентный бан</p>", Order: 1},
+		{Language: "en", Title: "Cheating and Exploits", Content: "<ul><li>Cheats, hacks, macros, bug abuse</li></ul><p><strong>Penalty:</strong> Permanent ban</p>", Order: 1},
+		{Language: "ru", Title: "Читы и эксплойты", Content: "<ul><li>Читы, хаки, макросы, баг-абузы</li></ul><p><strong>Наказание:</strong> Перманентный бан</p>", Order: 1},
+		{Language: "en", Title: "Chat Behavior", Content: "<ul><li>Insults to parents</li><li>Spam</li><li>Mentioning other projects</li></ul>", Order: 2},
+		{Language: "ru", Title: "Поведение в чате", Content: "<ul><li>Оскорбления родителей</li><li>Спам</li><li>Упоминание других проектов</li></ul>", Order: 2},
+		{Language: "en", Title: "Multi-Accounts", Content: "<ul><li>Using multiple accounts to get free /kit sets</li></ul>", Order: 3},
+		{Language: "ru", Title: "Мультиаккаунты", Content: "<ul><li>Использование нескольких аккаунтов для получения бесплатных наборов /kit</li></ul>", Order: 3},
+		{Language: "en", Title: "General Rules", Content: "<ul><li>Respect for administration and players</li></ul>", Order: 4},
+		{Language: "ru", Title: "Общие правила", Content: "<ul><li>Уважение к администрации и игрокам</li></ul>", Order: 4},
 	}
 	for _, rule := range rules {
 		if err := DB.Create(&rule).Error; err != nil {

@@ -4,6 +4,7 @@ import { ScrollToTop } from './components/ScrollToTop';
 import { AppProvider, useLanguageDetect } from './context/AppContext';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
+import { FloatingSocialLinks } from './components/FloatingSocialLinks';
 import { Analytics } from './components/Analytics';
 import Home from './pages/Home';
 import HowToStart from './pages/HowToStart';
@@ -54,6 +55,7 @@ function AppContent() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
+      <FloatingSocialLinks />
     </div>
   );
 }

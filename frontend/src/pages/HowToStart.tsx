@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Download, Shield, CheckCircle, Play } from 'lucide-react';
+import { Download, Archive, RefreshCw, Play, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/api';
 import * as Types from '../types';
@@ -31,7 +31,7 @@ const HowToStart: React.FC = () => {
     }
   };
 
-  const stepIcons = [Download, Shield, CheckCircle, Play];
+  const stepIcons = [Download, Archive, RefreshCw, Play];
 
   if (loading) {
     return (

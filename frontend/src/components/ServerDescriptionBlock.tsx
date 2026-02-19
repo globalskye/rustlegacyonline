@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Zap, DollarSign, Users, Command, Shield, Gift, Bell } from 'lucide-react';
@@ -6,7 +7,7 @@ import { ChevronDown, Zap, DollarSign, Users, Command, Shield, Gift, Bell } from
 const COMMANDS_FULL = {
   mustKnow: [
     { cmd: '/kit', usage: '/kit "Starter"', fullDesc: { ru: 'Получить бесплатный набор предметов. У каждого набора свой кулдаун. Название в кавычках. Первым делом берите Starter.', en: 'Get free item kit. Each has cooldown. Use quotes. Start with Starter.' } },
-    { cmd: '/home', usage: '/home или /home list', fullDesc: { ru: 'Телепорт к сохранённой точке «дом». /home list — список, /home название — телепорт.', en: 'Teleport to saved home. /home list shows all, /home name teleports.' } },
+    { cmd: '/home', usage: '/home или /home list', fullDesc: { ru: 'Телепорт к сохранённой точке дом. /home list - список, /home название - телепорт.', en: 'Teleport to saved home. /home list shows all, /home name teleports.' } },
     { cmd: '/help', usage: '/help', fullDesc: { ru: 'Все команды вашего ранга. Список китов.', en: 'All commands for your rank. Kit list.' } },
     { cmd: '/about', usage: '/about', fullDesc: { ru: 'Информация о сервере: правила, рейты.', en: 'Server info: rules, rates.' } },
     { cmd: '/suicide', usage: 'F1 → suicide', fullDesc: { ru: 'Мгновенная смерть. Если застряли или хотите респнуться.', en: 'Instant death. If stuck or want to respawn.' } },
@@ -14,7 +15,7 @@ const COMMANDS_FULL = {
   baseAndTeam: [
     { cmd: '/share', usage: '/share "NickName"', fullDesc: { ru: 'Дать доступ к дверям и шкафам. Для тиммейтов.', en: 'Give access to doors and storage. For teammates.' } },
     { cmd: '/unshare', usage: '/unshare "NickName"', fullDesc: { ru: 'Забрать доступ.', en: 'Remove access.' } },
-    { cmd: '/transfer', usage: 'Смотрите на объект → /transfer "NickName"', fullDesc: { ru: 'Передать объект. Для всего дома — смотрите на фундамент.', en: 'Transfer object. For whole base — look at foundation.' } },
+    { cmd: '/transfer', usage: 'Смотрите на объект → /transfer "NickName"', fullDesc: { ru: 'Передать объект. Для всего дома - смотрите на фундамент.', en: 'Transfer object. For whole base - look at foundation.' } },
     { cmd: '/destroy', usage: '/destroy', fullDesc: { ru: 'Режим сноса своих построек. Ресурсы частично возвращаются.', en: 'Demolish mode for your structures. Some resources returned.' } },
     { cmd: '/who', usage: 'Смотрите на объект → /who', fullDesc: { ru: 'Узнать владельца объекта.', en: 'See object owner.' } },
     { cmd: '/tp', usage: '/tp "NickName"', fullDesc: { ru: 'Запрос телепорта к игроку.', en: 'Request teleport to player.' } },
@@ -33,18 +34,24 @@ const COMMANDS_FULL = {
   ],
   economy: [
     { cmd: '/balance', usage: '/balance', fullDesc: { ru: 'Баланс валюты ($).', en: 'Currency balance ($).' } },
-    { cmd: '/shop', usage: '/shop или /shop "Resources"', fullDesc: { ru: 'Магазин. Категории: Resources, Food, Weapons, Kevlar и т.д.', en: 'Shop. Categories: Resources, Food, Weapons, Kevlar, etc.' } },
-    { cmd: '/buy', usage: '/buy дерево 1000', fullDesc: { ru: 'Купить предмет.', en: 'Buy item.' } },
-    { cmd: '/sell', usage: '/sell дерево 500', fullDesc: { ru: 'Продать предмет.', en: 'Sell item.' } },
+    { cmd: '/shop', usage: '/shop или /shop 4', fullDesc: { ru: 'Магазин. Без аргументов - меню. С числом - категория/предмет по ID (например /shop 4 - патроны).', en: 'Shop. No args - menu. With number - category/item by ID (e.g. /shop 4 - ammo).' } },
+    { cmd: '/buy', usage: '/buy 44 40 или /buy дерево 1000', fullDesc: { ru: 'Купить по ID и количеству: /buy 44 40. Или по названию: /buy дерево 1000.', en: 'Buy by ID and quantity: /buy 44 40. Or by name: /buy wood 1000.' } },
+    { cmd: '/sell', usage: '/sell 1 500 или /sell all', fullDesc: { ru: 'Продать по ID: /sell 1 500. Продать всё: /sell all.', en: 'Sell by ID: /sell 1 500. Sell all: /sell all.' } },
     { cmd: '/send', usage: '/send NickName 500', fullDesc: { ru: 'Передать валюту. Комиссия 10%.', en: 'Send currency. 10% tax.' } },
   ],
   clan: [
-    { cmd: '/clan', usage: '/clan', fullDesc: { ru: 'Команды клана: create, invite, dismiss, leave, deposit, withdraw, warp, ff.', en: 'Clan commands: create, invite, dismiss, leave, deposit, withdraw, warp, ff.' } },
-    { cmd: '/clan create', usage: '/clan create "Название"', fullDesc: { ru: 'Создать клан. Бесплатно. Макс 6 человек.', en: 'Create clan. Free. Max 6 members.' } },
-    { cmd: '/clan invite', usage: '/clan invite "NickName"', fullDesc: { ru: 'Пригласить в клан.', en: 'Invite to clan.' } },
-    { cmd: '/clan warp', usage: '/clan warp', fullDesc: { ru: 'Телепорт к клановому дому. Кулдаун 30 мин.', en: 'Teleport to clan house. 30 min cooldown.' } },
-    { cmd: '/clan ff', usage: '/clan ff on/off', fullDesc: { ru: 'Урон по своим и подсветка союзников.', en: 'Friendly fire and ally highlight.' } },
-    { cmd: '/clans', usage: '/clans', fullDesc: { ru: 'Список всех кланов.', en: 'List all clans.' } },
+    { cmd: '/clan', usage: '/clan', fullDesc: { ru: 'Информация о клане и список подкоманд.', en: 'Clan info and subcommands list.' } },
+    { cmd: '/clan create', usage: '/clan create "Название"', fullDesc: { ru: 'Создать новый клан. Бесплатно. Название 3-32 символа.', en: 'Create new clan. Free. Name 3-32 chars.' } },
+    { cmd: '/clan invite', usage: '/clan invite "NickName"', fullDesc: { ru: 'Пригласить игрока в клан. Он получит запрос (Y/N).', en: 'Invite player to clan. They get request (Y/N).' } },
+    { cmd: '/clan dismiss', usage: '/clan dismiss "NickName"', fullDesc: { ru: 'Исключить игрока из клана. Только лидер.', en: 'Kick player from clan. Leader only.' } },
+    { cmd: '/clan ff on', usage: '/clan ff on', fullDesc: { ru: 'Выключить урон по своим и подсветку союзников (Team ESP).', en: 'Disable friendly fire and ally highlight (Team ESP).' } },
+    { cmd: '/clan ff off', usage: '/clan ff off', fullDesc: { ru: 'Включить урон по своим и подсветку союзников.', en: 'Enable friendly fire and ally highlight.' } },
+    { cmd: '/clan up', usage: '/clan up', fullDesc: { ru: 'Повысить уровень клана. Нужны опыт и валюта в казне.', en: 'Level up clan. Requires experience and currency in treasury.' } },
+    { cmd: '/clan leave', usage: '/clan leave', fullDesc: { ru: 'Выйти из клана. Если лидер один - клан распустится.', en: 'Leave clan. If leader alone - clan disbands.' } },
+    { cmd: '/clan deposit', usage: '/clan deposit 500', fullDesc: { ru: 'Положить валюту в казну клана. Для апгрейда уровня.', en: 'Deposit currency to clan treasury. For level up.' } },
+    { cmd: '/clan withdraw', usage: '/clan withdraw 200', fullDesc: { ru: 'Забрать валюту из казны. Только лидер.', en: 'Withdraw currency from treasury. Leader only.' } },
+    { cmd: '/clan warp', usage: '/clan warp', fullDesc: { ru: 'Телепорт к клановому дому. Кулдаун 30 мин. Только на улице или в своём доме.', en: 'Teleport to clan house. 30 min cooldown. Outdoors or own base only.' } },
+    { cmd: '/clans', usage: '/clans', fullDesc: { ru: 'Список всех кланов с рейтингом и участниками.', en: 'List all clans with rating and members.' } },
   ],
   raidAlert: [
     { cmd: '/raidalert', usage: '/raidalert', fullDesc: { ru: 'Оповещения о рейде в Telegram, Discord, VK.', en: 'Raid notifications to Telegram, Discord, VK.' } },
@@ -61,11 +68,11 @@ const COMMANDS_FULL = {
 
 const KITS = [
   { name: 'Starter', cd: '30 мин', items: { ru: 'Еда, медикаменты, топор, лук, стрелы, тканевая броня', en: 'Food, meds, hatchet, bow, arrows, cloth armor' } },
-  { name: 'wipe', cd: '1 раз', items: { ru: 'Сера, металл, кожа, ткань, дерево — после вайпа', en: 'Sulfur, metal, leather, cloth, wood — after wipe' } },
+  { name: 'wipe', cd: '1 раз', items: { ru: 'Сера, металл, кожа, ткань, дерево - после вайпа', en: 'Sulfur, metal, leather, cloth, wood - after wipe' } },
   { name: 'help', cd: '30 мин', items: { ru: 'Медикаменты и еда', en: 'Meds and food' } },
   { name: 'Home', cd: '1 раз', items: { ru: 'Фундамент, стены, дверь, печка, сундук, кровать', en: 'Foundation, walls, door, furnace, storage, bed' } },
   { name: 'Pipe', cd: '4 ч', items: { ru: 'Дробовик, патроны, медикаменты', en: 'Pipe shotgun, shells, meds' } },
-};
+];
 
 type SectionId = 'about' | 'kits' | 'mustKnow' | 'baseAndTeam' | 'economy' | 'clan' | 'raidAlert' | 'chatAndInfo';
 
@@ -129,9 +136,8 @@ interface ServerDescriptionBlockProps {
 }
 
 const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverId }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRu = i18n.language === 'ru';
-  const t = (ru: string, en: string) => (isRu ? ru : en);
 
   const [openSections, setOpenSections] = useState<Set<SectionId>>(new Set(['about']));
 
@@ -175,12 +181,12 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
         gap: '0.5rem',
       }}>
         <Zap size={28} />
-        {t('Описание сервера Classic', 'Classic Server Description')}
+        {t('serverDesc.classicTitle')}
       </h2>
 
       <AccordionSection
         id="about"
-        title={t('О сервере', 'About Server')}
+        title={t('serverDesc.aboutServer')}
         icon={<Shield size={22} color="var(--primary)" />}
         isOpen={openSections.has('about')}
         onToggle={() => toggle('about')}
@@ -188,26 +194,23 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
         <div style={{ paddingTop: '1rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
             <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>{t('Рейты', 'Rates')}</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>{t('serverDesc.rates')}</div>
               <div style={{ fontWeight: 600, color: 'var(--primary)' }}>x1</div>
             </div>
             <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>{t('Лимит дома', 'House limit')}</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>{t('serverDesc.houseLimit')}</div>
               <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>6×6×10</div>
             </div>
           </div>
           <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0 }}>
-            {t(
-              'Классический Rust Legacy x1 с частичным вайпом. Система рангов, кланов, экономики и магазина. Лимит дома 6×6×10. Аирдропы по расписанию.',
-              'Classic Rust Legacy x1 with partial wipe. Rank system, clans, economy and shop. House limit 6×6×10. Scheduled airdrops.'
-            )}
+            {t('serverDesc.aboutText')}
           </p>
         </div>
       </AccordionSection>
 
       <AccordionSection
         id="kits"
-        title={t('Основные наборы', 'Main Kits')}
+        title={t('serverDesc.mainKits')}
         icon={<Gift size={22} color="var(--primary)" />}
         isOpen={openSections.has('kits')}
         onToggle={() => toggle('kits')}
@@ -224,15 +227,18 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
               </div>
             ))}
           </div>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.75rem' }}>
-            {t('Спецкиты для VIP и рангов — /help в игре.', 'Special kits for VIP and ranks — /help in-game.')}
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {t('serverDesc.specialKitsText')}
+            <Link to="/shop" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
+              {t('serverDesc.specialKitsLink')}
+            </Link>
           </p>
         </div>
       </AccordionSection>
 
       <AccordionSection
         id="mustKnow"
-        title={t('Обязательно знать', 'Must know')}
+        title={t('serverDesc.mustKnow')}
         icon={<Command size={22} color="var(--primary)" />}
         isOpen={openSections.has('mustKnow')}
         onToggle={() => toggle('mustKnow')}
@@ -246,7 +252,7 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
 
       <AccordionSection
         id="baseAndTeam"
-        title={t('База и тиммейты', 'Base & teammates')}
+        title={t('serverDesc.baseAndTeam')}
         icon={<Command size={22} color="var(--primary)" />}
         isOpen={openSections.has('baseAndTeam')}
         onToggle={() => toggle('baseAndTeam')}
@@ -260,7 +266,7 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
 
       <AccordionSection
         id="economy"
-        title={t('Экономика', 'Economy')}
+        title={t('serverDesc.economy')}
         icon={<DollarSign size={22} color="var(--primary)" />}
         isOpen={openSections.has('economy')}
         onToggle={() => toggle('economy')}
@@ -268,19 +274,19 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
         <div style={{ paddingTop: '1rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
             <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{t('Старт', 'Start')}</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{t('serverDesc.start')}</div>
               <div style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.3rem' }}>100 $</div>
             </div>
             <div>
               <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{t('Заработок', 'Earn')}</div>
               <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>
-                {t('Убийства, PvP, продажа', 'Kills, PvP, selling')}
+                {t('serverDesc.earn')}
               </div>
             </div>
             <div>
               <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{t('Потери', 'Losses')}</div>
               <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>
-                {t('Смерть −10–15%, перевод −10%', 'Death −10–15%, transfer −10%')}
+                {t('serverDesc.losses')}
               </div>
             </div>
           </div>
@@ -294,17 +300,14 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
 
       <AccordionSection
         id="clan"
-        title={t('Система кланов', 'Clan System')}
+        title={t('serverDesc.clanSystem')}
         icon={<Users size={22} color="var(--primary)" />}
         isOpen={openSections.has('clan')}
         onToggle={() => toggle('clan')}
       >
         <div style={{ paddingTop: '1rem' }}>
           <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>
-            {t(
-              'Кланы до 6 человек. 12 уровней. Бонусы к фарму до +180%. Warp — телепорт к клановому дому (30 мин). С 9 уровня — клановые войны.',
-              'Clans up to 6 members. 12 levels. Gathering bonuses up to +180%. Warp — teleport to clan house (30 min). Level 9+ — clan wars.'
-            )}
+            {t('serverDesc.clanText')}
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
             {[0, 1, 3, 5, 9, 12].map((lvl) => (
@@ -330,10 +333,7 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
       >
         <div style={{ paddingTop: '1rem' }}>
           <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>
-            {t(
-              'Пуш в Telegram, Discord или VK при рейде вашей базы. Уведомления о рейдах союзников по клану.',
-              'Push to Telegram, Discord or VK when your base is raided. Clan ally raid notifications.'
-            )}
+            {t('serverDesc.raidAlertText')}
           </p>
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
             {['Telegram', 'Discord', 'VK'].map((s) => (
@@ -350,7 +350,7 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
 
       <AccordionSection
         id="chatAndInfo"
-        title={t('Чат, информация, графика', 'Chat, info, graphics')}
+        title={t('serverDesc.chatInfoGraphics')}
         icon={<Command size={22} color="var(--primary)" />}
         isOpen={openSections.has('chatAndInfo')}
         onToggle={() => toggle('chatAndInfo')}

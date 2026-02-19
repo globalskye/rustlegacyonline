@@ -865,6 +865,18 @@ body {
   }
 }
 
+/* Floating social links - leviating circles */
+@keyframes float-social {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.floating-social-btn {
+  animation: float-social 3s ease-in-out infinite;
+}
+.floating-social-btn:nth-child(1) { animation-delay: 0s; }
+.floating-social-btn:nth-child(2) { animation-delay: 0.2s; }
+.floating-social-btn:nth-child(3) { animation-delay: 0.4s; }
+
 /* Wipe countdown - mobile */
 .monitoring-wipe-grid {
   display: grid;

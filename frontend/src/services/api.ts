@@ -499,6 +499,17 @@ class ApiService {
       body: JSON.stringify(config),
     });
   }
+
+  async getSiteConfig(): Promise<Types.SiteConfig> {
+    return this.request<Types.SiteConfig>('/site-config');
+  }
+
+  async updateSiteConfig(config: Types.SiteConfig): Promise<{ ok: string }> {
+    return this.request<{ ok: string }>('/site-config', {
+      method: 'PUT',
+      body: JSON.stringify(config),
+    });
+  }
 }
 
 export const apiService = new ApiService();
