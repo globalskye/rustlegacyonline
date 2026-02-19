@@ -7,6 +7,7 @@ import { apiService } from '../services/api';
 import * as Types from '../types';
 import { OnlineChart } from '../components/OnlineChart';
 import { WipeCountdown } from '../components/WipeCountdown';
+import LoadingScreen from '../components/LoadingScreen';
 
 const Home: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -85,14 +86,7 @@ const Home: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} style={{ textAlign: 'center' }}>
-          <Server size={80} color="var(--primary-blue)" style={{ marginBottom: '1rem', filter: 'drop-shadow(0 0 20px var(--glow-blue))' }} />
-          <p style={{ color: 'var(--text-secondary)' }}>Loading...</p>
-        </motion.div>
-      </div>
-    );
+    return <LoadingScreen message="Connecting to servers..." />;
   }
 
   if (apiError) {
@@ -124,15 +118,6 @@ const Home: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <motion.h1 
-            className="monitoring-title"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            Server Monitoring
-          </motion.h1>
-
           {/* Server Status Cards */}
           <div className="monitoring-cards">
             {serverStatuses.map((server, index) => (
@@ -225,6 +210,14 @@ const Home: React.FC = () => {
       {/* How To Start Section */}
       {howToStartSteps.length > 0 && (
         <section style={{ padding: '4rem 2rem', maxWidth: '1400px', margin: '0 auto' }}>
+          <motion.div 
+            className="section-divider"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+          >
+            How to Start
+          </motion.div>
           <motion.h2 
             className="section-title"
             initial={{ opacity: 0, y: 30 }}
@@ -442,7 +435,7 @@ const Home: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="card"
             style={{
-              background: 'rgba(56, 189, 248, 0.08)',
+              background: 'rgba(230, 126, 34, 0.1)',
               border: '2px solid var(--border-bright)',
               marginBottom: '2rem',
               marginTop: '3rem'

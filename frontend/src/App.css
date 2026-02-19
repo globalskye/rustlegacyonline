@@ -1,30 +1,40 @@
-/* Тёмный уют — мягкая тёмная тема */
+/* rustlegacy.eu — палитра и стили */
 :root,
 [data-theme="dark"] {
-  --primary-blue: #38bdf8;
-  --primary-blue-dark: #0ea5e9;
-  --primary-blue-darker: #0284c7;
+  /* Primary — оранжевый/ржавый как на rustlegacy.eu */
+  --primary: #e67e22;
+  --primary-dark: #d35400;
+  --primary-darker: #b7410e;
+  --primary-blue: #e67e22;
+  --primary-blue-dark: #d35400;
+  --primary-blue-darker: #b7410e;
+  --accent-amber: #f59e0b;
+  --accent-rust: #cd7f32;
   --accent-green: #4ade80;
   --accent-cyan: #2dd4bf;
-  --bg-dark: #16213e;
-  --bg-darker: #1a1a2e;
-  --bg-card: rgba(22, 33, 62, 0.6);
-  --bg-card-hover: rgba(30, 41, 70, 0.8);
-  --bg-navbar: rgba(26, 26, 46, 0.9);
-  --bg-mobile-menu: rgba(26, 26, 46, 0.98);
-  --bg-monitoring: rgba(22, 33, 62, 0.7);
-  --bg-stat-box: rgba(26, 26, 46, 0.5);
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --glow-blue: rgba(56, 189, 248, 0.25);
+  /* Backgrounds */
+  --bg-dark: #1a1510;
+  --bg-darker: #0f0c09;
+  --bg-card: rgba(26, 21, 16, 0.75);
+  --bg-card-hover: rgba(38, 30, 24, 0.9);
+  --bg-navbar: rgba(15, 12, 9, 0.92);
+  --bg-mobile-menu: rgba(15, 12, 9, 0.98);
+  --bg-monitoring: rgba(26, 21, 16, 0.8);
+  --bg-stat-box: rgba(38, 30, 24, 0.6);
+  /* Text */
+  --text-primary: #f5f0eb;
+  --text-secondary: #d4cfc9;
+  --text-muted: #a89f96;
+  /* Effects */
+  --glow-primary: rgba(230, 126, 34, 0.35);
+  --glow-blue: rgba(230, 126, 34, 0.35);
   --glow-green: rgba(74, 222, 128, 0.2);
-  --border-color: rgba(56, 189, 248, 0.15);
-  --border-bright: rgba(56, 189, 248, 0.4);
-  --nav-hover-bg: rgba(56, 189, 248, 0.1);
-  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.2);
-  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --border-color: rgba(230, 126, 34, 0.2);
+  --border-bright: rgba(230, 126, 34, 0.5);
+  --nav-hover-bg: rgba(230, 126, 34, 0.12);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  --overlay-bg: rgba(0, 0, 0, 0.75);
 }
 
 * {
@@ -51,7 +61,18 @@ body {
   min-height: 100vh;
 }
 
-/* Background — мягкие пятна цвета */
+/* Video background — bg.webm как на rustlegacy.eu */
+.background-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+/* Overlay поверх видео — затемнение для читаемости (rustlegacy.eu) */
 .background-layer {
   position: fixed;
   top: 0;
@@ -59,16 +80,110 @@ body {
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 80% 80%, rgba(74, 222, 128, 0.05) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(22, 33, 62, 0.5) 0%, transparent 70%),
-    var(--bg-darker);
+    linear-gradient(180deg, rgba(5, 4, 3, 0.88) 0%, rgba(15, 12, 9, 0.78) 30%, rgba(26, 21, 16, 0.72) 60%, rgba(5, 4, 3, 0.92) 100%),
+    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(230, 126, 34, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(205, 127, 50, 0.04) 0%, transparent 45%);
   z-index: -1;
+}
+
+/* Noise overlay для атмосферы */
+.background-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Grid overlay — убрана для уютного стиля */
 .grid-overlay {
   display: none;
+}
+
+/* ========== Loading Screen — загрузочный экран в стиле rustlegacy.eu ========== */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.loading-screen-bg {
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(180deg, #050403 0%, #0f0c09 40%, #1a1510 70%, #050403 100%),
+    radial-gradient(ellipse 70% 50% at 50% 30%, rgba(230, 126, 34, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 30% at 50% 80%, rgba(26, 21, 16, 0.4) 0%, transparent 60%);
+}
+
+.loading-screen-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.loading-screen-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.6) 100%);
+  pointer-events: none;
+}
+
+.loading-screen-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+}
+
+.loading-screen-logo {
+  margin-bottom: 1.5rem;
+}
+
+.loading-screen-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 0 30px rgba(230, 126, 34, 0.35);
+}
+
+.loading-screen-title-line {
+  display: block;
+}
+
+.loading-screen-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.loading-screen-bar {
+  width: min(280px, 80vw);
+  height: 4px;
+  background: rgba(230, 126, 34, 0.2);
+  border-radius: 2px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.loading-screen-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), rgba(230, 126, 34, 0.7));
+  border-radius: 2px;
+  box-shadow: 0 0 12px var(--glow-primary);
 }
 
 /* Navigation */
@@ -153,7 +268,7 @@ body {
 }
 
 .nav-link.active {
-  color: var(--primary-blue);
+  color: var(--primary);
   background: var(--nav-hover-bg);
 }
 
@@ -190,7 +305,7 @@ body {
   display: none;
   background: transparent;
   border: 1px solid var(--border-color);
-  color: var(--primary-blue);
+  color: var(--primary);
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 6px;
@@ -357,15 +472,15 @@ body {
 }
 
 .btn:hover {
-  background: var(--primary-blue-dark);
+  background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--glow-blue);
+  box-shadow: 0 6px 20px var(--glow-primary);
 }
 
 .btn-secondary {
   background: transparent;
   border: 1px solid var(--border-bright);
-  color: var(--primary-blue);
+  color: var(--primary);
   box-shadow: none;
 }
 
@@ -380,11 +495,99 @@ body {
 
 /* Glowing Effects */
 .glow-text {
-  text-shadow: 0 0 20px var(--glow-blue);
+  text-shadow: 0 0 20px var(--glow-primary);
 }
 
 .glow-border {
-  box-shadow: 0 0 20px var(--glow-blue);
+  box-shadow: 0 0 20px var(--glow-primary);
+}
+
+/* ========== rustlegacy.eu layout elements ========== */
+.hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2.5rem, 10vw, 5rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  text-align: center;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  text-shadow: 0 0 40px var(--glow-primary);
+}
+.hero-title-line { display: block; }
+.hero-subtitle {
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  color: var(--primary);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+.announcer-banner {
+  background: linear-gradient(90deg, transparent, rgba(230, 126, 34, 0.15), transparent);
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+}
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 3rem 0 2rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '⬇';
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+.stat-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+@media (max-width: 900px) {
+  .stat-grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .stat-grid-4 { grid-template-columns: 1fr; }
+}
+.stat-box {
+  background: var(--bg-stat-box);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.25s ease;
+}
+.stat-box:hover {
+  border-color: var(--border-bright);
+  transform: translateY(-2px);
+}
+.stat-box-value {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+}
+.stat-box-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Animations */
@@ -412,11 +615,10 @@ body {
 /* Monitoring Section - Mobile First */
 .monitoring-section {
   position: relative;
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6rem 1rem 2rem;
+  padding: 7rem 1rem 3rem;
   overflow: hidden;
 }
 .monitoring-inner {
@@ -834,7 +1036,7 @@ body {
   text-align: left;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  color: var(--primary-blue);
+  color: var(--primary);
   background: var(--bg-darker);
   border-bottom: 1px solid var(--border-color);
   white-space: nowrap;

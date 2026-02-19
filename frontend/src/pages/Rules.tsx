@@ -43,7 +43,7 @@ const Rules: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="card"
           style={{
-            background: 'rgba(56, 189, 248, 0.08)',
+            background: 'rgba(230, 126, 34, 0.1)',
             border: '2px solid var(--border-bright)',
             marginBottom: '3rem'
           }}

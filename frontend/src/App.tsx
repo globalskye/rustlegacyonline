@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ScrollToTop } from './components/ScrollToTop';
 import { AppProvider, useLanguageDetect } from './context/AppContext';
@@ -20,8 +20,21 @@ import './App.css';
 
 function AppContent() {
   useLanguageDetect();
+  useEffect(() => {
+    document.getElementById('app-initial-splash')?.remove();
+  }, []);
   return (
     <div className="app">
+      <video
+        className="background-video"
+        autoPlay
+        loop
+        muted
+        playsInline
+        aria-hidden
+      >
+        <source src="https://rustlegacy.eu/assets/bg.webm" type="video/webm" />
+      </video>
       <div className="background-layer" />
       <Navigation />
       <Routes>
