@@ -95,10 +95,12 @@ docker-compose up --build
 ./scripts/reset-db.sh
 ```
 
-Или одной командой:
+Или вручную (сначала останови backend, иначе будет ошибка «cannot drop the currently open database»):
 ```bash
-docker exec rust-legacy-postgres psql -U rustlegacy -d postgres -c "DROP DATABASE IF EXISTS rustlegacy WITH (FORCE); CREATE DATABASE rustlegacy;"
-docker restart rust-legacy-backend
+docker stop rustlegacy-backend
+docker exec rustlegacy-postgres psql -U rustlegacy -d postgres -c "DROP DATABASE IF EXISTS rustlegacy;"
+docker exec rustlegacy-postgres psql -U rustlegacy -d postgres -c "CREATE DATABASE rustlegacy;"
+docker start rustlegacy-backend
 ```
 
 ### Вариант 2: Локальная разработка
@@ -227,7 +229,7 @@ REACT_APP_API_URL=http://localhost:8080/api
 
 ```bash
 # Через Docker
-docker exec -it rust-legacy-postgres psql -U rustlegacy -d rustlegacy
+docker exec -it rustlegacy-postgres psql -U rustlegacy -d rustlegacy
 
 # Локально
 psql -h localhost -U rustlegacy -d rustlegacy
@@ -319,10 +321,10 @@ api.HandleFunc("/achievements", handlers.GetAchievements).Methods("GET")
 
 ```bash
 # Логи backend
-docker logs rust-legacy-backend -f
+docker logs rustlegacy-backend -f
 
 # Логи БД
-docker logs rust-legacy-postgres -f
+docker logs rustlegacy-postgres -f
 
 # Статус всех сервисов
 docker-compose ps

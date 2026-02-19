@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: rust-legacy-postgres
+    container_name: rustlegacy-postgres
     environment:
       POSTGRES_DB: ${DB_NAME:-rustlegacy}
       POSTGRES_USER: ${DB_USER:-rustlegacy}
@@ -22,7 +22,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    container_name: rust-legacy-backend
+    container_name: rustlegacy-backend
     depends_on:
       postgres:
         condition: service_healthy
@@ -48,7 +48,7 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
-    container_name: rust-legacy-frontend
+    container_name: rustlegacy-frontend
     ports:
       - "3000:80"
     depends_on:
@@ -59,7 +59,7 @@ services:
 
   adminer:
     image: adminer:latest
-    container_name: rust-legacy-adminer
+    container_name: rustlegacy-adminer
     depends_on:
       - postgres
     ports:

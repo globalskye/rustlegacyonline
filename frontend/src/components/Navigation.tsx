@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Zap } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 const Navigation: React.FC = () => {
@@ -36,10 +36,11 @@ const Navigation: React.FC = () => {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <Link to="/" className="nav-logo">
-            <div className="logo-icon">
-              <Zap size={24} color="#ffffff" />
+            <img src="/favicon.svg" alt="" className="logo-icon-img" width={40} height={40} />
+            <div className="logo-text-block">
+              <span className="logo-text-main">Rust Legacy</span>
+              <span className="logo-text-sub">Rust Legacy Online</span>
             </div>
-            <span className="logo-text">RUST LEGACY</span>
           </Link>
           
           <div className="nav-menu">

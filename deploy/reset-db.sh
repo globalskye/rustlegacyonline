@@ -1,6 +1,6 @@
 #!/bin/bash
-# Reset database: drop, recreate, restart backend (Migrate + Seed)
-# Run from project root: ./scripts/reset-db.sh
+# Reset database (production deploy)
+# Run from deploy/: ./reset-db.sh
 
 set -e
 
@@ -11,7 +11,7 @@ echo "Resetting database..."
 docker exec rustlegacy-postgres psql -U rustlegacy -d postgres -c "DROP DATABASE IF EXISTS rustlegacy;"
 docker exec rustlegacy-postgres psql -U rustlegacy -d postgres -c "CREATE DATABASE rustlegacy;"
 
-echo "Database recreated. Starting backend..."
+echo "Starting backend..."
 docker start rustlegacy-backend
 
 echo "Done. Backend will run Migrate + Seed on startup."

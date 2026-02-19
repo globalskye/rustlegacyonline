@@ -191,7 +191,7 @@ chmod +x add_news.sh
 
 **Через Docker:**
 ```bash
-docker exec -it rust-legacy-postgres psql -U rustlegacy -d rustlegacy
+docker exec -it rustlegacy-postgres psql -U rustlegacy -d rustlegacy
 ```
 
 **Локально:**
@@ -204,12 +204,12 @@ psql -h localhost -U rustlegacy -d rustlegacy
 
 **Экспорт всех новостей:**
 ```bash
-docker exec rust-legacy-postgres pg_dump -U rustlegacy -d rustlegacy -t news > news_backup.sql
+docker exec rustlegacy-postgres pg_dump -U rustlegacy -d rustlegacy -t news > news_backup.sql
 ```
 
 **Импорт:**
 ```bash
-docker exec -i rust-legacy-postgres psql -U rustlegacy -d rustlegacy < news_backup.sql
+docker exec -i rustlegacy-postgres psql -U rustlegacy -d rustlegacy < news_backup.sql
 ```
 
 ## 🚀 Добавление функционала
@@ -269,7 +269,7 @@ curl -X POST http://localhost:8080/api/news \
 ### API не отвечает
 ```bash
 # Проверить логи backend
-docker logs rust-legacy-backend
+docker logs rustlegacy-backend
 
 # Проверить, запущен ли сервис
 docker-compose ps

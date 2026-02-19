@@ -73,7 +73,7 @@ cp .env.example .env
 
 4. **Регулярные бэкапы:**
    ```bash
-   docker exec rust-legacy-postgres pg_dump -U rustlegacy rustlegacy > backup_$(date +%Y%m%d).sql
+   docker exec rustlegacy-postgres pg_dump -U rustlegacy rustlegacy > backup_$(date +%Y%m%d).sql
    ```
 
 ---

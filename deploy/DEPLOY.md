@@ -87,6 +87,27 @@ cd deploy
 | `./deploy.sh stop` | Остановить всё |
 | `./deploy.sh logs` | Просмотр логов |
 
+### Сброс базы данных
+
+```bash
+cd deploy
+
+# Сначала убедись, что контейнеры запущены
+./deploy.sh build   # или ./deploy.sh restart
+
+# Затем сброс
+chmod +x reset-db.sh
+./reset-db.sh
+```
+
+Или вручную (если rustlegacy-postgres и rustlegacy-backend уже запущены):
+```bash
+docker stop rustlegacy-backend
+docker exec rustlegacy-postgres psql -U rustlegacy -d postgres -c "DROP DATABASE IF EXISTS rustlegacy;"
+docker exec rustlegacy-postgres psql -U rustlegacy -d postgres -c "CREATE DATABASE rustlegacy;"
+docker start rustlegacy-backend
+```
+
 ---
 
 ## Обновление

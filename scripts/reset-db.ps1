@@ -3,17 +3,20 @@
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "Resetting database..." -ForegroundColor Yellow
+Write-Host "Stopping backend (disconnect from DB)..." -ForegroundColor Yellow
+docker stop rustlegacy-backend 2>$null
 
-# Drop and recreate database (FORCE disconnects backend)
-docker exec rust-legacy-postgres psql -U rustlegacy -d postgres -c "DROP DATABASE IF EXISTS rustlegacy WITH (FORCE); CREATE DATABASE rustlegacy;"
+Write-Host "Resetting database..." -ForegroundColor Yellow
+docker exec rustlegacy-postgres psql -U rustlegacy -d postgres -c "DROP DATABASE IF EXISTS rustlegacy;"
+docker exec rustlegacy-postgres psql -U rustlegacy -d postgres -c "CREATE DATABASE rustlegacy;"
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Error: is postgres container running? Try: docker-compose up -d postgres" -ForegroundColor Red
+    Write-Host "Error: is rustlegacy-postgres running? Try: docker compose up -d" -ForegroundColor Red
+    docker start rustlegacy-backend 2>$null
     exit 1
 }
 
-Write-Host "Database recreated. Restarting backend..." -ForegroundColor Yellow
-docker restart rust-legacy-backend
+Write-Host "Database recreated. Starting backend..." -ForegroundColor Yellow
+docker start rustlegacy-backend
 
 Write-Host "Done. Backend will run Migrate + Seed on startup." -ForegroundColor Green
