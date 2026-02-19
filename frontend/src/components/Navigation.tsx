@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
+import { apiService } from '../services/api';
+
 const Navigation: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const location = useLocation();
+
+  useEffect(() => {
+    apiService.getServerInfo().then((info) => {
+      const url = info?.downloadLinks?.[0]?.url || info?.downloadUrl;
+      if (url) setDownloadUrl(url);
+    }).catch(() => {});
+  }, []);
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -56,6 +66,17 @@ const Navigation: React.FC = () => {
           </div>
 
           <div className="nav-actions">
+            {downloadUrl ? (
+              <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className="nav-download-btn">
+                <Download size={18} />
+                {t('hero.download')}
+              </a>
+            ) : (
+              <Link to="/how-to-start" className="nav-download-btn">
+                <Download size={18} />
+                {t('hero.download')}
+              </Link>
+            )}
             <button 
               onClick={() => changeLanguage('en')}
               className={`lang-btn ${i18n.language === 'en' ? 'active' : ''}`}
@@ -98,6 +119,17 @@ const Navigation: React.FC = () => {
                 </Link>
               ))}
               
+              {downloadUrl ? (
+                <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className="mobile-nav-link nav-download-mobile" onClick={() => setMobileMenuOpen(false)}>
+                  <Download size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                  {t('hero.download')}
+                </a>
+              ) : (
+                <Link to="/how-to-start" className="mobile-nav-link nav-download-mobile" onClick={() => setMobileMenuOpen(false)}>
+                  <Download size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                  {t('hero.download')}
+                </Link>
+              )}
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                 <button 
                   onClick={() => changeLanguage('en')} 

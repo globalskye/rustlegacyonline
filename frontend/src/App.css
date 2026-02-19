@@ -292,6 +292,27 @@ body {
   align-items: center;
 }
 
+.nav-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary-blue);
+  color: #fff !important;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.2s;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.nav-download-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--glow-blue);
+}
+
 .lang-btn {
   background: transparent;
   border: 1px solid var(--border-color);
@@ -331,6 +352,17 @@ body {
 
 .mobile-menu-btn:hover {
   background: var(--nav-hover-bg);
+}
+
+.nav-download-mobile {
+  display: flex !important;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem !important;
+  background: rgba(230, 126, 34, 0.15);
+  border: 1px solid var(--border-bright);
+  border-radius: 10px;
+  color: var(--primary-blue) !important;
 }
 
 .mobile-menu {
