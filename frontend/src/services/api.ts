@@ -140,10 +140,11 @@ class ApiService {
     });
   }
 
-  async getServerDetails(lang?: string, section?: string): Promise<Types.ServerDetail[]> {
+  async getServerDetails(lang?: string, section?: string, serverId?: number): Promise<Types.ServerDetail[]> {
     const params = new URLSearchParams();
     if (lang) params.append('lang', lang);
     if (section) params.append('section', section);
+    if (serverId != null && serverId > 0) params.append('serverId', String(serverId));
     
     const query = params.toString() ? `?${params.toString()}` : '';
     return this.request<Types.ServerDetail[]>(`/server-details${query}`);
@@ -169,8 +170,11 @@ class ApiService {
     });
   }
 
-  async getPlugins(lang?: string): Promise<Types.Plugin[]> {
-    const query = lang ? `?lang=${lang}` : '';
+  async getPlugins(lang?: string, serverId?: number): Promise<Types.Plugin[]> {
+    const params = new URLSearchParams();
+    if (lang) params.append('lang', lang);
+    if (serverId != null && serverId > 0) params.append('serverId', String(serverId));
+    const query = params.toString() ? `?${params.toString()}` : '';
     return this.request<Types.Plugin[]>(`/plugins${query}`);
   }
 

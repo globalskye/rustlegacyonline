@@ -14,10 +14,16 @@ import (
 func GetPlugins(w http.ResponseWriter, r *http.Request) {
 	var plugins []models.Plugin
 	lang := r.URL.Query().Get("lang")
+	serverIDStr := r.URL.Query().Get("serverId")
 
 	query := database.DB.Preload("Commands").Order("\"order\" ASC")
 	if lang != "" {
 		query = query.Where("language = ?", lang)
+	}
+	if serverIDStr != "" {
+		if serverID, err := strconv.ParseUint(serverIDStr, 10, 32); err == nil && serverID > 0 {
+			query = query.Where("server_id = ? OR server_id = 0", serverID)
+		}
 	}
 
 	if err := query.Find(&plugins).Error; err != nil {

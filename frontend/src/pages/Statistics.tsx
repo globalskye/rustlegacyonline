@@ -47,7 +47,7 @@ const Statistics: React.FC = () => {
       const playersList = Array.isArray(playersRes) ? playersRes : [];
       const clansList = Array.isArray(clansRes) ? clansRes : [];
       setAllPlayers([...playersList]);
-      setTopClans([...clansList].sort((a, b) => (b.experience || 0) - (a.experience || 0)).slice(0, 20));
+      setTopClans([...clansList].sort((a, b) => (b.experience || 0) - (a.experience || 0)));
       setLoading(false);
     } catch (error) {
       console.error('Error loading data:', error);

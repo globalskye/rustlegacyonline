@@ -63,6 +63,7 @@ export interface HowToStartStep {
 
 export interface ServerDetail {
   id: number;
+  serverId?: number;
   language: string;
   section: string;
   title: string;
@@ -74,6 +75,7 @@ export interface ServerDetail {
 
 export interface Plugin {
   id: number;
+  serverId?: number;
   language: string;
   name: string;
   description: string;

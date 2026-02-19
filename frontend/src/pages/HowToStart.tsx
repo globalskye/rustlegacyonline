@@ -106,7 +106,7 @@ const HowToStart: React.FC = () => {
             return (
               <motion.div
                 key={step.id}
-                className={`card howto-step-card ${step.imageUrl ? 'has-image' : ''}`}
+                className="card howto-step-card"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
@@ -161,25 +161,6 @@ const HowToStart: React.FC = () => {
                     dangerouslySetInnerHTML={{ __html: step.content }}
                   />
                 </div>
-
-                {step.imageUrl && (
-                  <div className="howto-step-image" style={{
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    border: '1px solid var(--border-color)',
-                    boxShadow: '0 10px 40px rgba(14, 165, 233, 0.2)'
-                  }}>
-                    <img 
-                      src={step.imageUrl}
-                      alt={step.title}
-                      style={{
-                        width: '100%',
-                        height: 'auto',
-                        display: 'block'
-                      }}
-                    />
-                  </div>
-                )}
               </motion.div>
             );
           })}

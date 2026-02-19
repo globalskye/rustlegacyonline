@@ -141,9 +141,30 @@ const Home: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className={`monitoring-status-badge ${server.isOnline ? 'online' : 'offline'}`}>
-                    <div className="monitoring-status-dot" />
-                    <span>{server.isOnline ? 'Online' : 'Offline'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <Link
+                      to={`/server-info/${server.serverId}`}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        padding: '0.4rem 0.75rem',
+                        background: 'rgba(230, 126, 34, 0.15)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 8,
+                        color: 'var(--primary)',
+                        textDecoration: 'none',
+                        fontSize: '0.85rem',
+                        fontWeight: 600
+                      }}
+                    >
+                      <Info size={16} />
+                      {i18n.language === 'ru' ? 'Плагины и инфо' : 'Plugins & info'}
+                    </Link>
+                    <div className={`monitoring-status-badge ${server.isOnline ? 'online' : 'offline'}`}>
+                      <div className="monitoring-status-dot" />
+                      <span>{server.isOnline ? 'Online' : 'Offline'}</span>
+                    </div>
                   </div>
                 </div>
 

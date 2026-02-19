@@ -65,6 +65,7 @@ type HowToStartStep struct {
 
 type ServerDetail struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
+	ServerID  uint      `json:"serverId"` // 0 = all servers
 	Language  string    `json:"language"`
 	Section   string    `json:"section"`
 	Title     string    `json:"title"`
@@ -78,6 +79,7 @@ type ServerDetail struct {
 
 type Plugin struct {
 	ID          uint      `gorm:"primaryKey" json:"id"`
+	ServerID    uint      `json:"serverId"` // 0 = all servers
 	Language    string    `json:"language"`
 	Name        string    `json:"name"`
 	Description string    `json:"description" gorm:"type:text"`

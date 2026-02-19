@@ -23,7 +23,8 @@ const Navigation: React.FC = () => {
     { path: '/statistics', label: t('nav.statistics') },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => 
+    path === '/' ? location.pathname === '/' : location.pathname === path || location.pathname.startsWith(path + '/');
 
   return (
     <>

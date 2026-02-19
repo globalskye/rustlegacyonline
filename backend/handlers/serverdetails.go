@@ -15,6 +15,7 @@ func GetServerDetails(w http.ResponseWriter, r *http.Request) {
 	var details []models.ServerDetail
 	lang := r.URL.Query().Get("lang")
 	section := r.URL.Query().Get("section")
+	serverIDStr := r.URL.Query().Get("serverId")
 
 	query := database.DB.Order("\"order\" ASC")
 	if lang != "" {
@@ -22,6 +23,11 @@ func GetServerDetails(w http.ResponseWriter, r *http.Request) {
 	}
 	if section != "" {
 		query = query.Where("section = ?", section)
+	}
+	if serverIDStr != "" {
+		if serverID, err := strconv.ParseUint(serverIDStr, 10, 32); err == nil && serverID > 0 {
+			query = query.Where("server_id = ? OR server_id = 0", serverID)
+		}
 	}
 
 	if err := query.Find(&details).Error; err != nil {

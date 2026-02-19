@@ -42,6 +42,7 @@ function AppContent() {
         <Route path="/news" element={<News />} />
         <Route path="/how-to-start" element={<HowToStart />} />
         <Route path="/server-info" element={<ServerInfo />} />
+        <Route path="/server-info/:serverId" element={<ServerInfo />} />
         <Route path="/rules" element={<Rules />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/statistics" element={<Statistics />} />

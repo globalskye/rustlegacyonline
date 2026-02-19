@@ -34,13 +34,20 @@ export const OnlineChart: React.FC<{ serverType?: string; serverName?: string }>
             if (!byBucket.has(bucket)) byBucket.set(bucket, []);
             byBucket.get(bucket)!.push(r.players ?? 0);
           });
+          const is7d = hours > 24;
           const points: DataPoint[] = Array.from(byBucket.entries())
-            .map(([ts, vals]) => ({
-              ts,
-              time: new Date(ts).toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' }),
-              players: vals.length > 0 ? Math.max(...vals) : 0,
-              fullTime: new Date(ts).toLocaleString(i18n.language),
-            }))
+            .map(([ts, vals]) => {
+              const date = new Date(ts);
+              const timeStr = is7d
+                ? date.toLocaleDateString(i18n.language, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+                : date.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
+              return {
+                ts,
+                time: timeStr,
+                players: vals.length > 0 ? Math.max(...vals) : 0,
+                fullTime: date.toLocaleString(i18n.language),
+              };
+            })
             .sort((a, b) => a.ts - b.ts);
           setData(points);
         })
@@ -125,14 +132,21 @@ export const OnlineChart: React.FC<{ serverType?: string; serverName?: string }>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
-                    <XAxis dataKey="time" stroke="var(--text-muted)" fontSize={11} tickFormatter={(v) => v} />
+                    <XAxis 
+                      dataKey="time" 
+                      stroke="var(--text-muted)" 
+                      fontSize={10} 
+                      interval={hours > 24 ? 'preserveStartEnd' : 0}
+                      tick={{ fill: 'var(--text-muted)' }}
+                    />
                     <YAxis stroke="var(--text-muted)" fontSize={11} allowDecimals={false} />
                     <Tooltip
-                      cursor={false}
+                      cursor={{ stroke: 'var(--border-bright)', strokeWidth: 1, strokeDasharray: '4 4' }}
                       contentStyle={{ background: 'var(--bg-darker)', border: '1px solid var(--border-color)', borderRadius: 8 }}
                       labelStyle={{ color: 'var(--text-primary)' }}
                       formatter={(val: number | undefined) => [val ?? 0, i18n.language === 'ru' ? 'Игроков' : 'Players']}
-                      labelFormatter={(label, payload) => payload[0]?.payload?.fullTime || label}
+                      labelFormatter={(_label, payload) => payload?.[0]?.payload?.fullTime ?? ''}
+                      allowEscapeViewBox={{ x: false, y: false }}
                     />
                     <Line type="monotone" dataKey="players" stroke="var(--primary-blue)" strokeWidth={2} dot={false} />
                   </LineChart>
