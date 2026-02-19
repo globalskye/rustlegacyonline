@@ -464,6 +464,41 @@ body {
   transform: translateY(-2px);
 }
 
+/* Rules content - clean list styling */
+.rules-content ul {
+  margin: 0 0 1rem 0;
+  padding-left: 1.25rem;
+  list-style: none;
+}
+.rules-content ul li {
+  position: relative;
+  padding: 0.25rem 0;
+  padding-left: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.rules-content ul li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--primary-blue);
+  font-weight: bold;
+}
+.rules-content p {
+  margin: 0.75rem 0 0 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.rules-content .rules-penalty {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(244, 67, 54, 0.1);
+  border-left: 4px solid #f44336;
+  border-radius: 0 8px 8px 0;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;

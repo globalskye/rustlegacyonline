@@ -226,8 +226,8 @@ func Seed() error {
 	// RULES
 	// ========================================
 	rules := []models.Rule{
-		{Language: "en", Title: "Cheating and Exploits", Content: "<ul><li>Cheats, hacks, macros, bug abuse</li></ul><p><strong>Penalty:</strong> Permanent ban</p>", Order: 1},
-		{Language: "ru", Title: "Читы и эксплойты", Content: "<ul><li>Читы, хаки, макросы, баг-абузы</li></ul><p><strong>Наказание:</strong> Перманентный бан</p>", Order: 1},
+		{Language: "en", Title: "Cheating and Exploits", Content: "<ul><li>Cheats, macros, bug abuse</li></ul><p class=\"rules-penalty\"><strong>Penalty:</strong> Permanent ban</p>", Order: 1},
+		{Language: "ru", Title: "Читы и эксплойты", Content: "<ul><li>Читы, макросы, баг-абузы</li></ul><p class=\"rules-penalty\"><strong>Наказание:</strong> Перманентный бан</p>", Order: 1},
 		{Language: "en", Title: "Chat Behavior", Content: "<ul><li>Insults to parents</li><li>Spam</li><li>Mentioning other projects</li></ul>", Order: 2},
 		{Language: "ru", Title: "Поведение в чате", Content: "<ul><li>Оскорбления родителей</li><li>Спам</li><li>Упоминание других проектов</li></ul>", Order: 2},
 		{Language: "en", Title: "Multi-Accounts", Content: "<ul><li>Using multiple accounts to get free /kit sets</li></ul>", Order: 3},

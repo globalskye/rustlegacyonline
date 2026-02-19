@@ -105,6 +105,7 @@ const Rules: React.FC = () => {
                 </h2>
                 
                 <div 
+                  className="rules-content"
                   style={{
                     color: 'var(--text-secondary)',
                     lineHeight: 1.8,
