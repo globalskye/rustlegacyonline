@@ -16,6 +16,9 @@ func Setup(r *mux.Router) {
 	// Health
 	api.HandleFunc("/health", handlers.HealthCheck).Methods("GET")
 
+	// Contact form (email)
+	api.HandleFunc("/contact", handlers.SendContact).Methods("POST")
+
 	// Embed preview for Discord/VK etc - dynamic OG with online + download link
 	api.HandleFunc("/embed", handlers.EmbedPreview).Methods("GET")
 

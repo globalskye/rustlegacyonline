@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import HowToStart from './pages/HowToStart';
 import ServerInfo from './pages/ServerInfo';
 import Rules from './pages/Rules';
+import Contact from './pages/Contact';
 import Shop from './pages/Shop';
 import Statistics from './pages/Statistics';
 import News from './pages/News';
@@ -44,6 +45,7 @@ function AppContent() {
         <Route path="/server-info" element={<ServerInfo />} />
         <Route path="/server-info/:serverId" element={<ServerInfo />} />
         <Route path="/rules" element={<Rules />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/legal/:type" element={<LegalDocument />} />

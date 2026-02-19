@@ -19,6 +19,7 @@ const Navigation: React.FC = () => {
     { path: '/how-to-start', label: t('nav.howToStart') },
     { path: '/server-info', label: t('nav.serverInfo') },
     { path: '/rules', label: t('nav.rules') },
+    { path: '/contact', label: t('nav.contact') },
     { path: '/shop', label: t('nav.shop') },
     { path: '/statistics', label: t('nav.statistics') },
   ];

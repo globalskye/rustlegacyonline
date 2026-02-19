@@ -35,3 +35,7 @@ deploy/.env
 
 # Large files
 all-images.tar
+
+# Info — загружаемые данные (плагины и т.д.)
+info/*
+!info/.gitkeep

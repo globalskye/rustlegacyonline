@@ -12,6 +12,8 @@
   --accent-rust: #cd7f32;
   --accent-green: #4ade80;
   --accent-cyan: #2dd4bf;
+  --success: #4ade80;
+  --error: #f87171;
   /* Backgrounds */
   --bg-dark: #1a1510;
   --bg-darker: #0f0c09;

@@ -10,6 +10,7 @@ const resources = {
         howToStart: 'How to Start',
         serverInfo: 'Server Info',
         rules: 'Rules',
+        contact: 'Contact',
         shop: 'Shop',
         statistics: 'Statistics',
         admin: 'Admin'
@@ -75,6 +76,7 @@ const resources = {
         a4: 'Check the Rules page. Violations may result in a ban.',
       },
       footer: {
+        contactForm: 'Contact form',
         rights: 'All rights reserved.',
         paymentMethods: 'Payment Methods',
         legal: 'Legal',
@@ -90,6 +92,7 @@ const resources = {
         howToStart: 'Как начать',
         serverInfo: 'Инфо о сервере',
         rules: 'Правила',
+        contact: 'Связаться',
         shop: 'Магазин',
         statistics: 'Статистика',
         admin: 'Админка'
@@ -155,6 +158,7 @@ const resources = {
         a4: 'На странице Правила. Нарушения могут привести к бану.',
       },
       footer: {
+        contactForm: 'Форма обратной связи',
         rights: 'Все права защищены.',
         paymentMethods: 'Способы оплаты',
         legal: 'Юридическая информация',

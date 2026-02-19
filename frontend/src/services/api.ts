@@ -39,6 +39,18 @@ class ApiService {
     return this.request<Types.CompanyInfo>('/company-info');
   }
 
+  async sendContact(data: { name: string; email: string; message: string }): Promise<{ ok: boolean; error?: string }> {
+    const base = getApiUrl();
+    const url = base.startsWith('http') ? `${base}/contact` : `${window.location.origin}${base}/contact`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const json = await response.json();
+    return { ok: json.ok ?? false, error: json.error };
+  }
+
   async updateCompanyInfo(data: Partial<Types.CompanyInfo>): Promise<Types.CompanyInfo> {
     return this.request<Types.CompanyInfo>('/company-info', {
       method: 'PUT',

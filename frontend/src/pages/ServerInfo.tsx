@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Terminal, Info, Server, ChevronRight } from 'lucide-react';
+import ServerDescriptionBlock from '../components/ServerDescriptionBlock';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/api';
 import * as Types from '../types';
@@ -140,7 +141,10 @@ const ServerInfo: React.FC = () => {
               </p>
             </div>
 
-            {/* Server Description Section */}
+            {/* Server Description Block (Classic server only) */}
+            <ServerDescriptionBlock serverId={selectedServerId ?? 0} />
+
+            {/* Server Description Section (from API) */}
             {descriptionDetails.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 30 }}

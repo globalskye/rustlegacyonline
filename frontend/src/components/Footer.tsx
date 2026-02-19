@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Mail, MessageCircle } from 'lucide-react';
 import { apiService } from '../services/api';
 import * as Types from '../types';
@@ -215,28 +216,64 @@ const Footer: React.FC = () => {
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
               {companyInfo?.email ? (
-                <a 
-                  href={`mailto:${companyInfo.email}`}
-                  style={{
-                    color: 'var(--text-muted)',
-                    textDecoration: 'none',
-                    fontSize: '0.95rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    transition: 'color 0.3s ease'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-blue)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
-                >
-                  <Mail size={18} />
-                  {companyInfo.email}
-                </a>
+                <>
+                  <a 
+                    href={`mailto:${companyInfo.email}`}
+                    style={{
+                      color: 'var(--text-muted)',
+                      textDecoration: 'none',
+                      fontSize: '0.95rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      transition: 'color 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-blue)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                  >
+                    <Mail size={18} />
+                    {companyInfo.email}
+                  </a>
+                  <Link 
+                    to="/contact"
+                    style={{
+                      color: 'var(--text-muted)',
+                      textDecoration: 'none',
+                      fontSize: '0.95rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      transition: 'color 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-blue)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                  >
+                    {t('footer.contactForm')}
+                  </Link>
+                </>
               ) : (
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Mail size={18} />
-                  —
-                </span>
+                <>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Mail size={18} />
+                    —
+                  </span>
+                  <Link 
+                    to="/contact"
+                    style={{
+                      color: 'var(--text-muted)',
+                      textDecoration: 'none',
+                      fontSize: '0.95rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      transition: 'color 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-blue)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                  >
+                    {t('footer.contactForm')}
+                  </Link>
+                </>
               )}
               <a 
                 href="#"
