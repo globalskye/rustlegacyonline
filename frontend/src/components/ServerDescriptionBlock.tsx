@@ -100,7 +100,7 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ id, title, icon, is
         cursor: 'pointer',
         color: 'var(--text-primary)',
         fontFamily: 'Poppins',
-        fontSize: '1.1rem',
+        fontSize: '1.35rem',
         fontWeight: 600,
         textAlign: 'left',
       }}
@@ -151,12 +151,12 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
   };
 
   const CommandCard = ({ c }: { c: { cmd: string; usage: string; fullDesc: { ru: string; en: string } } }) => (
-    <div style={{ padding: '1rem', background: 'rgba(230,126,34,0.05)', borderRadius: 8, marginBottom: '0.75rem' }}>
+    <div style={{ padding: '1.25rem', background: 'rgba(230,126,34,0.05)', borderRadius: 8, marginBottom: '0.75rem' }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
-        <code style={{ fontFamily: 'monospace', color: 'var(--primary)', fontWeight: 600 }}>{c.cmd}</code>
-        <code style={{ fontFamily: 'monospace', color: 'var(--text-muted)', fontSize: '0.85rem' }}>{c.usage}</code>
+        <code style={{ fontFamily: 'monospace', color: 'var(--primary)', fontWeight: 600, fontSize: '1.05rem' }}>{c.cmd}</code>
+        <code style={{ fontFamily: 'monospace', color: 'var(--text-muted)', fontSize: '1rem' }}>{c.usage}</code>
       </div>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, margin: 0 }}>
+      <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', lineHeight: 1.6, margin: 0 }}>
         {c.fullDesc[isRu ? 'ru' : 'en']}
       </p>
     </div>
@@ -173,14 +173,16 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
     >
       <h2 style={{
         fontFamily: 'Poppins',
-        fontSize: '1.5rem',
+        fontSize: '2.25rem',
         color: 'var(--primary)',
         marginBottom: '1.5rem',
         display: 'flex',
         alignItems: 'center',
-        gap: '0.5rem',
+        justifyContent: 'center',
+        gap: '0.75rem',
+        textAlign: 'center',
       }}>
-        <Zap size={28} />
+        <Zap size={36} />
         {t('serverDesc.classicTitle')}
       </h2>
 
@@ -194,15 +196,15 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
         <div style={{ paddingTop: '1rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
             <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>{t('serverDesc.rates')}</div>
-              <div style={{ fontWeight: 600, color: 'var(--primary)' }}>x1</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '0.25rem' }}>{t('serverDesc.rates')}</div>
+              <div style={{ fontWeight: 600, color: 'var(--primary)', fontSize: '1.15rem' }}>x1</div>
             </div>
             <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>{t('serverDesc.houseLimit')}</div>
-              <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>6×6×10</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '0.25rem' }}>{t('serverDesc.houseLimit')}</div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '1.15rem' }}>6×6×10</div>
             </div>
           </div>
-          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0 }}>
+          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '1.1rem', margin: 0 }}>
             {t('serverDesc.aboutText')}
           </p>
         </div>
@@ -218,16 +220,16 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
         <div style={{ paddingTop: '1rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '0.75rem' }}>
             {KITS.map((kit) => (
-              <div key={kit.name} style={{ padding: '1rem', background: 'rgba(230,126,34,0.06)', borderRadius: 8 }}>
+              <div key={kit.name} style={{ padding: '1.25rem', background: 'rgba(230,126,34,0.06)', borderRadius: 8 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                  <code style={{ fontFamily: 'monospace', color: 'var(--primary)', fontWeight: 600 }}>/kit "{kit.name}"</code>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(230,126,34,0.15)', padding: '0.15rem 0.4rem', borderRadius: 4 }}>{kit.cd}</span>
+                  <code style={{ fontFamily: 'monospace', color: 'var(--primary)', fontWeight: 600, fontSize: '1.05rem' }}>/kit "{kit.name}"</code>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', background: 'rgba(230,126,34,0.15)', padding: '0.15rem 0.4rem', borderRadius: 4 }}>{kit.cd}</span>
                 </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>{kit.items[isRu ? 'ru' : 'en']}</p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', margin: 0 }}>{kit.items[isRu ? 'ru' : 'en']}</p>
               </div>
             ))}
           </div>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             {t('serverDesc.specialKitsText')}
             <Link to="/shop" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
               {t('serverDesc.specialKitsLink')}
@@ -274,18 +276,18 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
         <div style={{ paddingTop: '1rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
             <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{t('serverDesc.start')}</div>
-              <div style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.3rem' }}>100 $</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{t('serverDesc.start')}</div>
+              <div style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '1.4rem' }}>100 $</div>
             </div>
             <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{t('Заработок', 'Earn')}</div>
-              <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{t('Заработок', 'Earn')}</div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '1.05rem' }}>
                 {t('serverDesc.earn')}
               </div>
             </div>
             <div>
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{t('Потери', 'Losses')}</div>
-              <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{t('Потери', 'Losses')}</div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '1.05rem' }}>
                 {t('serverDesc.losses')}
               </div>
             </div>
@@ -306,12 +308,12 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
         onToggle={() => toggle('clan')}
       >
         <div style={{ paddingTop: '1rem' }}>
-          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>
+          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '1.1rem', marginBottom: '1rem' }}>
             {t('serverDesc.clanText')}
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
             {[0, 1, 3, 5, 9, 12].map((lvl) => (
-              <span key={lvl} style={{ padding: '0.4rem 0.6rem', background: 'rgba(230,126,34,0.1)', borderRadius: 6, fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary)' }}>
+              <span key={lvl} style={{ padding: '0.4rem 0.6rem', background: 'rgba(230,126,34,0.1)', borderRadius: 6, fontSize: '1rem', fontWeight: 600, color: 'var(--primary)' }}>
                 Lvl {lvl}: {lvl === 0 ? '+0%' : lvl === 1 ? '+10%' : lvl === 3 ? '+30%' : lvl === 5 ? '+50%' : lvl === 9 ? '+90%' : '+180%'}
               </span>
             ))}
@@ -332,12 +334,12 @@ const ServerDescriptionBlock: React.FC<ServerDescriptionBlockProps> = ({ serverI
         onToggle={() => toggle('raidAlert')}
       >
         <div style={{ paddingTop: '1rem' }}>
-          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>
+          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '1.1rem', marginBottom: '1rem' }}>
             {t('serverDesc.raidAlertText')}
           </p>
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
             {['Telegram', 'Discord', 'VK'].map((s) => (
-              <span key={s} style={{ padding: '0.3rem 0.6rem', background: 'rgba(230,126,34,0.12)', borderRadius: 6, fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary)' }}>{s}</span>
+              <span key={s} style={{ padding: '0.3rem 0.6rem', background: 'rgba(230,126,34,0.12)', borderRadius: 6, fontSize: '1rem', fontWeight: 600, color: 'var(--primary)' }}>{s}</span>
             ))}
           </div>
           <div style={{ display: 'grid', gap: '0.75rem' }}>

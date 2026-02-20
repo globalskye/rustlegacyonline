@@ -128,15 +128,15 @@ const ServerInfo: React.FC = () => {
           <>
             <div style={{
               marginBottom: '2rem',
-              padding: '1rem 1.5rem',
+              padding: '1.25rem 1.5rem',
               background: 'rgba(230, 126, 34, 0.08)',
               border: '1px solid var(--border-color)',
               borderRadius: 12
             }}>
-              <h3 style={{ fontFamily: 'Poppins', fontSize: '1.3rem', color: 'var(--primary)', marginBottom: '0.5rem' }}>
+              <h3 style={{ fontFamily: 'Poppins', fontSize: '1.5rem', color: 'var(--primary)', marginBottom: '0.5rem', textAlign: 'center' }}>
                 {selectedServer.serverName}
               </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', textAlign: 'center' }}>
                 {selectedServer.serverType === 'classic' ? 'Classic' : 'Deathmatch'} · {selectedServer.ip}:{selectedServer.port}
               </p>
             </div>
@@ -153,11 +153,12 @@ const ServerInfo: React.FC = () => {
                 style={{ marginBottom: '4rem' }}
               >
                 <h2 style={{
-                  fontFamily: 'Poppins', fontSize: '2rem', color: 'var(--primary-blue)',
+                  fontFamily: 'Poppins', fontSize: '2.25rem', color: 'var(--primary-blue)',
                   marginBottom: '2rem', textTransform: 'uppercase', letterSpacing: '2px',
-                  display: 'flex', alignItems: 'center', gap: '1rem'
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem',
+                  textAlign: 'center'
                 }}>
-                  <Info size={32} />
+                  <Info size={36} />
                   {t('serverInfo.aboutTitle')}
                 </h2>
 
@@ -171,13 +172,13 @@ const ServerInfo: React.FC = () => {
                       transition={{ duration: 0.6, delay: index * 0.1 }}
                     >
                       <h3 style={{
-                        fontFamily: 'Poppins', fontSize: '1.5rem', color: 'var(--text-primary)',
-                        marginBottom: '1rem', letterSpacing: '1px'
+                        fontFamily: 'Poppins', fontSize: '1.75rem', color: 'var(--text-primary)',
+                        marginBottom: '1rem', letterSpacing: '1px', textAlign: 'center'
                       }}>
                         {detail.title}
                       </h3>
                       <div
-                        style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '1.05rem' }}
+                        style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '1.15rem' }}
                         dangerouslySetInnerHTML={{ __html: detail.content }}
                       />
                     </motion.div>
@@ -195,11 +196,12 @@ const ServerInfo: React.FC = () => {
                 style={{ marginTop: '4rem' }}
               >
                 <h2 style={{
-                  fontFamily: 'Poppins', fontSize: '2rem', color: 'var(--primary-blue)',
+                  fontFamily: 'Poppins', fontSize: '2.25rem', color: 'var(--primary-blue)',
                   marginBottom: '2rem', textTransform: 'uppercase', letterSpacing: '2px',
-                  display: 'flex', alignItems: 'center', gap: '1rem'
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem',
+                  textAlign: 'center'
                 }}>
-                  <Terminal size={32} />
+                  <Terminal size={36} />
                   {t('serverInfo.pluginsTitle')}
                 </h2>
 
@@ -219,12 +221,12 @@ const ServerInfo: React.FC = () => {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div>
                             <h3 style={{
-                              fontFamily: 'Poppins', fontSize: '1.3rem', color: 'var(--text-primary)',
+                              fontFamily: 'Poppins', fontSize: '1.5rem', color: 'var(--text-primary)',
                               marginBottom: '0.5rem', letterSpacing: '1px'
                             }}>
                               {plugin.name}
                             </h3>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
                               {plugin.description}
                             </p>
                           </div>
@@ -254,8 +256,9 @@ const ServerInfo: React.FC = () => {
                                 borderTop: '1px solid var(--border-color)'
                               }}>
                                 <h4 style={{
-                                  fontFamily: 'Poppins', fontSize: '1.1rem', color: 'var(--primary-blue)',
-                                  marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px'
+                                  fontFamily: 'Poppins', fontSize: '1.35rem', color: 'var(--primary-blue)',
+                                  marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px',
+                                  textAlign: 'center'
                                 }}>
                                   {t('serverInfo.commandsTitle')}
                                 </h4>
@@ -267,20 +270,20 @@ const ServerInfo: React.FC = () => {
                                         background: 'rgba(230, 126, 34, 0.05)',
                                         border: '1px solid var(--border-color)',
                                         borderRadius: '6px',
-                                        padding: '1rem'
+                                        padding: '1.25rem'
                                       }}
                                     >
                                       <div style={{
-                                        fontFamily: 'monospace', fontSize: '1rem',
+                                        fontFamily: 'monospace', fontSize: '1.1rem',
                                         color: 'var(--accent-cyan)', marginBottom: '0.5rem', fontWeight: 600
                                       }}>
                                         {cmd.command}
                                       </div>
-                                      <div style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: cmd.usage ? '0.5rem' : 0 }}>
+                                      <div style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginBottom: cmd.usage ? '0.5rem' : 0 }}>
                                         {cmd.description}
                                       </div>
                                       {cmd.usage && (
-                                        <div style={{ fontFamily: 'monospace', fontSize: '0.9rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                                        <div style={{ fontFamily: 'monospace', fontSize: '1rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
                                           Usage: {cmd.usage}
                                         </div>
                                       )}
