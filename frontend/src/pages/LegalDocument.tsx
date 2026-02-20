@@ -54,6 +54,10 @@ const LegalDocument: React.FC = () => {
         return t('legal.privacy');
       case 'company':
         return t('legal.companyInfo');
+      case 'payment_rules':
+        return t('legal.paymentRules');
+      case 'refund_policy':
+        return t('legal.refundPolicy');
       default:
         return t('legal.title');
     }

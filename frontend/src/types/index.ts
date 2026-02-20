@@ -170,7 +170,7 @@ export interface PaymentMethod {
 export interface LegalDocument {
   id: number;
   language: string;
-  type: 'terms' | 'privacy' | 'rules' | 'company_info';
+  type: 'terms' | 'privacy' | 'rules' | 'company_info' | 'payment_rules' | 'refund_policy';
   title: string;
   content: string;
   updatedAt: string;
@@ -211,6 +211,13 @@ export interface CompanyInfo {
   email?: string;
   inn: string;
   ogrn: string;
+  unp?: string;
+  registrationInfo?: string;
+  tradeRegistryNum?: string;
+  tradeRegistryDate?: string;
+  workingHours?: string;
+  storeName?: string;
+  licenses?: string;
   bankRequisites?: string;
   deliveryInfo: string;
 }

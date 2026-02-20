@@ -1,0 +1,25 @@
+# rustlegacy.online — проксирование на web.local:80 (mainnet)
+# Файл: rustlegacy.subdomain.conf (скопировать в SWAG proxy-confs, убрать .sample)
+#
+# Требования:
+# - SWAG в сети mainnet (чтобы резолвить web.local)
+# - Сертификат для rustlegacy.online (URL или EXTRA_DOMAINS в SWAG)
+
+server {
+    listen 443 ssl;
+
+    server_name rustlegacy.online www.rustlegacy.online;
+
+    include /config/nginx/ssl.conf;
+
+    client_max_body_size 0;
+
+    location / {
+        include /config/nginx/proxy.conf;
+        include /config/nginx/resolver.conf;
+        set $upstream_app web.local;
+        set $upstream_port 80;
+        set $upstream_proto http;
+        proxy_pass $upstream_proto://$upstream_app:$upstream_port;
+    }
+}

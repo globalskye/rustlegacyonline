@@ -54,7 +54,13 @@ type statsSyncPayload struct {
 
 // ReceiveStatsSync handles POST from TopSystem plugin - upserts players and clans
 // POST /api/stats/sync
+// GET /api/stats/sync — проверка доступности эндпоинта
 func ReceiveStatsSync(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"status":"ok","message":"POST JSON with players and clans to sync"}`))
+		return
+	}
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return

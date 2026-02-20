@@ -187,6 +187,72 @@ location /admin {
 
 ---
 
+---
+
+## Работа через SWAG (порты 80/443 заняты)
+
+Если на сервере уже запущен **SWAG** (reverse proxy) и занял 80/443, используй режим SWAG:
+
+### 1. Узнай сеть SWAG
+
+```bash
+docker network ls
+# Ищи сеть, к которой подключён контейнер swag (часто: swag, proxy, lsio или <project>_default)
+
+# Или:
+docker inspect swag | grep -A 5 Networks
+```
+
+### 2. Настрой .env
+
+```bash
+cd deploy
+# Добавь в .env:
+SWAG_NETWORK=имя_сети_из_шага_1
+```
+
+### 3. Добавь конфиг в SWAG
+
+Скопируй proxy-конфиг в папку SWAG (путь к config — из твоего docker-compose или `docker inspect swag`):
+
+```bash
+# Пример: SWAG config в /root/swag/config
+cp swag-proxy-confs/rustlegacy.subdomain.conf.sample /path/to/swag/config/nginx/proxy-confs/rustlegacy.subdomain.conf
+```
+
+### 4. Сертификат для rustlegacy.online
+
+SWAG должен иметь сертификат для rustlegacy.online. В переменных SWAG:
+- `URL=rustlegacy.online` — если rustlegacy основной домен
+- или `EXTRA_DOMAINS=rustlegacy.online,www.rustlegacy.online` — если основной другой
+
+### 5. Запуск
+
+```bash
+./deploy.sh swag
+docker restart swag   # перезапусти SWAG, чтобы подхватить новый конфиг
+```
+
+Сайт: **https://rustlegacy.online**
+
+---
+
+## mainnet (инфраструктура Autori)
+
+Если хостинг на общей инфраструктуре с сетью **mainnet**:
+
+- HTTP, порт 80
+- hostname: **web.local**
+
+```bash
+cd deploy
+./deploy.sh mainnet
+```
+
+Требуется существующая Docker-сеть `mainnet`. Сайт будет доступен по `web.local:80`.
+
+---
+
 ## Проблемы
 
 **Порт 80 занят**

@@ -198,6 +198,32 @@ const Footer: React.FC = () => {
               >
                 {t('legal.companyInfo')}
               </Link>
+              <Link 
+                to="/legal/payment_rules"
+                style={{
+                  color: 'var(--text-muted)',
+                  textDecoration: 'none',
+                  fontSize: '0.95rem',
+                  transition: 'color 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-blue)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+              >
+                {t('legal.paymentRules')}
+              </Link>
+              <Link 
+                to="/legal/refund_policy"
+                style={{
+                  color: 'var(--text-muted)',
+                  textDecoration: 'none',
+                  fontSize: '0.95rem',
+                  transition: 'color 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-blue)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+              >
+                {t('legal.refundPolicy')}
+              </Link>
             </div>
           </div>
 

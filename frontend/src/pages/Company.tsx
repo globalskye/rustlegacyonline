@@ -34,6 +34,13 @@ const Company: React.FC = () => {
     email: 'Email',
     inn: 'ИНН',
     ogrn: 'ОГРН',
+    unp: 'УНП',
+    registrationInfo: 'Сведения о гос. регистрации',
+    tradeRegistryNum: 'Номер в Торговом реестре',
+    tradeRegistryDate: 'Дата регистрации в Торговом реестре',
+    workingHours: 'Режим работы',
+    storeName: 'Наименование интернет-магазина',
+    licenses: 'Лицензии',
     bankRequisites: 'Банковские реквизиты',
     deliveryInfo: 'Информация о доставке товаров и услуг',
     title: 'Реквизиты организации'
@@ -44,6 +51,13 @@ const Company: React.FC = () => {
     email: 'Email',
     inn: 'INN (Tax ID)',
     ogrn: 'OGRN',
+    unp: 'UNP (Belarus)',
+    registrationInfo: 'State registration details',
+    tradeRegistryNum: 'Trade registry number',
+    tradeRegistryDate: 'Trade registry date',
+    workingHours: 'Working hours',
+    storeName: 'Online store name',
+    licenses: 'Licenses',
     bankRequisites: 'Bank requisites',
     deliveryInfo: 'Delivery information',
     title: 'Company Information'
@@ -96,7 +110,49 @@ const Company: React.FC = () => {
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.ogrn}</div>
                 <div style={{ fontSize: '1.05rem', color: 'var(--text-secondary)' }}>{info?.ogrn || '—'}</div>
               </div>
+              <div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.unp}</div>
+                <div style={{ fontSize: '1.05rem', color: 'var(--text-secondary)' }}>{info?.unp || '—'}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.workingHours}</div>
+                <div style={{ fontSize: '1.05rem', color: 'var(--text-secondary)' }}>{info?.workingHours || '—'}</div>
+              </div>
             </div>
+            {(info?.registrationInfo || info?.tradeRegistryNum || info?.storeName || info?.licenses) && (
+              <>
+                {info?.registrationInfo && (
+                  <div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.registrationInfo}</div>
+                    <div style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', whiteSpace: 'pre-line' }}>{info.registrationInfo}</div>
+                  </div>
+                )}
+                {info?.tradeRegistryNum && (
+                  <div className="company-grid-2">
+                    <div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.tradeRegistryNum}</div>
+                      <div style={{ fontSize: '1.05rem', color: 'var(--text-secondary)' }}>{info.tradeRegistryNum}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.tradeRegistryDate}</div>
+                      <div style={{ fontSize: '1.05rem', color: 'var(--text-secondary)' }}>{info.tradeRegistryDate}</div>
+                    </div>
+                  </div>
+                )}
+                {info?.storeName && (
+                  <div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.storeName}</div>
+                    <div style={{ fontSize: '1.05rem', color: 'var(--text-secondary)' }}>{info.storeName}</div>
+                  </div>
+                )}
+                {info?.licenses && (
+                  <div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.licenses}</div>
+                    <div style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', whiteSpace: 'pre-line' }}>{info.licenses}</div>
+                  </div>
+                )}
+              </>
+            )}
             {info?.bankRequisites && (
               <div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>{labels.bankRequisites}</div>

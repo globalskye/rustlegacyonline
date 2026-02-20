@@ -62,6 +62,8 @@ const resources = {
         terms: 'Terms of Service',
         privacy: 'Privacy Policy',
         companyInfo: 'Company Information',
+        paymentRules: 'Payment Rules',
+        refundPolicy: 'Refund Policy',
         lastUpdated: 'Last updated'
       },
       faq: {
@@ -165,6 +167,8 @@ const resources = {
         terms: 'Пользовательское соглашение',
         privacy: 'Политика конфиденциальности',
         companyInfo: 'Информация о компании',
+        paymentRules: 'Правила оплаты',
+        refundPolicy: 'Правила возврата',
         lastUpdated: 'Последнее обновление'
       },
       faq: {

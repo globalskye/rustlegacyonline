@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { apiService } from '../../services/api';
 import * as Types from '../../types';
 
-const TYPES = ['terms', 'privacy', 'rules', 'company_info'] as const;
+const TYPES = ['terms', 'privacy', 'rules', 'company_info', 'payment_rules', 'refund_policy'] as const;
 type LegalType = typeof TYPES[number];
 const emptyForm: { language: 'en' | 'ru'; type: LegalType; title: string; content: string } = { language: 'en', type: 'terms', title: '', content: '' };
 

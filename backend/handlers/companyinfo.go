@@ -33,6 +33,13 @@ func UpdateCompanyInfo(w http.ResponseWriter, r *http.Request) {
 	info.Email = input.Email
 	info.INN = input.INN
 	info.OGRN = input.OGRN
+	info.UNP = input.UNP
+	info.RegistrationInfo = input.RegistrationInfo
+	info.TradeRegistryNum = input.TradeRegistryNum
+	info.TradeRegistryDate = input.TradeRegistryDate
+	info.WorkingHours = input.WorkingHours
+	info.StoreName = input.StoreName
+	info.Licenses = input.Licenses
 	info.BankRequisites = input.BankRequisites
 	info.DeliveryInfo = input.DeliveryInfo
 	if info.ID == 0 {

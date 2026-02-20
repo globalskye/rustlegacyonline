@@ -1,6 +1,6 @@
 #!/bin/bash
 # Deploy rustlegacy.online - build and run on server
-# Usage: ./deploy.sh [init|build|ssl|restart]
+# Usage: ./deploy.sh [init|build|ssl|swag|mainnet|restart]
 # Run from project root or deploy/
 
 set -e
@@ -9,6 +9,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 COMPOSE_FILE="docker-compose.production.yml"
+SWAG_COMPOSE="docker-compose.swag.yml"
+MAINNET_COMPOSE="docker-compose.mainnet.yml"
 
 cmd_init() {
     echo "=== Initial setup ==="
@@ -46,25 +48,74 @@ cmd_ssl() {
     echo "Done! Site: https://rustlegacy.online"
 }
 
+cmd_swag() {
+    echo "=== Build and run via SWAG (no 80/443) ==="
+    [ ! -f .env ] && { echo "Run: cp .env.example .env && nano .env"; exit 1; }
+    # Проверка сети SWAG
+    NW="${SWAG_NETWORK:-swag}"
+    if ! docker network inspect "$NW" &>/dev/null; then
+        echo "Docker network '$NW' not found. Find SWAG network: docker network ls"
+        echo "Then: export SWAG_NETWORK=your_swag_network"
+        exit 1
+    fi
+    docker compose -f $SWAG_COMPOSE up -d --build
+    echo ""
+    echo "Rust Legacy containers started. Add swag-proxy-confs/rustlegacy.subdomain.conf.sample to SWAG proxy-confs, remove .sample, restart SWAG."
+    echo "Site: https://rustlegacy.online (after SWAG config)"
+}
+
+cmd_mainnet() {
+    echo "=== Build and run on mainnet (HTTP, port 80, hostname: web.local) ==="
+    [ ! -f .env ] && { echo "Run: cp .env.example .env && nano .env"; exit 1; }
+    if ! docker network inspect mainnet &>/dev/null; then
+        echo "Docker network 'mainnet' not found. Create it or ask infrastructure admin."
+        exit 1
+    fi
+    grep -q "^MAINNET=" .env 2>/dev/null || echo "MAINNET=1" >> .env
+    docker compose -f $MAINNET_COMPOSE up -d --build
+    echo ""
+    echo "Deployed! Accessible at web.local:80 (via mainnet)"
+}
+
 cmd_restart() {
     echo "=== Restarting ==="
-    docker compose -f $COMPOSE_FILE restart
+    if [ -f .env ] && grep -q "^SWAG_NETWORK=" .env 2>/dev/null; then
+        docker compose -f $SWAG_COMPOSE restart
+    elif [ -f .env ] && grep -q "^MAINNET=" .env 2>/dev/null; then
+        docker compose -f $MAINNET_COMPOSE restart
+    else
+        docker compose -f $COMPOSE_FILE restart
+    fi
 }
 
 cmd_stop() {
-    docker compose -f $COMPOSE_FILE down
+    if [ -f .env ] && grep -q "^SWAG_NETWORK=" .env 2>/dev/null; then
+        docker compose -f $SWAG_COMPOSE down
+    elif [ -f .env ] && grep -q "^MAINNET=" .env 2>/dev/null; then
+        docker compose -f $MAINNET_COMPOSE down
+    else
+        docker compose -f $COMPOSE_FILE down
+    fi
 }
 
 cmd_logs() {
-    docker compose -f $COMPOSE_FILE logs -f
+    if [ -f .env ] && grep -q "^SWAG_NETWORK=" .env 2>/dev/null; then
+        docker compose -f $SWAG_COMPOSE logs -f
+    elif [ -f .env ] && grep -q "^MAINNET=" .env 2>/dev/null; then
+        docker compose -f $MAINNET_COMPOSE logs -f
+    else
+        docker compose -f $COMPOSE_FILE logs -f
+    fi
 }
 
 case "${1:-build}" in
     init)   cmd_init ;;
     build)  cmd_build ;;
     ssl)    cmd_ssl ;;
+    swag)   cmd_swag ;;
+    mainnet) cmd_mainnet ;;
     restart) cmd_restart ;;
     stop)   cmd_stop ;;
     logs)   cmd_logs ;;
-    *)      echo "Usage: $0 {init|build|ssl|restart|stop|logs}"; exit 1 ;;
+    *)      echo "Usage: $0 {init|build|ssl|swag|mainnet|restart|stop|logs}"; exit 1 ;;
 esac

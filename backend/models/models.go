@@ -280,19 +280,26 @@ type FontSettings struct {
 	BodySize    string `json:"bodySize"`
 }
 
-// CompanyInfo - обязательная информация об организации (для размещения на сайте)
+// CompanyInfo - обязательная информация об организации (для размещения на сайте, эквайринг РБ)
 type CompanyInfo struct {
-	ID            uint      `gorm:"primaryKey" json:"id"`
-	LegalName     string    `json:"legalName" gorm:"type:text"`     // наименование юр. лица / ИП
-	Address       string    `json:"address" gorm:"type:text"`       // фактический или юридический адрес
-	Phone         string    `json:"phone"`                          // номер телефона
-	Email         string    `json:"email"`                          // email для связи
-	INN           string    `json:"inn"`                            // ИНН
-	OGRN          string    `json:"ogrn"`                           // ОГРН
-	BankRequisites string   `json:"bankRequisites" gorm:"type:text"` // банковские реквизиты
-	DeliveryInfo  string    `json:"deliveryInfo" gorm:"type:text"`  // информация о доставке
-	CreatedAt     time.Time `json:"createdAt"`
-	UpdatedAt     time.Time `json:"updatedAt"`
+	ID                 uint      `gorm:"primaryKey" json:"id"`
+	LegalName          string    `json:"legalName" gorm:"type:text"`           // наименование юр. лица / ИП
+	Address            string    `json:"address" gorm:"type:text"`            // юридический/почтовый адрес (с указанием страны)
+	Phone              string    `json:"phone"`                               // номер телефона
+	Email              string    `json:"email"`                               // email для связи
+	INN                string    `json:"inn"`                                // ИНН (РФ)
+	OGRN               string    `json:"ogrn"`                               // ОГРН (РФ)
+	UNP                string    `json:"unp"`                                // УНП (Беларусь)
+	RegistrationInfo   string    `json:"registrationInfo" gorm:"type:text"`   // сведения о гос. регистрации
+	TradeRegistryNum   string    `json:"tradeRegistryNum"`                    // номер в Торговом реестре
+	TradeRegistryDate  string    `json:"tradeRegistryDate"`                   // дата регистрации в Торговом реестре
+	WorkingHours       string    `json:"workingHours"`                        // режим работы
+	StoreName          string    `json:"storeName"`                           // наименование интернет-магазина
+	Licenses           string    `json:"licenses" gorm:"type:text"`           // лицензии (если применимо)
+	BankRequisites     string    `json:"bankRequisites" gorm:"type:text"`      // банковские реквизиты
+	DeliveryInfo       string    `json:"deliveryInfo" gorm:"type:text"`        // информация о доставке
+	CreatedAt          time.Time `json:"createdAt"`
+	UpdatedAt          time.Time `json:"updatedAt"`
 }
 
 // OnlineHistory - история онлайна для графика

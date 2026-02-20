@@ -1,0 +1,30 @@
+=== ПРАВИЛА СЕРВЕРА — HTML для вставки в Admin → Rules ===
+
+--- РУССКИЙ (RU) ---
+
+Правило 1 — Читы и эксплойты
+<ul><li>Читы, макросы, баг-абузы</li></ul><p class="rules-penalty"><strong>Наказание:</strong> Перманентный бан</p>
+
+Правило 2 — Поведение в чате
+<ul><li>Оскорбления родителей</li><li>Спам</li><li>Упоминание других проектов</li></ul>
+
+Правило 3 — Мультиаккаунты
+<ul><li>Использование нескольких аккаунтов для получения бесплатных наборов /kit</li></ul>
+
+Правило 4 — Общие правила
+<ul><li>Уважение к администрации и игрокам</li></ul>
+
+
+--- ENGLISH (EN) ---
+
+Rule 1 — Cheating and Exploits
+<ul><li>Cheats, macros, bug abuse</li></ul><p class="rules-penalty"><strong>Penalty:</strong> Permanent ban</p>
+
+Rule 2 — Chat Behavior
+<ul><li>Insults to parents</li><li>Spam</li><li>Mentioning other projects</li></ul>
+
+Rule 3 — Multi-Accounts
+<ul><li>Using multiple accounts to get free /kit sets</li></ul>
+
+Rule 4 — General Rules
+<ul><li>Respect for administration and players</li></ul>

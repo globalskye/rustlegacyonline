@@ -1,0 +1,86 @@
+# rustlegacy — работа в сети mainnet (инфраструктура Autori)
+# HTTP, порт 80, hostname: web.local
+#
+# Запуск: ./deploy.sh mainnet
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: rustlegacy-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-rustlegacy}
+      POSTGRES_USER: ${DB_USER:-rustlegacy}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rustlegacy-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rustlegacy"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    container_name: rustlegacy-backend
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 8000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-rustlegacy}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME:-rustlegacy}
+      STATS_SYNC_ENDPOINT: ${STATS_SYNC_ENDPOINT:-}
+      RCON_HOST: ${RCON_HOST:-}
+      RCON_PORT: ${RCON_PORT:-}
+      RCON_PASSWORD: ${RCON_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-rustlegacy-default-secret}
+    networks:
+      - rustlegacy-network
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-/api}
+        REACT_APP_GOOGLE_ANALYTICS_ID: ${REACT_APP_GOOGLE_ANALYTICS_ID:-}
+        REACT_APP_YANDEX_METRIKA_ID: ${REACT_APP_YANDEX_METRIKA_ID:-}
+    container_name: rustlegacy-frontend
+    hostname: web.local
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - rustlegacy-network
+      - mainnet
+
+  adminer:
+    image: adminer:latest
+    container_name: rustlegacy-adminer
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    networks:
+      - rustlegacy-network
+
+volumes:
+  postgres_data:
+
+networks:
+  rustlegacy-network:
+    driver: bridge
+  mainnet:
+    external: true
