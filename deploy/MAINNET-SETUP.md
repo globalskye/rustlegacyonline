@@ -86,6 +86,21 @@ server {
 
 ---
 
+## Плагины TopSystem (Report Online, Stats Sync)
+
+Backend доступен по IP на порту **8082** (или `API_PORT` из .env):
+
+| Плагин | URL в конфиге |
+|--------|---------------|
+| Report Online | `http://62.122.214.201:8082/api/server-status/report` |
+| Stats Sync | `http://62.122.214.201:8082/api/stats/sync` |
+
+В `oxide/config/TopSystem.json`:
+- **Report Online URL** → `http://62.122.214.201:8082/api/server-status/report`
+- **Sync URL** → `http://62.122.214.201:8082/api/stats/sync`
+
+---
+
 ## Шаг 4. Полезные команды
 
 | Команда | Описание |

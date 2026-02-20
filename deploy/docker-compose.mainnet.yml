@@ -28,6 +28,8 @@ services:
       dockerfile: backend/Dockerfile
     container_name: rustlegacy-backend
     restart: always
+    ports:
+      - "${API_PORT:-8082}:8000"   # Плагин TopSystem: http://IP:8082/api/server-status/report
     depends_on:
       postgres:
         condition: service_healthy
