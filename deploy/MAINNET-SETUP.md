@@ -72,6 +72,8 @@ server {
 - [ ] SWAG-контейнер подключён к сети **mainnet**
 - [ ] В SWAG есть сертификат для rustlegacy.online (`URL=rustlegacy.online` или `EXTRA_DOMAINS=rustlegacy.online,www.rustlegacy.online`)
 - [ ] DNS: A-записи `rustlegacy.online` и `www.rustlegacy.online` указывают на IP сервера
+
+**Примечание:** Порт 80 на хосте не используется — SWAG подключается к web.local по внутренней сети mainnet.
 - [ ] После добавления конфига — `docker restart swag`
 
 ---

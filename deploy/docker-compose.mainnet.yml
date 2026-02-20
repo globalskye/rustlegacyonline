@@ -57,8 +57,7 @@ services:
     container_name: rustlegacy-frontend
     hostname: web.local
     restart: always
-    ports:
-      - "80:80"
+    # Порт 80 не пробрасываем — SWAG подключается к web.local:80 по сети mainnet
     depends_on:
       - backend
     networks:
