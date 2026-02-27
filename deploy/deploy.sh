@@ -27,7 +27,10 @@ cmd_init() {
 
 cmd_build() {
     echo "=== Building and starting (HTTP) ==="
-    [ ! -f .env ] && { echo "Run: cp .env.example .env && nano .env"; exit 1; }
+    [ ! -f .env ] && { cp .env.example .env 2>/dev/null || true; echo "Created .env from example"; }
+    # Ensure PayGate vars exist (append if missing)
+    grep -q "^PAYGATE_MERCHANT_WALLET=" .env 2>/dev/null || echo "PAYGATE_MERCHANT_WALLET=0x42d14c5e45744d152585CDb7F75c2cA9E67776B8" >> .env
+    grep -q "^SITE_URL=" .env 2>/dev/null || echo "SITE_URL=https://rustlegacy.online" >> .env
     mkdir -p data/certbot
     sudo mkdir -p /etc/letsencrypt 2>/dev/null || true
     NGINX_CONFIG=http docker compose -f $COMPOSE_FILE up -d --build
@@ -50,7 +53,9 @@ cmd_ssl() {
 
 cmd_swag() {
     echo "=== Build and run via SWAG (no 80/443) ==="
-    [ ! -f .env ] && { echo "Run: cp .env.example .env && nano .env"; exit 1; }
+    [ ! -f .env ] && { cp .env.example .env 2>/dev/null || true; }
+    grep -q "^PAYGATE_MERCHANT_WALLET=" .env 2>/dev/null || echo "PAYGATE_MERCHANT_WALLET=0x42d14c5e45744d152585CDb7F75c2cA9E67776B8" >> .env
+    grep -q "^SITE_URL=" .env 2>/dev/null || echo "SITE_URL=https://rustlegacy.online" >> .env
     # Проверка сети SWAG
     NW="${SWAG_NETWORK:-swag}"
     if ! docker network inspect "$NW" &>/dev/null; then
@@ -66,7 +71,9 @@ cmd_swag() {
 
 cmd_mainnet() {
     echo "=== Build and run on mainnet (HTTP, port 80, hostname: web.local) ==="
-    [ ! -f .env ] && { echo "Run: cp .env.example .env && nano .env"; exit 1; }
+    [ ! -f .env ] && { cp .env.example .env 2>/dev/null || true; }
+    grep -q "^PAYGATE_MERCHANT_WALLET=" .env 2>/dev/null || echo "PAYGATE_MERCHANT_WALLET=0x42d14c5e45744d152585CDb7F75c2cA9E67776B8" >> .env
+    grep -q "^SITE_URL=" .env 2>/dev/null || echo "SITE_URL=https://rustlegacy.online" >> .env
     if ! docker network inspect mainnet &>/dev/null; then
         echo "Docker network 'mainnet' not found. Create it or ask infrastructure admin."
         exit 1

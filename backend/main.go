@@ -72,6 +72,11 @@ func main() {
 		}
 	}()
 
+	if w := os.Getenv("PAYGATE_MERCHANT_WALLET"); w != "" {
+		log.Printf("PayGate: configured (wallet set)")
+	} else {
+		log.Printf("PayGate: NOT configured - set PAYGATE_MERCHANT_WALLET")
+	}
 	log.Printf("Server starting on :%s", port)
 	if err := http.ListenAndServe(":"+port, handler); err != nil {
 		log.Fatalf("Server failed: %v", err)

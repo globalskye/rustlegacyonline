@@ -197,6 +197,50 @@ type PlayerStats struct {
 	Suicides    int    `json:"suicides"`
 }
 
+// User — обычные пользователи (магазин, баланс)
+type User struct {
+	ID           uint      `gorm:"primaryKey" json:"id"`
+	Login        string    `json:"login" gorm:"uniqueIndex;size:100"` // произвольный логин
+	PasswordHash string    `json:"-" gorm:"column:password_hash"`
+	GoogleID     string    `json:"-" gorm:"column:google_id;uniqueIndex"`
+	SteamID      string    `json:"steamId"`
+	Balance      float64   `json:"balance" gorm:"default:0"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+}
+
+// Order — заказы (покупка, пополнение)
+type Order struct {
+	ID                uint      `gorm:"primaryKey" json:"id"`
+	UserID            *uint     `json:"userId"`
+	OrderType         string    `json:"orderType"` // "shop" | "topup"
+	Status            string    `json:"status"`   // "pending" | "paid" | "failed" | "delivered" | "refunded"
+	ItemID            *uint     `json:"itemId"`
+	SteamID           string    `json:"steamId"`
+	Amount            float64   `json:"amount"`
+	Currency          string    `json:"currency"`
+	PaygateInvoiceID  string    `json:"-" gorm:"column:paygate_invoice_id"`
+	PaygatePaymentURL string    `json:"-" gorm:"column:paygate_payment_url;type:text"`
+	RconCommand       string    `json:"-" gorm:"column:rcon_command;type:text"`
+	RconExecuted      bool      `json:"-" gorm:"column:rcon_executed"`
+	PaymentMethod     string    `json:"paymentMethod"` // "paygate" | "balance"
+	CreatedAt         time.Time `json:"createdAt"`
+	UpdatedAt         time.Time `json:"updatedAt"`
+}
+
+// Transaction — история изменений баланса
+type Transaction struct {
+	ID            uint      `gorm:"primaryKey" json:"id"`
+	UserID        uint      `json:"userId"`
+	Type          string    `json:"type"` // "topup" | "purchase" | "refund" | "admin_adjust"
+	OrderID       *uint     `json:"orderId"`
+	Amount        float64   `json:"amount"`        // + или -
+	BalanceBefore float64   `json:"balanceBefore"`
+	BalanceAfter  float64   `json:"balanceAfter"`
+	Description   string    `json:"description" gorm:"type:text"`
+	CreatedAt     time.Time `json:"createdAt"`
+}
+
 // AdminUser for admin panel authentication
 type AdminUser struct {
 	ID           uint      `gorm:"primaryKey" json:"id"`

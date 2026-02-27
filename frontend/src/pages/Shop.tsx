@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Package, Tag, Check, X } from 'lucide-react';
+import { ShoppingCart, Package, Tag, Check, X, Wallet, CreditCard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/api';
+import { useApp } from '../context/AppContext';
 import * as Types from '../types';
 
 const CURRENCIES = ['USD', 'EUR', 'CZK', 'RUB', 'BYN'] as const;
@@ -14,6 +16,8 @@ const FALLBACK_RATES: Record<string, number> = {
 
 const Shop: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const { user, refreshUser } = useApp();
   const [categories, setCategories] = useState<Types.ShopCategory[]>([]);
   const [items, setItems] = useState<Types.ShopItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
@@ -21,6 +25,10 @@ const Shop: React.FC = () => {
   const [currency, setCurrency] = useState<string>('USD');
   const [rates, setRates] = useState<Record<string, number>>(FALLBACK_RATES);
   const [loading, setLoading] = useState(true);
+  const [checkoutSteamId, setCheckoutSteamId] = useState('');
+  const [checkoutPayment, setCheckoutPayment] = useState<'balance' | 'paygate'>('paygate');
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
 
   useEffect(() => {
     loadData();
@@ -31,10 +39,23 @@ const Shop: React.FC = () => {
   }, [selectedCategory, i18n.language]);
 
   useEffect(() => {
+    if (selectedItem) {
+      setCheckoutError('');
+      setCheckoutSteamId(user?.steamId || '');
+      const price = getDisplayPrice(selectedItem);
+      setCheckoutPayment(user && user.balance >= price ? 'balance' : 'paygate');
+    }
+  }, [selectedItem, user]);
+
+  useEffect(() => {
     apiService.getCurrencyRates()
       .then((r) => setRates({ ...FALLBACK_RATES, ...r }))
       .catch(() => setRates(FALLBACK_RATES));
   }, []);
+
+  useEffect(() => {
+    if (searchParams.get('topup') === '1') refreshUser();
+  }, [searchParams, refreshUser]);
 
   const loadData = async () => {
     setLoading(true);
@@ -469,6 +490,123 @@ const Shop: React.FC = () => {
                   <div style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-line' }}>{selectedItem.warranty}</div>
                 </div>
               )}
+              {/* Checkout form */}
+              {getDisplayPrice(selectedItem) > 0 && (
+                <div style={{ paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)' }}>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
+                      Steam ID
+                    </label>
+                    <input
+                      type="text"
+                      value={checkoutSteamId}
+                      onChange={(e) => { setCheckoutSteamId(e.target.value); setCheckoutError(''); }}
+                      placeholder="76561198xxxxxxxx"
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        background: 'var(--bg-darker)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 8,
+                        color: 'var(--text-primary)',
+                        fontSize: '1rem',
+                      }}
+                    />
+                  </div>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
+                      {i18n.language === 'ru' ? 'Способ оплаты' : 'Payment method'}
+                    </label>
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      {user && user.balance >= getDisplayPrice(selectedItem) && (
+                        <button
+                          type="button"
+                          onClick={() => { setCheckoutPayment('balance'); setCheckoutError(''); }}
+                          style={{
+                            flex: 1,
+                            minWidth: 140,
+                            padding: '0.75rem 1rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            background: checkoutPayment === 'balance' ? 'var(--primary-blue)' : 'var(--bg-darker)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: 8,
+                            color: 'var(--text-primary)',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <Wallet size={20} />
+                          {i18n.language === 'ru' ? 'Баланс' : 'Balance'} ({user.balance.toFixed(0)} ₽)
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => { setCheckoutPayment('paygate'); setCheckoutError(''); }}
+                        style={{
+                          flex: 1,
+                          minWidth: 140,
+                          padding: '0.75rem 1rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          background: checkoutPayment === 'paygate' ? 'var(--primary-blue)' : 'var(--bg-darker)',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: 8,
+                          color: 'var(--text-primary)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <CreditCard size={20} />
+                        {i18n.language === 'ru' ? 'Карта' : 'Card'}
+                      </button>
+                    </div>
+                    {user && user.balance < getDisplayPrice(selectedItem) && (
+                      <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                        {i18n.language === 'ru' ? 'Недостаточно средств. ' : 'Insufficient balance. '}
+                        <Link to="/balance" style={{ color: 'var(--primary-blue)' }}>
+                          {i18n.language === 'ru' ? 'Пополнить' : 'Top up'}
+                        </Link>
+                      </p>
+                    )}
+                  </div>
+                  {checkoutError && (
+                    <div style={{ color: 'var(--accent-red)', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                      {checkoutError}
+                    </div>
+                  )}
+                  <button
+                    className="btn"
+                    disabled={checkoutLoading || !checkoutSteamId.trim()}
+                    style={{ width: '100%', padding: '1rem' }}
+                    onClick={async () => {
+                      if (!selectedItem || !checkoutSteamId.trim()) return;
+                      setCheckoutError('');
+                      setCheckoutLoading(true);
+                      const result = await apiService.checkout(selectedItem.id, checkoutSteamId.trim(), checkoutPayment);
+                      setCheckoutLoading(false);
+                      if (result.ok) {
+                        if (result.paymentUrl) {
+                          window.location.href = result.paymentUrl;
+                        } else {
+                          setSelectedItem(null);
+                          setCheckoutSteamId('');
+                          refreshUser();
+                        }
+                      } else {
+                        setCheckoutError(result.error || (i18n.language === 'ru' ? 'Ошибка оплаты' : 'Payment failed'));
+                      }
+                    }}
+                  >
+                    {checkoutLoading
+                      ? (i18n.language === 'ru' ? 'Обработка...' : 'Processing...')
+                      : checkoutPayment === 'balance'
+                        ? (i18n.language === 'ru' ? 'Оплатить балансом' : 'Pay with balance')
+                        : (i18n.language === 'ru' ? 'Оплатить картой' : 'Pay with card')}
+                  </button>
+                </div>
+              )}
+
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -484,9 +622,11 @@ const Shop: React.FC = () => {
                 }}>
                   {getDisplayPrice(selectedItem) <= 0 ? 'Free' : `${convertPrice(getDisplayPrice(selectedItem))} ${currency}`}
                 </div>
-                <button className="btn">
-                  <Tag size={18} /> Buy Now
-                </button>
+                {getDisplayPrice(selectedItem) <= 0 && (
+                  <button className="btn" disabled>
+                    <Tag size={18} /> {i18n.language === 'ru' ? 'Бесплатно' : 'Free'}
+                  </button>
+                )}
               </div>
             </motion.div>
           </motion.div>

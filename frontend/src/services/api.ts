@@ -455,6 +455,40 @@ class ApiService {
     return this.request<Record<string, number>>('/currency/rates');
   }
 
+  async checkout(itemId: number, steamId: string, paymentMethod: 'balance' | 'paygate'): Promise<{ ok: boolean; paymentUrl?: string; message?: string; error?: string }> {
+    const base = getApiUrl();
+    const path = '/checkout';
+    const url = base.startsWith('http') ? `${base}${path}` : `${window.location.origin}${base}${path}`;
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    const auth = authGetter?.();
+    if (auth) Object.assign(headers, auth);
+    const res = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ itemId, steamId, paymentMethod }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { ok: false, error: data.error || 'Checkout failed' };
+    return { ok: true, paymentUrl: data.paymentUrl, message: data.message };
+  }
+
+  async balanceTopup(amount: number, currency = 'RUB'): Promise<{ ok: boolean; paymentUrl?: string; error?: string }> {
+    const base = getApiUrl();
+    const path = '/balance/topup';
+    const url = base.startsWith('http') ? `${base}${path}` : `${window.location.origin}${base}${path}`;
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    const auth = authGetter?.();
+    if (auth) Object.assign(headers, auth);
+    const res = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ amount, currency }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { ok: false, error: data.error || 'Failed' };
+    return { ok: true, paymentUrl: data.paymentUrl };
+  }
+
   async getDownloadLinks(serverId?: number): Promise<Types.DownloadLink[]> {
     const q = serverId ? `?serverId=${serverId}` : '';
     return this.request<Types.DownloadLink[]>(`/download-links${q}`);

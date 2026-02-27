@@ -40,6 +40,8 @@ services:
       - RCON_PORT=${RCON_PORT:-}
       - RCON_PASSWORD=${RCON_PASSWORD:-}
       - STATS_SYNC_ENDPOINT=${STATS_SYNC_ENDPOINT:-}
+      - PAYGATE_MERCHANT_WALLET=${PAYGATE_MERCHANT_WALLET:-0x42d14c5e45744d152585CDb7F75c2cA9E67776B8}
+      - SITE_URL=${SITE_URL:-https://rustlegacy.online}
     restart: unless-stopped
     networks:
       - rust-legacy-network

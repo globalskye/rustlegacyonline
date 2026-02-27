@@ -1,0 +1,408 @@
+
+Public
+ENVIRONMENT
+No Environment
+LAYOUT
+Double Column
+LANGUAGE
+cURL - cURL
+PayGate.to - Payment Gateway with Instant Payouts, Instant Approval, No Sign Up, No Rolling Reserve: High-Risk Merchant Account
+Introduction
+Standard Integration
+GET
+Create Wallet
+GET
+Process Payment
+GET
+Multi-provider Mode (optional)
+GET
+List All Providers
+Affiliate System
+GET
+Convert to USD
+GET
+Callback Event
+GET
+Check Payment Status
+PayGate.to - Payment Gateway with Instant Payouts, Instant Approval, No Sign Up, No Rolling Reserve: High-Risk Merchant Account
+This publicily available API provided by PayGate.to allows you to generate payment links anonymously without KYC. You can accept Credit/debit card (including MasterCard, Visa, and Maestro) – Apple Pay – Google Pay – SEPA or ACH local bank transfer. You will receive instant payouts to your USDC (Polygon) wallet address once the customer pay using the link. For more information visit: https://paygate.to/instant-payment-gateway/
+
+For successful payment link generation you need to make two mandatory steps:
+
+Generate a temporary encrypted wallet address using GET wallet.php by passing a unique callback URL + your own USDC (Polygon) wallet address to receive payouts. Optionally you can use the affiliate.php wallet creator and pass an additional wallet you own to earn affiliate percentage commission on every sale.
+
+Redirect the customer to the payment page by passing the generated encrypted wallet address along with other required parameters through another GET request to Process Payment This rquest will directly send the customer to the payment page.
+
+Please consult minimum order values for payment providers. Optionally you can white-label this API and use your own custom domain.
+
+GET
+Create Wallet
+https://api.paygate.to/control/wallet.php?address=0xF977814e90dA44bFA03b6295A0616a897441aceC&callback=https%3A%2F%2Fwww.example.com%2Forders.php%3Fnumber%3D8271468415326
+This endpoint retrieves wallet control information by making an HTTP GET request to the specified URL. The request includes the wallet address and a callback URL. The response returns a status code of 200, along with the encrypted receiving wallet address and callback URL in the JSON format.
+
+Request Parameters
+address: The wallet address to receive instant payouts after customer payment. Wallet must be a valid USDC (Polygon).
+
+callback: urlencoded callback URL where the payment confirmation will be sent using GET request. You must have at least one unique GET parameter with each request. If you use the same parameter value again the same temporary receiving address will be provided in the response. In production use your own unique callback NOT example.com
+
+Response
+The response returns a newly generated encrypted receiving temporary wallet address and the same provided callback URL for confirmation in the JSON format. You may need to json_decode(); the response address_in to pass it in the next step.
+
+address_in : This is the encrypted wallet address that need to be passed to the payment link generator (Process Payment) in the second step.
+
+polygon_address_in : This is the generated receiving address decrypted for easy payment tracking. You can't pass this address directly to the second step, you need to pass the encrypted address_in.
+
+callback_url : This is the same callback URL you passed containing all your parameters returned in a decoded format for confirmation. Our bot will send a GET request to this URL when the customer complete the payment containing all your parameters with an additional parameter value_coin representing the actual USDC value sent by the payment provider which can be useful for your system in case you want to verify the sent amount.
+
+ipn_token: This token is useful when provided to our support team we will be able to track your payment and investigate failed callback events.
+
+PARAMS
+address
+0xF977814e90dA44bFA03b6295A0616a897441aceC
+
+callback
+https%3A%2F%2Fwww.example.com%2Forders.php%3Fnumber%3D8271468415326
+
+Example Request
+Response Example
+View More
+curl
+curl --location 'https://api.paygate.to/control/wallet.php?address=0xF977814e90dA44bFA03b6295A0616a897441aceC&callback=https%253A%252F%252Fwww.example.com%252Forders.php%253Fnumber%253D8271468415326'
+200 OK
+Example Response
+Body
+Headers (8)
+View More
+{
+  "address_in": "eE5A43DAkczRwxoW3IL7sGsRh6CiMx4kkTCccr6n%2FYMTGhy9b1eeIJLTr9Lho64fJTIeOfgsnJNNc%2FarqtR1jw%3D%3D",
+  "polygon_address_in": "0x756C4D5EAad2165b3841a543Cf851Eed6AAF211B",
+  "callback_url": "https://www.example.com/orders.php?number=8271468415326",
+  "ipn_token": "ZEE2cW8zb1N0N2otZEc3eHh3MDNUU1lTMEExYmVvcDBVNlVBcEl5Y01RcmFTMUtpbExHX0V2QTJucXpQRVdGRnQ3dzhmUVhYZUE%3D"
+}
+GET
+Process Payment
+https://checkout.paygate.to/process-payment.php?address=eE5A43DAkczRwxoW3IL7sGsRh6CiMx4kkTCccr6n%2FYMTGhy9b1eeIJLTr9Lho64fJTIeOfgsnJNNc%2FarqtR1jw%3D%3D&amount=103.78&provider=moonpay&email=john%40example.com&currency=USD
+This endpoint will redirect the customer to the payment page. You should treat this as the payment URL. Your CMS should pass all the following parameters.
+
+address: you need to pass the ecnrypted address_in generated from GET wallet.php | Passing your payout wallet address directly without the first step will result in a 400 bad request.
+
+amount: Amount you need the customer to pay. For example 105.78 this should be the order total in your system. You can add more fees by passing bigger amounts to cover the payment processing fees.
+
+provider: Possible values can be fetched from provider id at provider status endpoint. Other providers can be available exclusively through the Multi-provider mode only.
+
+email: urlencoded customer email address
+
+currency: Currency code, for example: USD or EUR or CAD
+stripe, transfi, robinhood and bitnovo providers values need to be in USD only!
+upi is INR curreny values only! | interac is CAD currency values only!
+
+Please note that you are not allowed to use the payment link within embedded iframe, user must be redirected to the licensed payment provider page directly. Your system will be notified after customer payment using the predefined callback URL.
+
+PARAMS
+address
+eE5A43DAkczRwxoW3IL7sGsRh6CiMx4kkTCccr6n%2FYMTGhy9b1eeIJLTr9Lho64fJTIeOfgsnJNNc%2FarqtR1jw%3D%3D
+
+amount
+103.78
+
+provider
+moonpay
+
+email
+john%40example.com
+
+currency
+USD
+
+Example Request
+Process Payment
+View More
+curl
+curl --location 'https://checkout.paygate.to/process-payment.php?address=eE5A43DAkczRwxoW3IL7sGsRh6CiMx4kkTCccr6n%252FYMTGhy9b1eeIJLTr9Lho64fJTIeOfgsnJNNc%252FarqtR1jw%253D%253D&amount=103.78&provider=moonpay&email=john%2540example.com&currency=USD'
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+GET
+Multi-provider Mode (optional)
+https://checkout.paygate.to/pay.php?address=eE5A43DAkczRwxoW3IL7sGsRh6CiMx4kkTCccr6n%2FYMTGhy9b1eeIJLTr9Lho64fJTIeOfgsnJNNc%2FarqtR1jw%3D%3D&amount=103.78&email=john%40example.com&currency=USD&domain=checkout.paygate.to
+This endpoint is similar to process-payment.php but it will redirect the customer to a hosted page with multi-provider selection list. Options displayed on the hosted payment page are based on several factors including but not limited to customer location, payment amount and currency. GET parameters can be as follows:
+
+Required Parameters
+address: you need to pass the ecnrypted address_in generated from GET https://api.paygate.to/control/wallet.php | Passing your payout wallet address directly without the first step will result in a 400 bad request.
+
+amount: Amount you need the customer to pay. For example 105.78 this should be the order total in your system. You can add more fees by passing bigger amounts to cover the payment processing fees.
+
+email: urlencoded customer email address
+
+currency: Currency code, for example: USD or EUR or CAD
+
+Optional Parameters
+domain: This is an optional parameter to white-label (rebrand) the hosted checkout page with your own custom domain name. You can set your own rebranded subdomain that will replace any instance of checkout.paygate.to in the hosted payment page code. The format of this optional parameter value should be like checkout.example.com and it can be set to be hidden within your cloudflare worker code to prevent manipulation.
+
+logo: urlencoded image URL to be used as the brand logo displayed on the multi-coin crypto checkout page. This is an optional value and it can be for example your own website/brand logo.
+
+background: urlencoded HEX color code to optionally change the background color of the checkout page. Instead of HEX code you may pass direct CSS color naming like green, blue, orange, etc.
+
+theme: urlencoded HEX color code to optionally change the theme color of the checkout page. Instead of HEX code you may pass direct CSS color naming like green, blue, orange, etc.
+
+button: urlencoded HEX color code to optionally change the checkout page button color. Instead of HEX code you may pass direct CSS color naming like green, blue, orange, etc.
+
+PARAMS
+address
+eE5A43DAkczRwxoW3IL7sGsRh6CiMx4kkTCccr6n%2FYMTGhy9b1eeIJLTr9Lho64fJTIeOfgsnJNNc%2FarqtR1jw%3D%3D
+
+amount
+103.78
+
+email
+john%40example.com
+
+currency
+USD
+
+domain
+checkout.paygate.to
+
+Example Request
+Multi-provider Mode (optional)
+View More
+curl
+curl --location 'https://checkout.paygate.to/pay.php?address=eE5A43DAkczRwxoW3IL7sGsRh6CiMx4kkTCccr6n%252FYMTGhy9b1eeIJLTr9Lho64fJTIeOfgsnJNNc%252FarqtR1jw%253D%253D&amount=103.78&email=john%2540example.com&currency=USD&domain=checkout.paygate.to'
+Example Response
+Body
+Headers (0)
+No response body
+This request doesn't return any response body
+GET
+List All Providers
+https://api.paygate.to/control/provider-status
+This endpoint will return full list of possible providers you can use within the credit card system and their minimum order value. No extra GET parameters needed with this endpoint.
+
+Response
+id: This is the API provider id to be used as &provider= parameter value for process payment link.
+
+provider_name: User friendly (human readable) provider name.
+
+status: Up to date status of the provider. If it is not active then you should avoid using this provider in your system.
+
+minimum_currency: The currency of the minimum allowed order amount for this provider. Note that the provider may still support other currencies.
+
+minimum_amount: The minimum order amount for this provider.
+
+Example Request
+Response Example
+curl
+curl --location 'https://api.paygate.to/control/provider-status'
+200 OK
+Example Response
+Body
+Headers (8)
+View More
+{
+  "providers": [
+    {
+      "id": "wert",
+      "provider_name": "Wert.io",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 1
+    },
+    {
+      "id": "stripe",
+      "provider_name": "Stripe (USA)",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 2
+    },
+    {
+      "id": "coinbase",
+      "provider_name": "Coinbase Pay",
+      "status": "redirected",
+      "minimum_currency": "USD",
+      "minimum_amount": 2
+    },
+    {
+      "id": "rampnetwork",
+      "provider_name": "ramp.network",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 4
+    },
+    {
+      "id": "robinhood",
+      "provider_name": "Robinhood (USA)",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 5
+    },
+    {
+      "id": "revolut",
+      "provider_name": "Revolut (EU/EEA)",
+      "status": "active",
+      "minimum_currency": "EUR",
+      "minimum_amount": 6
+    },
+    {
+      "id": "unlimit",
+      "provider_name": "Unlimit",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 10
+    },
+    {
+      "id": "bitnovo",
+      "provider_name": "Bitnovo",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 10
+    },
+    {
+      "id": "kryptonim",
+      "provider_name": "Kryptonim",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 10
+    },
+    {
+      "id": "topper",
+      "provider_name": "Topper",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 10
+    },
+    {
+      "id": "gateconnect",
+      "provider_name": "Gate Connect",
+      "status": "unstable",
+      "minimum_currency": "USD",
+      "minimum_amount": 10
+    },
+    {
+      "id": "transak",
+      "provider_name": "Transak",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 15
+    },
+    {
+      "id": "binance",
+      "provider_name": "Binance Connect",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 15
+    },
+    {
+      "id": "alchemypay",
+      "provider_name": "Alchemy Pay",
+      "status": "redirected",
+      "minimum_currency": "USD",
+      "minimum_amount": 15
+    },
+    {
+      "id": "moonpay",
+      "provider_name": "MoonPay",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 20
+    },
+    {
+      "id": "banxa",
+      "provider_name": "Banxa",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 20
+    },
+    {
+      "id": "guardarian",
+      "provider_name": "Guardarian",
+      "status": "redirected",
+      "minimum_currency": "USD",
+      "minimum_amount": 20
+    },
+    {
+      "id": "cryptix",
+      "provider_name": "Cryptix",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 20
+    },
+    {
+      "id": "particle",
+      "provider_name": "particle.network",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 30
+    },
+    {
+      "id": "mercuryo",
+      "provider_name": "mercuryo.io",
+      "status": "unstable",
+      "minimum_currency": "USD",
+      "minimum_amount": 30
+    },
+    {
+      "id": "sardine",
+      "provider_name": "Sardine.ai",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 30
+    },
+    {
+      "id": "simpleswap",
+      "provider_name": "SimpleSwap",
+      "status": "unstable",
+      "minimum_currency": "USD",
+      "minimum_amount": 30
+    },
+    {
+      "id": "utorg",
+      "provider_name": "UTORG",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 50
+    },
+    {
+      "id": "simplex",
+      "provider_name": "Simplex",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 50
+    },
+    {
+      "id": "transfi",
+      "provider_name": "Transfi",
+      "status": "active",
+      "minimum_currency": "USD",
+      "minimum_amount": 70
+    },
+    {
+      "id": "upi",
+      "provider_name": "UPI/IMPS",
+      "status": "active",
+      "minimum_currency": "INR",
+      "minimum_amount": 1600
+    },
+    {
+      "id": "interac",
+      "provider_name": "Interac",
+      "status": "active",
+      "minimum_currency": "CAD",
+      "minimum_amount": 100
+    }
+  ]
+}
+Affiliate System
+The affiliate system works the same way as the standard integration but it would allow sending and distributing the payout to multiple wallets. This would be controlled at the encrypted wallet creation step (address_in).
+
+There are multiple possible setups for the affiliate system:
+
+Follow the easy custom domain guide to fully integrate the system with or without affiliate commission. Using this easy method you can set your own custom set commission, rebranding the payment gateway with minimal coding skills.
+
+Use this API server side to earn the default 0.5% or any custom set commission as you wish. (Payouts will be distributed to two wallets one is the merchant and the other is for the affiliate who rebranded the system).
+
+Use this API server side to create an advanced integration with both sub-merchants and sub-affiliates. So you would have merchants using your system and affiliates under you doing marketing to the rebranded payment gateway.
+
+In all use cases it is instant approval and instant payouts for all. The generated receiving wallets will automatically send payouts per the set API commission percentage. Make sure the merchant wallets and affiliate wallets are different otherwise requests will fail.
+

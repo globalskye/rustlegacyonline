@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Download } from 'lucide-react';
+import { Menu, X, Download, LogIn, UserPlus, Wallet, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { apiService } from '../services/api';
+import { useApp } from '../context/AppContext';
 
 const Navigation: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const { user, authLoading, logout } = useApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const location = useLocation();
@@ -66,6 +68,32 @@ const Navigation: React.FC = () => {
           </div>
 
           <div className="nav-actions">
+            {!authLoading && (
+              <>
+                {user ? (
+                  <>
+                    <Link to="/balance" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Wallet size={18} />
+                      {user.balance.toFixed(0)} ₽
+                    </Link>
+                    <button onClick={logout} className="lang-btn" style={{ display: 'flex', alignItems: 'center', gap: 6 }} title={i18n.language === 'ru' ? 'Выйти' : 'Logout'}>
+                      <LogOut size={18} />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <LogIn size={18} />
+                      {i18n.language === 'ru' ? 'Войти' : 'Login'}
+                    </Link>
+                    <Link to="/register" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <UserPlus size={18} />
+                      {i18n.language === 'ru' ? 'Регистрация' : 'Register'}
+                    </Link>
+                  </>
+                )}
+              </>
+            )}
             {downloadUrl ? (
               <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className="nav-download-btn">
                 <Download size={18} />
@@ -118,7 +146,33 @@ const Navigation: React.FC = () => {
                   {item.label}
                 </Link>
               ))}
-              
+              {!authLoading && (
+                <>
+                  {user ? (
+                    <>
+                      <Link to="/balance" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                        <Wallet size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                        {i18n.language === 'ru' ? 'Баланс' : 'Balance'}: {user.balance.toFixed(0)} ₽
+                      </Link>
+                      <button className="mobile-nav-link" onClick={() => { logout(); setMobileMenuOpen(false); }} style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}>
+                        <LogOut size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                        {i18n.language === 'ru' ? 'Выйти' : 'Logout'}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/login" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                        <LogIn size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                        {i18n.language === 'ru' ? 'Войти' : 'Login'}
+                      </Link>
+                      <Link to="/register" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                        <UserPlus size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+                        {i18n.language === 'ru' ? 'Регистрация' : 'Register'}
+                      </Link>
+                    </>
+                  )}
+                </>
+              )}
               {downloadUrl ? (
                 <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className="mobile-nav-link nav-download-mobile" onClick={() => setMobileMenuOpen(false)}>
                   <Download size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />

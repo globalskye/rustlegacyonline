@@ -41,6 +41,8 @@ services:
       RCON_PORT: ${RCON_PORT:-}
       RCON_PASSWORD: ${RCON_PASSWORD:-}
       JWT_SECRET: ${JWT_SECRET:-rustlegacy-default-secret}
+      PAYGATE_MERCHANT_WALLET: ${PAYGATE_MERCHANT_WALLET:-0x42d14c5e45744d152585CDb7F75c2cA9E67776B8}
+      SITE_URL: ${SITE_URL:-https://rustlegacy.online}
     networks:
       - rustlegacy-network
 
