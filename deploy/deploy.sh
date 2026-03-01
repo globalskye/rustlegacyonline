@@ -52,21 +52,16 @@ cmd_ssl() {
 }
 
 cmd_swag() {
-    echo "=== Build and run via SWAG (no 80/443) ==="
+    echo "=== Build and run via SWAG (host mode, port 8080) ==="
     [ ! -f .env ] && { cp .env.example .env 2>/dev/null || true; }
     grep -q "^PAYGATE_MERCHANT_WALLET=" .env 2>/dev/null || echo "PAYGATE_MERCHANT_WALLET=0x42d14c5e45744d152585CDb7F75c2cA9E67776B8" >> .env
     grep -q "^SITE_URL=" .env 2>/dev/null || echo "SITE_URL=https://rustlegacy.online" >> .env
-    # Проверка сети SWAG
-    NW="${SWAG_NETWORK:-swag}"
-    if ! docker network inspect "$NW" &>/dev/null; then
-        echo "Docker network '$NW' not found. Find SWAG network: docker network ls"
-        echo "Then: export SWAG_NETWORK=your_swag_network"
-        exit 1
-    fi
+    grep -q "^DEPLOY_MODE=swag" .env 2>/dev/null || echo "DEPLOY_MODE=swag" >> .env
     docker compose -f $SWAG_COMPOSE up -d --build
     echo ""
-    echo "Rust Legacy containers started. Add swag-proxy-confs/rustlegacy.subdomain.conf.sample to SWAG proxy-confs, remove .sample, restart SWAG."
-    echo "Site: https://rustlegacy.online (after SWAG config)"
+    echo "Rust Legacy started. Frontend: 127.0.0.1:8080"
+    echo "SWAG default.conf: set \$target http://127.0.0.1:8080;"
+    echo "Site: https://rustlegacy.online"
 }
 
 cmd_mainnet() {
@@ -86,7 +81,7 @@ cmd_mainnet() {
 
 cmd_restart() {
     echo "=== Restarting ==="
-    if [ -f .env ] && grep -q "^SWAG_NETWORK=" .env 2>/dev/null; then
+    if [ -f .env ] && grep -q "^DEPLOY_MODE=swag" .env 2>/dev/null; then
         docker compose -f $SWAG_COMPOSE restart
     elif [ -f .env ] && grep -q "^MAINNET=" .env 2>/dev/null; then
         docker compose -f $MAINNET_COMPOSE restart
@@ -96,7 +91,7 @@ cmd_restart() {
 }
 
 cmd_stop() {
-    if [ -f .env ] && grep -q "^SWAG_NETWORK=" .env 2>/dev/null; then
+    if [ -f .env ] && grep -q "^DEPLOY_MODE=swag" .env 2>/dev/null; then
         docker compose -f $SWAG_COMPOSE down
     elif [ -f .env ] && grep -q "^MAINNET=" .env 2>/dev/null; then
         docker compose -f $MAINNET_COMPOSE down
@@ -106,7 +101,7 @@ cmd_stop() {
 }
 
 cmd_logs() {
-    if [ -f .env ] && grep -q "^SWAG_NETWORK=" .env 2>/dev/null; then
+    if [ -f .env ] && grep -q "^DEPLOY_MODE=swag" .env 2>/dev/null; then
         docker compose -f $SWAG_COMPOSE logs -f
     elif [ -f .env ] && grep -q "^MAINNET=" .env 2>/dev/null; then
         docker compose -f $MAINNET_COMPOSE logs -f
