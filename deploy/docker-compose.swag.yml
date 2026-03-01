@@ -62,12 +62,13 @@ services:
         REACT_APP_YANDEX_METRIKA_ID: ${REACT_APP_YANDEX_METRIKA_ID:-}
     container_name: rustlegacy-frontend
     restart: always
-    # Без портов 80/443 — доступ только через SWAG
+    # Порт 8080 — SWAG (host mode) проксирует сюда
+    ports:
+      - "127.0.0.1:8080:80"
     depends_on:
       - backend
     networks:
       - rustlegacy-network
-      - swag-network
 
   adminer:
     image: adminer:latest
@@ -86,6 +87,3 @@ volumes:
 networks:
   rustlegacy-network:
     driver: bridge
-  swag-network:
-    external: true
-    name: ${SWAG_NETWORK:-swag}
