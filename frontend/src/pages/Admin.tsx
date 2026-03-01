@@ -31,6 +31,7 @@ const Admin: React.FC = () => {
   const { isAdmin, login, logout } = useApp();
   const [checking, setChecking] = useState(true);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [clanNameToDelete, setClanNameToDelete] = useState('');
 
   useEffect(() => {
     if (!isAdmin) {
@@ -105,22 +106,41 @@ const Admin: React.FC = () => {
               <Database size={18} />
               Adminer
             </a>
-            <button
-              onClick={async () => {
-                if (window.confirm('Delete ALL clans and players? Data will be replaced by TopSystem sync.')) {
-                  try {
-                    await apiService.clearClansAndPlayers();
-                    showMessage('Cleared. TopSystem will sync real data.', 'success');
-                  } catch {
-                    showMessage('Failed', 'error');
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                value={clanNameToDelete}
+                onChange={(e) => setClanNameToDelete(e.target.value)}
+                placeholder={i18n.language === 'ru' ? 'Название клана' : 'Clan name'}
+                style={{
+                  padding: '0.5rem 0.75rem',
+                  background: 'var(--bg-darker)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 6,
+                  color: 'var(--text-primary)',
+                  minWidth: 140,
+                }}
+              />
+              <button
+                onClick={async () => {
+                  if (!clanNameToDelete.trim()) {
+                    showMessage(i18n.language === 'ru' ? 'Введите название клана' : 'Enter clan name', 'error');
+                    return;
                   }
-                }
-              }}
-              className="btn btn-secondary"
-              style={{ padding: '0.5rem 1rem', background: '#ef4444', borderColor: '#ef4444' }}
-            >
-              Clear clans & players
-            </button>
+                  try {
+                    await apiService.deleteClanByName(clanNameToDelete);
+                    setClanNameToDelete('');
+                    showMessage(i18n.language === 'ru' ? 'Клан удалён' : 'Clan deleted', 'success');
+                  } catch {
+                    showMessage(i18n.language === 'ru' ? 'Клан не найден или ошибка' : 'Clan not found or error', 'error');
+                  }
+                }}
+                className="btn btn-secondary"
+                style={{ padding: '0.5rem 1rem', background: '#ef4444', borderColor: '#ef4444' }}
+              >
+                {i18n.language === 'ru' ? 'Удалить по названию' : 'Delete by name'}
+              </button>
+            </div>
             <button onClick={() => { logout(); navigate('/'); }} className="btn btn-secondary">
               <LogOut size={18} /> Logout
             </button>

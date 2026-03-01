@@ -28,7 +28,7 @@ const Balance: React.FC = () => {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/shop" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

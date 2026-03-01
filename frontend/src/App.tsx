@@ -17,8 +17,6 @@ import News from './pages/News';
 import LegalDocument from './pages/LegalDocument';
 import Company from './pages/Company';
 import Admin from './pages/Admin';
-import Login from './pages/Login';
-import Register from './pages/Register';
 import Balance from './pages/Balance';
 import NotFound from './pages/NotFound';
 import './App.css';
@@ -54,8 +52,6 @@ function AppContent() {
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/legal/:type" element={<LegalDocument />} />
         <Route path="/company" element={<Company />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/balance" element={<Balance />} />
         <Route path="/admin/*" element={<Admin />} />
         <Route path="*" element={<NotFound />} />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Download, LogIn, UserPlus, Wallet, LogOut } from 'lucide-react';
+import { Menu, X, Download, Wallet, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { apiService } from '../services/api';
@@ -80,18 +80,7 @@ const Navigation: React.FC = () => {
                       <LogOut size={18} />
                     </button>
                   </>
-                ) : (
-                  <>
-                    <Link to="/login" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <LogIn size={18} />
-                      {i18n.language === 'ru' ? 'Войти' : 'Login'}
-                    </Link>
-                    <Link to="/register" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <UserPlus size={18} />
-                      {i18n.language === 'ru' ? 'Регистрация' : 'Register'}
-                    </Link>
-                  </>
-                )}
+                ) : null}
               </>
             )}
             {downloadUrl ? (
@@ -159,18 +148,7 @@ const Navigation: React.FC = () => {
                         {i18n.language === 'ru' ? 'Выйти' : 'Logout'}
                       </button>
                     </>
-                  ) : (
-                    <>
-                      <Link to="/login" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                        <LogIn size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                        {i18n.language === 'ru' ? 'Войти' : 'Login'}
-                      </Link>
-                      <Link to="/register" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                        <UserPlus size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                        {i18n.language === 'ru' ? 'Регистрация' : 'Register'}
-                      </Link>
-                    </>
-                  )}
+                  ) : null}
                 </>
               )}
               {downloadUrl ? (

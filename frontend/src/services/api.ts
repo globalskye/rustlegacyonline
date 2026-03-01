@@ -523,6 +523,14 @@ class ApiService {
     return this.request<{ ok: boolean }>('/admin/clear-clans-players', { method: 'DELETE' });
   }
 
+  async deleteClanByName(name: string): Promise<{ ok: boolean; error?: string }> {
+    const res = await this.request<{ ok: boolean; error?: string }>('/admin/clans/delete-by-name', {
+      method: 'POST',
+      body: JSON.stringify({ name: name.trim() }),
+    });
+    return res;
+  }
+
   async getSocialConfig(): Promise<Types.SocialConfig> {
     return this.request<Types.SocialConfig>('/admin/social');
   }

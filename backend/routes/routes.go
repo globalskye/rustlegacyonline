@@ -162,6 +162,7 @@ func Setup(r *mux.Router) {
 
 	// Admin (protected)
 	api.Handle("/admin/clear-clans-players", authpkg.AdminMiddleware(http.HandlerFunc(handlers.ClearClansAndPlayers))).Methods("DELETE")
+	api.Handle("/admin/clans/delete-by-name", authpkg.AdminMiddleware(http.HandlerFunc(handlers.DeleteClanByName))).Methods("DELETE", "POST")
 	api.Handle("/admin/social", authpkg.AdminMiddleware(http.HandlerFunc(handlers.GetSocialConfig))).Methods("GET")
 	api.Handle("/admin/social", authpkg.AdminMiddleware(http.HandlerFunc(handlers.UpdateSocialConfig))).Methods("PUT")
 }
