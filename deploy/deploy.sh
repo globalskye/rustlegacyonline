@@ -56,12 +56,14 @@ cmd_swag() {
     [ ! -f .env ] && { cp .env.example .env 2>/dev/null || true; }
     grep -q "^PAYGATE_MERCHANT_WALLET=" .env 2>/dev/null || echo "PAYGATE_MERCHANT_WALLET=0x42d14c5e45744d152585CDb7F75c2cA9E67776B8" >> .env
     grep -q "^SITE_URL=" .env 2>/dev/null || echo "SITE_URL=https://rustlegacy.online" >> .env
+    grep -q "^API_PORT=" .env 2>/dev/null || echo "API_PORT=8082" >> .env
     grep -q "^DEPLOY_MODE=swag" .env 2>/dev/null || echo "DEPLOY_MODE=swag" >> .env
     docker compose -f $SWAG_COMPOSE up -d --build
     echo ""
-    echo "Rust Legacy started. Frontend: 127.0.0.1:8080"
-    echo "SWAG default.conf: set \$target http://127.0.0.1:8080;"
-    echo "Site: https://rustlegacy.online"
+    echo "Rust Legacy started."
+    echo "  Frontend: 127.0.0.1:8080 (SWAG)"
+    echo "  Backend:  :8082 (TopSystem report, stats/sync)"
+    echo "  Site: https://rustlegacy.online"
 }
 
 cmd_mainnet() {

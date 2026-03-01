@@ -61,15 +61,21 @@ if [ ! -f .env ]; then
     echo "Ошибка: нет .env. Скопируй: cp .env.example .env"
     exit 1
 fi
+grep -q "^API_PORT=" .env 2>/dev/null || echo "API_PORT=8082" >> .env
 
 docker compose -f docker-compose.swag.yml up -d --build
 docker compose -f docker-compose.swag.yml up -d --force-recreate frontend
 
 sleep 2
 if docker ps --format '{{.Names}} {{.Ports}}' | grep -q "rustlegacy-frontend.*8080"; then
-    echo "    Frontend на 127.0.0.1:8080: OK"
+    echo "    Frontend: 127.0.0.1:8080 (SWAG) OK"
 else
-    echo "    Внимание: проверь docker ps | grep rustlegacy"
+    echo "    Внимание: frontend проверь docker ps"
+fi
+if docker ps --format '{{.Names}} {{.Ports}}' | grep -q "rustlegacy-backend.*8082"; then
+    echo "    Backend: 0.0.0.0:8082 (TopSystem) OK"
+else
+    echo "    Внимание: backend на 8082 проверь docker ps"
 fi
 
 # 5. Перезапуск SWAG
@@ -79,6 +85,7 @@ docker restart swag
 
 echo ""
 echo "=== Готово ==="
-echo "Сайт: https://rustlegacy.online"
+echo "Сайт:     https://rustlegacy.online (frontend через SWAG)"
+echo "Backend:  :8082 — TopSystem report, stats/sync"
 echo ""
 echo "Если не работает: docker logs swag"
